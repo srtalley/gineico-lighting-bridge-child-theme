@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<title><?php echo get_bloginfo( 'name', 'display' ); ?></title>
 		<style type="text/css">
 			#template_header {
-				background-color: #cccccc;
+				background-color: #CEC6B1;
 			}
 			#header_wrapper {
 				padding: 16px 18px;
@@ -89,9 +89,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 												<div id="template_header_image">
 													<?php
 													if ( $img = get_option( 'woocommerce_email_header_image' ) ) {
-														echo '<p style="margin-top:0 !important; margin-bottom: 0 !important;"><a href="' . site_url() . '" target="_blank"><img src="' . esc_url( $img ) . '" alt="' . get_bloginfo( 'name', 'display' ) . '" /><a/></p>';
+														echo '<p style="margin-top:0 !important; margin-bottom: 0 !important;"><a href="' . site_url() . '" target="_blank"><img width="200" height="104" src="' . esc_url( $img ) . '" alt="' . get_bloginfo( 'name', 'display' ) . '" style="width: 200px; margin-top: 10px;" /><a/></p>';
 													}
 													?>
+													<p style="font-size: 14px; font-weight: normal; margin: 0 !important;">Gineico Lighting • Italian Architectural Lighting Solutions</p>
+
 												</div>
 											</td>
 										</tr>

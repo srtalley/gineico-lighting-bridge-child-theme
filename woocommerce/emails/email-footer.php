@@ -41,7 +41,10 @@ defined( 'ABSPATH' ) || exit;
 										<tbody>
 											<tr style="font-family: Arial, sans-serif; line-height: 1.3em;">
 												<td align="left" class="footer_container_inner" style="line-height: 1.3em; font-family: Arial,sans-serif; font-size: 12px; color: #646464;">
-													<img src="https://www.gineicolighting.com.au/wp-content/uploads/2018/08/Gineico-Lighting-Logo-x-50.png">
+												<?php
+												if ( $img = get_option( 'woocommerce_email_header_image' ) ) { 
+											echo '<p style="margin-top:0 !important; margin-bottom: 0 !important;"><a href="' . site_url() . '" target="_blank"><img src="' . esc_url( $img ) . '" width="100" height="52" alt="' . get_bloginfo( 'name', 'display' ) . '" style="width: 100px;" /><a/></p>';
+										} ?>
 												</td>
 											</tr>
 										</tbody>

@@ -71,8 +71,8 @@ do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plai
 <table cellspacing="0" cellpadding="0" border="0" width="100%" style="font-family: Arial, sans-serif; line-height: 1.3em; color: #232323; margin-bottom: 15px;">
    <tbody>
       <tr style="font-family: Arial, sans-serif; line-height: 1.3em;">
-         <td class="order-table-heading" style="font-family: Arial, sans-serif; line-height: 1.3em; padding: 0 0 6px; text-align: left;"> <span class="highlight" style="color: #077230; text-decoration: none; font-style: none;"> Order Number: </span> <?php echo $order->get_id(); ?> </td>
-         <td class="order-table-heading" style="font-family: Arial, sans-serif; line-height: 1.3em; padding: 0 0 6px; text-align: right;"> <span class="highlight" style="color: #077230; text-decoration: none; font-style: none;"> Order Date: </span>  <?php echo $order->get_date_created()->format ('F d, Y'); ?> </td>
+         <td class="order-table-heading" style="font-family: Arial, sans-serif; line-height: 1.3em; padding: 0 0 6px; text-align: left;"> <span class="highlight" style="color: #242e4a; text-decoration: none; font-style: none;"> Order Number: </span> <?php echo $order->get_id(); ?> </td>
+         <td class="order-table-heading" style="font-family: Arial, sans-serif; line-height: 1.3em; padding: 0 0 6px; text-align: right;"> <span class="highlight" style="color: #242e4a; text-decoration: none; font-style: none;"> Order Date: </span>  <?php echo $order->get_date_created()->format ('F d, Y'); ?> </td>
       </tr>
    </tbody>
 </table>
