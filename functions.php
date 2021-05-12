@@ -2,6 +2,8 @@
 
 // custom child theme includes
 include_once('includes/qode-breadcrumbs.php');
+include_once('includes/class-woocommerce.php');
+
 define('QODE_CHILD_ROOT', get_stylesheet_directory_uri());
 
 // Remove the recaptcha from the wp-admin login form
@@ -1634,6 +1636,9 @@ function dst_email_order_items_args( $args ) {
     return $args;
  
 }
+
+
+
 function wl ( $log ) {
 	if ( is_array( $log ) || is_object( $log ) ) {
 	error_log( print_r( $log, true ) );
@@ -1661,3 +1666,11 @@ function wf( $contents, $filename = '' ) {
 	file_put_contents($file, $current);
 }
 
+    /**
+     * Modify WooCommerce breadcrumb delimiters
+     */
+    function gm_woocommerce_set_breadcrumbs( $defaults ) {
+        // Change the breadcrumb delimeter from '/' to '>'
+        $defaults['delimiter'] = ' &gt; ';
+        return $defaults;
+    }

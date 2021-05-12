@@ -4,8 +4,8 @@ Theme URI: http://demo.qodeinteractive.com/bridge/
 Description: A child theme of Bridge Theme
 Author: Qode Interactive
 Author URI: http://www.qodethemes.com/
-Version: 1.1.4
-Date: 2021-02-18
+Version: 1.1.5
+Date: 2021-05-11
 Template: bridge
 */
 @import url("../bridge/style.css");
@@ -157,7 +157,8 @@ header.centered_logo .q_logo img {
 }
 .qode-child-breadcrumb .breadcrumbs,
 .qode-child-breadcrumb.breadcrumb a,
-.qode-child-breadcrumb.breadcrumb .current {
+.qode-child-breadcrumb.breadcrumb .current,
+.qode-child-breadcrumb .woocommerce-breadcrumb {
 	color: #333;
 	font-weight: bold;
 }

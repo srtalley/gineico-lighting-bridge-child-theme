@@ -369,10 +369,6 @@ if(get_post_meta($id, "qode_separator_bellow_title", true)){
 	$bridge_qode_title_separator = $bridge_qode_options['title_separator'];
 }
 
-// if(function_exists('bridge_child_is_woocommerce_listing_page') and bridge_child_is_woocommerce_listing_page()) {
-	$bridge_qode_title_separator = "no";
-// }
-
 //SCROLL ANIMATIONS
 //Whole Title Content Animation
 $bridge_qode_title_content_animation = 'no';
@@ -600,18 +596,7 @@ if($bridge_qode_title_content_animation == 'yes' || $bridge_qode_title_animation
 	$bridge_qode_animation = 'data-animation="yes"';
 }
 
-$qode_is_title_hidden = bridge_qode_is_title_hidden();
-
-if(class_exists('WooCommerce')) {
-	if(is_product()) {
-		$qode_is_title_hidden = true;
-		/*if (function_exists('bridge_qode_child_custom_breadcrumbs') && $bridge_qode_enable_breadcrumbs == "yes") {
-			?><div class="container"><div class="product-breadcrumb breadcrumb container_inner" <?php print $bridge_qode_page_title_breadcrumbs_animation_data; ?>> <?php bridge_qode_child_custom_breadcrumbs(); ?></div></div><?php
-		}*/
-	}
-}
-
-if(!$qode_is_title_hidden) { ?>
+if(!bridge_qode_is_title_hidden()) { ?>
 	<div class="title_outer <?php echo bridge_qode_get_module_part( $bridge_qode_animate_title_class.$bridge_qode_title_text_shadow ); if($bridge_qode_responsive_title_image == 'yes' && $bridge_qode_show_title_image == true){ echo ' with_image'; }?>"  <?php print bridge_qode_get_module_part( $bridge_qode_animation ); ?>  <?php echo 'data-height="'.$bridge_qode_title_height.'"'; if($bridge_qode_title_height != '' && $bridge_qode_animate_title_area == 'area_top_bottom'){ echo 'style="opacity:0;height:' . $bridge_qode_header_height_padding .'px;"'; } ?>>
 		<div class="title <?php echo bridge_qode_get_module_part( $bridge_qode_page_title_fontsize . " " . $bridge_qode_page_title_position . " " . $bridge_qode_page_title_border_bottom_in_grid_class ); if($bridge_qode_responsive_title_image == 'no' && $bridge_qode_title_image != "" && ($bridge_qode_fixed_title_image == "yes" || $bridge_qode_fixed_title_image == "yes_zoom") && $bridge_qode_show_title_image == true){ echo ' has_fixed_background '; if($bridge_qode_fixed_title_image == "yes_zoom"){ echo 'zoom_out '; } } if($bridge_qode_responsive_title_image == 'no' && $bridge_qode_title_image != "" && $bridge_qode_fixed_title_image == "no" && $bridge_qode_show_title_image == true){ echo ' has_background'; }  ?>" style="<?php if($bridge_qode_responsive_title_image == 'no' && $bridge_qode_title_image != "" && $bridge_qode_show_title_image == true){ if($bridge_qode_title_image_width != ''){ echo 'background-size:'.$bridge_qode_title_image_width.'px auto;'; } echo 'background-image:url('.$bridge_qode_title_image.');';  } if($bridge_qode_title_height != ''){ echo 'height:'.$bridge_qode_title_height.'px;'; } if($bridge_qode_title_background_color != ''){ echo 'background-color:'.$bridge_qode_title_background_color.';'; } ?>">
 			<div class="image <?php if($bridge_qode_responsive_title_image == 'yes' && $bridge_qode_title_image != "" && $bridge_qode_show_title_image == true){ echo "responsive"; }else{ echo "not_responsive"; } ?>"><?php if($bridge_qode_title_image != "" && $bridge_qode_show_title_image == true){ ?><img itemprop="image" src="<?php echo esc_url( $bridge_qode_title_image ); ?>" alt="&nbsp;" /> <?php } ?></div>
@@ -642,15 +627,9 @@ if(!$qode_is_title_hidden) { ?>
 											<span class="subtitle" <?php print bridge_qode_get_module_part( $bridge_qode_page_subtitle_animation_data ); ?> <?php echo bridge_qode_get_module_part( $bridge_qode_subtitle_color ); ?>><?php echo get_post_meta($id, "qode_page_subtitle", true); ?></span>
 										<?php } ?>
 									<?php } ?>
-									<?php
-									/*if(function_exists('bridge_child_is_woocommerce_listing_page') and !bridge_child_is_woocommerce_listing_page()) {
-										if (function_exists('bridge_qode_child_custom_breadcrumbs') && $bridge_qode_enable_breadcrumbs == "yes") {
-										?>
-										<div class="breadcrumb" <?php print $bridge_qode_page_title_breadcrumbs_animation_data; ?>> <?php bridge_qode_child_custom_breadcrumbs(); ?></div>
-										<?php
-										}
-									}*/
-									?>
+									<?php if (function_exists('bridge_qode_custom_breadcrumbs') && $bridge_qode_enable_breadcrumbs == "yes") { ?>
+										<!-- <div class="breadcrumb" <?php //print bridge_qode_get_module_part( $bridge_qode_page_title_breadcrumbs_animation_data ); ?>> <?php //bridge_qode_custom_breadcrumbs(); ?></div> -->
+									<?php } ?>
 								<?php if(($bridge_qode_responsive_title_image == 'yes' && $bridge_qode_show_title_image == true)  || ($bridge_qode_fixed_title_image == "yes" || $bridge_qode_fixed_title_image == "yes_zoom") || ($bridge_qode_responsive_title_image == 'no' && $bridge_qode_title_image != "" && $bridge_qode_fixed_title_image == "no" && $bridge_qode_show_title_image == true)){ ?>
 									</div>
 								<?php } ?>
@@ -675,16 +654,22 @@ if(!$qode_is_title_hidden) { ?>
 			<div class="title_border_in_grid_holder"></div>
 		<?php } ?>
 	</div>
-<?php } ?>
+<?php } 
+
+if(!is_front_page()) { ?>
+
+<div class="container"><div class="qode-child-breadcrumb breadcrumb container_inner" <?php print $bridge_qode_page_title_breadcrumbs_animation_data; ?>>
 <?php
-// if(class_exists('WooCommerce')) {
-	// if(function_exists('bridge_child_is_woocommerce_listing_page') and bridge_child_is_woocommerce_listing_page()) {
+	if(class_exists('WooCommerce') && (is_shop() || is_product() || is_product_category())) {
+			woocommerce_breadcrumb();
+	} else {
 		if (function_exists('bridge_qode_child_custom_breadcrumbs') && $bridge_qode_enable_breadcrumbs == "yes") {
-			?><div class="container"><div class="qode-child-breadcrumb breadcrumb container_inner" <?php print $bridge_qode_page_title_breadcrumbs_animation_data; ?>> <?php bridge_qode_child_custom_breadcrumbs(); ?></div></div><?php
+			bridge_qode_child_custom_breadcrumbs();
 		}
-	// }
-// }
+	}
 ?>
+</div></div>
+<?php }?>
 <?php
 	/* Return id for archive pages */
 	if(is_category() || is_tag() || is_author()){

@@ -2,6 +2,9 @@
 
 Gineico Lighting Bridge child theme documented changes.
 
+## [1.1.5] - 2021-05-11
+* Updates to the breadcrumbs in title.php to match GM.
+
 ## [1.1.4] - 2021-02-18
 * Added code to hide reCAPTCHA v3.
 
