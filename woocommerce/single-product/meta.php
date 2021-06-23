@@ -116,19 +116,19 @@ $separator = ', ';
 					echo '<div class="product-attached-pdf-label">Downloads: </div>';
 					echo '<div class="product-attached-pdf-files">';
 					if(!empty($product_details)) {
-						echo '<p><a alt="' . $product_details_alt . '" href="' . $product_details_url . '">' . $product_details_title . '</a></p>';
+						echo '<p><a alt="' . $product_details_alt . '" href="' . $product_details_url . '" target="_blank">' . $product_details_title . '</a></p>';
 					}
 					if(!empty($installation_instructions)) {
-						echo '<p><a alt="' . $installation_instructions_alt . '" href="' . $installation_instructions_url . '">' . $installation_instructions_title . '</a></p>';
+						echo '<p><a alt="' . $installation_instructions_alt . '" href="' . $installation_instructions_url . '" target="_blank">' . $installation_instructions_title . '</a></p>';
 					}
 					if(!empty($photometry)) {
-						echo '<p><a alt="' . $photometry_alt . '" href="' . $photometry_url . '">' . $photometry_title . '</a></p>';
+						echo '<p><a alt="' . $photometry_alt . '" href="' . $photometry_url . '" target="_blank">' . $photometry_title . '</a></p>';
 					}
 					if(!empty($dwg_file)) {
-						echo '<p><a alt="' . $dwg_file_alt . '" href="' . $dwg_file_url . '">' . $dwg_file_title . '</a></p>';
+						echo '<p><a alt="' . $dwg_file_alt . '" href="' . $dwg_file_url . '" target="_blank">' . $dwg_file_title . '</a></p>';
 					}
 					if(!empty($ldt_ies_file)) {
-						echo '<p><a alt="' . $ldt_ies_file_alt . '" href="' . $ldt_ies_file_url . '">' . $ldt_ies_file_title . '</a></p>';
+						echo '<p><a alt="' . $ldt_ies_file_alt . '" href="' . $ldt_ies_file_url . '" target="_blank">' . $ldt_ies_file_title . '</a></p>';
 					}
 					echo '</div>';
 					echo '</div>';

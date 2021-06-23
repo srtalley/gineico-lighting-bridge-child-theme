@@ -2,6 +2,9 @@
 
 Gineico Lighting Bridge child theme documented changes.
 
+## [1.1.5.1] - 2021-05-17
+* Changes to the WooCommerce single product meta file.
+
 ## [1.1.5] - 2021-05-11
 * Updates to the breadcrumbs in title.php to match GM.
 
