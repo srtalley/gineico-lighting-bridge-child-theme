@@ -2,6 +2,13 @@
 
 Gineico Lighting Bridge child theme documented changes.
 
+## [1.1.7] - 2021-07-01
+* Removed product structured data.
+
+## [1.1.6] - 2021-06-30
+* Added the continue shopping button after adding to quote.
+* Added styling to make the view quote and continue shopping match GM.
+
 ## [1.1.5.1] - 2021-05-17
 * Changes to the WooCommerce single product meta file.
 

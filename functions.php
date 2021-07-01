@@ -1606,21 +1606,21 @@ function dl_after_add_to_cart_download_pdf(){
  /**
  * Remove partial product structured data.
  */
-add_filter( 'woocommerce_structured_data_product_offer', 'dst_remove_partial_product_structured_data', 10, 2 );
+// add_filter( 'woocommerce_structured_data_product_offer', 'dst_remove_partial_product_structured_data', 10, 2 );
 
-function dst_remove_partial_product_structured_data( $markup_offer, $product ) {
-	$markup_offer = array(
-		'availability'  => 'https://schema.org/' . ( $product->is_in_stock() ? 'InStock' : 'OutOfStock' ),
-		'url'           => get_permalink( $product->get_id() ),
-		'seller'        => array(
-			'@type' => 'Organization',
-			'name'  => get_bloginfo( 'name' ),
-			'url'   => home_url(),
-		),
-	);
+// function dst_remove_partial_product_structured_data( $markup_offer, $product ) {
+// 	$markup_offer = array(
+// 		'availability'  => 'https://schema.org/' . ( $product->is_in_stock() ? 'InStock' : 'OutOfStock' ),
+// 		'url'           => get_permalink( $product->get_id() ),
+// 		'seller'        => array(
+// 			'@type' => 'Organization',
+// 			'name'  => get_bloginfo( 'name' ),
+// 			'url'   => home_url(),
+// 		),
+// 	);
 
-	return $markup_offer;
-}
+// 	return $markup_offer;
+// }
 
 /*
  * Add the product image to the emails

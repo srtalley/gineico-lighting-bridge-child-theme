@@ -4,8 +4,8 @@ Theme URI: http://demo.qodeinteractive.com/bridge/
 Description: A child theme of Bridge Theme
 Author: Qode Interactive
 Author URI: http://www.qodethemes.com/
-Version: 1.1.5
-Date: 2021-05-11
+Version: 1.1.6.1
+Date: 2021-06-30
 Template: bridge
 */
 @import url("../bridge/style.css");
@@ -323,7 +323,7 @@ header.scrolled .header_top {
 .yith_ywraq_add_item_response_message a:hover {
     color: #212121;
 }
-.yith_ywraq_add_item_browse_message a:after {
+/* .yith_ywraq_add_item_browse_message a:after {
     content: "\f0ea";
     font-size: 12px;
     float: left;
@@ -331,6 +331,82 @@ header.scrolled .header_top {
     line-height: 19px;
     color: #212121;
     font-family: 'FontAwesome';
+} */
+
+.product-type-simple .yith-ywraq-add-to-quote {
+    margin: 20px 0; 
+}
+.product-type-simple .yith-ywraq-add-to-quote,
+.cart .yith-ywraq-add-to-quote {
+    width: 100%;
+    /* padding-left: 100px; */
+    flex: 1 1 auto;
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.product-type-simple .yith-ywraq-add-to-quote .yith-ywraq-add-button,
+.product-type-simple .yith-ywraq-add-to-quote .yith_ywraq_add_item_response_message,
+.product-type-simple .yith-ywraq-add-to-quote .yith_ywraq_add_item_product_message,
+.cart .yith-ywraq-add-to-quote .yith-ywraq-add-button,
+.cart .yith-ywraq-add-to-quote .yith_ywraq_add_item_response_message,
+.cart .yith-ywraq-add-to-quote .yith_ywraq_add_item_product_message {
+    flex: 1 1 100%;
+}
+.product-type-simple .yith-ywraq-add-to-quote .yith_ywraq_add_item_browse_message,
+.cart .yith-ywraq-add-to-quote .yith_ywraq_add_item_browse_message {
+    flex: 0 1 48%;
+}
+.product-type-simple .yith-ywraq-add-to-quote .yith_ywraq_add_item_browse_message.gl-continue-shopping a,
+.cart .yith-ywraq-add-to-quote .yith_ywraq_add_item_browse_message.gl-continue-shopping a {
+    background-color: #fff !important;
+    border: 3px solid #2b2b2b;
+    color: #2b2b2b;
+}
+.product-type-simple .yith-ywraq-add-to-quote .yith_ywraq_add_item_browse_message.gl-continue-shopping a:hover,
+.cart .yith-ywraq-add-to-quote .yith_ywraq_add_item_browse_message.gl-continue-shopping a:hover {
+    background-color: #2b2b2b !important;
+    border: 3px solid #2b2b2b;
+    color: #FFF;
+}
+.woocommerce .yith-ywraq-add-to-quote .add-request-quote-button.button,
+.woocommerce .yith_ywraq_add_item_browse_message a,
+.add-request-quote-button-variable.button {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+    background-color: #009147 !important;
+    font-weight: 700;
+    line-height: 16px;
+    font-size: 13px;
+    text-transform: uppercase;
+    display: block;
+    color: #fff;
+    letter-spacing: 2.2px;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    height: 52px;
+}
+body.woocommerce-js .add-request-quote-button.button:hover,
+.woocommerce .add-request-quote-button-addons.button:hover,
+body.woocommerce-js .yith_ywraq_add_item_browse_message a:hover,
+.add-request-quote-button-variable.button:hover {
+    background-color: #2b2b2b !important;
+}
+
+.yith_ywraq_add_item_product_message,
+.yith_ywraq_add_item_response_message {
+    text-align: center;
+    padding-bottom: 6px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 15px;
 }
 .request-quote-column {
     width: 50%;
