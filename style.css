@@ -4,8 +4,8 @@ Theme URI: http://demo.qodeinteractive.com/bridge/
 Description: A child theme of Bridge Theme
 Author: Qode Interactive
 Author URI: http://www.qodethemes.com/
-Version: 1.1.6.1
-Date: 2021-06-30
+Version: 1.1.8
+Date: 2021-07-04
 Template: bridge
 */
 @import url("../bridge/style.css");
@@ -82,21 +82,23 @@ header.centered_logo .q_logo img {
     padding: 0;
 }
 .woocommerce div.product .cart .quantity {
-	float: none;
-    display: inline-block;
+	/* float: none; */
     margin: 0;
     padding: 0;
     height: 52px;
     line-height: 52px;
     /*height: 100%;*/
     /*line-height: 100%;*/
-    margin-left: 56px;
     /*vertical-align: top;*/
+}
+.woocommerce div.product.product-type-simple .cart {
+    margin-top: 20px;
 }
 .woocommerce.single-product .product .yith-ywraq-add-to-quote {
     float: left;
     width: 70%;
 }
+
 .woocommerce.single-product .product .yith-ywraq-add-to-quote .add-request-quote-button.button {
 	width: 100%;
     border: 1px solid #009147;
@@ -334,7 +336,7 @@ header.scrolled .header_top {
 } */
 
 .product-type-simple .yith-ywraq-add-to-quote {
-    margin: 20px 0; 
+    margin: 20px 0 0; 
 }
 .product-type-simple .yith-ywraq-add-to-quote,
 .cart .yith-ywraq-add-to-quote {
@@ -453,11 +455,18 @@ header .shopping_cart_outer {
 .woocommerce .wishlist_manage_table tfoot a.create-new-wishlist i {
     display: none;
 }
-.woocommerce div.product .summary .variation-quantity-container {
-	margin-bottom: 20px;
+.woocommerce div.product .summary .gl-quantity-container {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.woocommerce div.product.product-type-simple .summary .gl-quantity-container {
+    margin-bottom: 0;
 }
 .woocommerce div.product .summary table.variations label,
-.woocommerce div.product .summary .variation-quantity-label {
+.woocommerce div.product .summary .gl-quantity-label {
 	color: #333;
     font-weight: 700;
     font-size: 14px;
@@ -466,18 +475,17 @@ header .shopping_cart_outer {
 .woocommerce div.product .summary table.variations label:after {
 	content: ':';
 }
-.woocommerce div.product .summary .variation-quantity-label,
-.woocommerce div.product .summary .variation-quantity-input {
-    display: inline-block;
-}
-.woocommerce div.product .summary .variation-quantity-input .quantity {
+.woocommerce div.product .summary .gl-quantity-container .quantity {
 	margin-left: 0;
 }
-.woocommerce div.product .summary .variation-quantity-label {
-	padding: 5px 10px;
+.woocommerce div.product .summary .gl-quantity-label {
+	padding: 5px 10px 0;
+}
+.woocommerce div.product.product-type-simple  .summary .gl-quantity-label {
+	padding-left: 0;
 }
 .woocommerce div.product .summary table.variations td.label,
-.woocommerce div.product .summary .variation-quantity-label {
+.woocommerce div.product .summary .gl-quantity-label {
 	width: 75px;
 }
 .woocommerce div.product .summary table.variations td.value select {
@@ -488,7 +496,7 @@ header .shopping_cart_outer {
 	margin-bottom: 6px;
 	width: 100%;
 }
-.woocommerce div.product .summary .variation-quantity-input .quantity {
+.woocommerce div.product .summary .gl-quantity-container .quantity {
 	height: 35px;
     line-height: 35px;
     margin-left: 6px;
@@ -1251,6 +1259,15 @@ a.pp_close {
         flex-basis: 100%;
     }
 }
+@media only screen and (max-width: 480px) {
+    .woocommerce div.product:not(.product-type-simple) .summary .gl-quantity-container {
+        /* width: 100%; */
+        margin-top: -32px;
+    }
+    .woocommerce div.product .summary .gl-quantity-container .quantity {
+        /* margin-left: -45px; */
+    }
+}
 @media only screen and (max-width: 320px) {
     .float-gineico-advanced-filter-container {
         padding: 50px 0;
@@ -1350,7 +1367,7 @@ a.pp_close {
     }
     .woocommerce div.product .summary table.variations td.label,
     .woocommerce div.product .summary table.variations td.value,
-    .woocommerce div.product .summary .variation-quantity-label {
+    .woocommerce div.product .summary .gl-quantity-label {
         display: block;
         width: 100%;
         box-sizing: border-box;
@@ -1365,15 +1382,6 @@ a.pp_close {
     .woocommerce div.product .summary table.variations td.value select {
         display: block;
         margin: 0 auto;
-    }
-    .woocommerce div.product .summary .variation-quantity-input {
-        width: 100%;
-        text-align: center;
-        margin-top: -38px;
-        display: block;
-    }
-    .woocommerce div.product .summary .variation-quantity-input .quantity {
-        margin-left: -45px;
     }
     .woocommerce div.product div.upsells .qode-related-upsells-title {
         margin-top: 20px;
@@ -1756,7 +1764,7 @@ a.pp_close {
         line-height: 30px;
         font-size: 16px;
     }
-    .woocommerce div.product .summary .variation-quantity-input .quantity {
+    .woocommerce div.product .summary .gl-quantity-container .quantity {
         margin-left: 65px;
     }
     .woocommerce div.product .summary table.variations .reset_variations {
@@ -1936,7 +1944,7 @@ a.pp_close {
         width: 155px;
     }
     .woocommerce div.product .summary table.variations label,
-    .woocommerce div.product .summary .variation-quantity-label {
+    .woocommerce div.product .summary .gl-quantity-label {
         font-size: 12px;
     }
     .woocommerce.single-product .product .yith-ywraq-add-to-quote .add-request-quote-button.button {

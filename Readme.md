@@ -2,6 +2,9 @@
 
 Gineico Lighting Bridge child theme documented changes.
 
+## [1.1.8] - 2021-07-04
+* Updated the quantity label display.
+
 ## [1.1.7] - 2021-07-01
 * Removed product structured data.
 
