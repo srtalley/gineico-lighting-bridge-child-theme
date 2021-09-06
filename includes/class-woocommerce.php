@@ -59,8 +59,13 @@ class GL_WooCommerce {
     public function gl_wc_login_form_function() {
         // if ( !is_admin() ) return;
         if ( is_user_logged_in() && !current_user_can('administrator')) wp_redirect( site_url() . '/my-account' );
-        
+
+        // these two lines enqueue the login nocaptcha scripts
+        wp_enqueue_script('login_nocaptcha_google_api');
+        wp_enqueue_style('login_nocaptcha_css');
+
         ob_start();
+
         ?>
         <div class="woocommerce gl-wc-registration-form gl-wc-shortcode">
 
@@ -107,6 +112,10 @@ class GL_WooCommerce {
         // if ( is_admin() ) return;
         if ( is_user_logged_in() && !current_user_can('administrator')) wp_redirect( site_url() . '/my-account' );
         
+        // these two lines enqueue the login nocaptcha scripts
+        wp_enqueue_script('login_nocaptcha_google_api');
+        wp_enqueue_style('login_nocaptcha_css');
+                
         ob_start();
         ?>
             <div class="woocommerce gl-wc-registration-form gl-wc-shortcode">

@@ -4,7 +4,7 @@ Theme URI: http://demo.qodeinteractive.com/bridge/
 Description: A child theme of Bridge Theme
 Author: Qode Interactive
 Author URI: http://www.qodethemes.com/
-Version: 1.1.9
+Version: 1.1.9.2
 Date: 2021-09-05
 Template: bridge
 */
@@ -556,8 +556,21 @@ header .shopping_cart_outer {
 .gl-wc-shortcode input[type=text], .gl-wc-shortcode input[type=email], .gl-wc-shortcode input[type=password], .gl-wc-shortcode select {
     width: 100%;
     box-sizing: border-box;
+    border: 1px solid rgba(0,0,0,0);
 }
-
+.gl-wc-shortcode input:focus,
+.gl-wc-shortcode select:focus {
+    border: 1px solid #dd840e !important;
+}
+.gl-wc-shortcode p.form-row {
+    padding-bottom: 0;
+    margin-bottom: 10px;
+    text-align: left;
+}
+.gl-wc-shortcode .woocommerce-LostPassword a {
+    color: #242e49;
+    font-weight: bold;
+}
 
 .ywraq-wrapper .product-meta {
 	padding-left: 30px;
