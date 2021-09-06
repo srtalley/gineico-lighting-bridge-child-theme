@@ -150,7 +150,5 @@ do_action( 'yith_ywraq_quote_template_header', $order_id );
     do_action( 'yith_ywraq_quote_template_after_content', $order_id );
 	?>
 </div>
-<?php
-?>
 </body>
 </html>

@@ -4,8 +4,8 @@ Theme URI: http://demo.qodeinteractive.com/bridge/
 Description: A child theme of Bridge Theme
 Author: Qode Interactive
 Author URI: http://www.qodethemes.com/
-Version: 1.1.8
-Date: 2021-07-04
+Version: 1.1.9
+Date: 2021-09-05
 Template: bridge
 */
 @import url("../bridge/style.css");
@@ -27,6 +27,10 @@ select {
     background-size: 8px;
     background-repeat: no-repeat;
     background-position: calc(100% - 5px) center;
+}
+/* Zopim Widget Mobile */
+.zopim[data-test-id="ChatWidgetMobileButton"] {
+    bottom: 28px !important;
 }
 /* Header */
 header.centered_logo .logo_wrapper,
@@ -52,6 +56,30 @@ header.centered_logo .q_logo img {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+.header_inner_right {
+    padding-left: 0;
+}
+header .side_menu_button>a {
+    width: auto;
+}
+header .side_menu_button>a.search_button {
+    vertical-align: top;
+}
+header .search_button:after {
+    content: 'SEARCH';
+    position: relative;
+    font-family: 'Raleway', sans-serif;
+    color: #1a1a1a;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: 3.6px;
+    text-transform: uppercase;
+    vertical-align: text-bottom;
+    padding-left: 5px;
+}
+
+/****/
 .woocommerce div.product div.product_meta>span a {
 	border-bottom: dotted 1px #888;
 }
@@ -523,6 +551,14 @@ header .shopping_cart_outer {
 .woocommerce-account input[type=password] {
     width: 97%;
 }
+/* WooCommerce Login/Registration Shortcodes */
+
+.gl-wc-shortcode input[type=text], .gl-wc-shortcode input[type=email], .gl-wc-shortcode input[type=password], .gl-wc-shortcode select {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
 .ywraq-wrapper .product-meta {
 	padding-left: 30px;
     list-style-position: outside;
@@ -908,6 +944,21 @@ a.pp_close {
     .woocommerce.single-product .product-attached-pdf-buttons {
         width: 100%;
     }
+    .footer_bottom {
+        height: auto;
+    }
+    .footer_bottom .textwidget p,
+    .footer_bottom .textwidget p a {
+        display: inline-block;
+        line-height: 16px;
+    }
+    #back_to_top {
+        bottom: 100px;
+    }
+    /* Zopim Widget Mobile */
+    .zopim[data-test-id="ChatWidgetMobileButton"] {
+        bottom: 55px !important;
+    }
 }
 @media only screen and (min-width: 700px) {
 	.gineico-advanced-search .main-filter input.gineico-s {
@@ -983,15 +1034,23 @@ a.pp_close {
 	    width: 395px;
 	}
 }
-@media only screen and (max-width: 1260px) {
+@media only screen and (max-width: 1300px) {
     nav.main_menu > ul > li > a {
         padding: 0 1.3vw;
     }
+
+}
+@media only screen and (max-width: 1260px) {
+
+}
+@media only screen and (max-width: 1100px) {
+    nav.main_menu > ul > li > a {
+        padding: 0 0.9vw;
+    }
+
 }
 @media only screen and (max-width: 1024px) {
-    nav.main_menu > ul > li > a {
-        padding: 0 10px;
-    }
+
     .content .container .container_inner.qode-child-breadcrumb {
         padding: 50px 0 0;
     }
@@ -1074,6 +1133,9 @@ a.pp_close {
         flex-basis: 100%;
         justify-content: center;
     }
+    header .search_button:after {
+        content: '';
+    }
 	.content.content_top_margin {
 	    margin-top: 0 !important;
 	}
@@ -1107,7 +1169,7 @@ a.pp_close {
         clear: both;
     }
     .woocommerce input[type='text']:not(.qode_search_field):not(.wpcf7-text) {
-        padding: 0;
+        /* padding: 0; */
     }
     .cf7-flex p.cf7-half {
         flex-basis: 100%;
@@ -1198,7 +1260,13 @@ a.pp_close {
     .q_slider .carousel, .qode_slider_preloader, .carousel-inner>.item {
         height: 550px !important;
     }
+    .yith-request-a-quote-page .container_inner {
+        width: 92%;
+    }
     #yith-ywraq-form #yith-ywrq-table-list thead {
+        display: none;
+    }
+    .yith-request-a-quote-page .yith-ywraq-before-table {
         display: none;
     }
     #yith-ywraq-form #yith-ywrq-table-list tr.cart_item {
@@ -1208,20 +1276,68 @@ a.pp_close {
         border-bottom: 1px solid #e6e6e6;
         margin-bottom: 25px;
         padding-bottom: 10px;
+        align-items: center;
     }
     #yith-ywraq-form #yith-ywrq-table-list td.product-remove {
-        display: block;
+        /* display: block;
         border: none;
         position: absolute;
         top: 0;
         right: 0;
         line-height: 0;
-        padding: 0;
+        padding: 0; */
+        flex: 0 0 100px;
+        text-align: left;
+        order: 1;
+        border: none;
+    }
+    #yith-ywraq-form #yith-ywrq-table-list td.product-remove a.remove {
+        text-indent: 0;
+        color: rgba(0,0,0,0);
+        position: relative;
+    }   
+    #yith-ywraq-form #yith-ywrq-table-list td.product-remove a.remove:after {
+        content: 'Remove';
+        color: #1c1c1c;
+        position: absolute;
+        left: 26px;
+        top: -6px;
+        font-size: 16px;
     }
     #yith-ywraq-form #yith-ywrq-table-list td.product-thumbnail,
     #yith-ywraq-form #yith-ywrq-table-list td.product-name,
     #yith-ywraq-form #yith-ywrq-table-list td.product-quantity {
-        flex: 1 100%;
+        /* flex: 1 100%; */
+    }
+    #yith-ywraq-form #yith-ywrq-table-list td.product-thumbnail {
+        flex: 0 1 30%;
+        order: 3;
+    }
+    #yith-ywraq-form #yith-ywrq-table-list td.product-quantity {
+        flex: 1 1 42%;
+        padding: 5px 10px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        order: 2;
+    }
+    #yith-ywraq-form #yith-ywrq-table-list td.product-quantity:before {
+        content: attr(data-title);
+        color: #1c1c1c;
+        margin-right: 10px;
+        font-size: 16px;
+        padding-top: 3px;
+    }
+    #yith-ywraq-form #yith-ywrq-table-list td.product-quantity input {
+        padding: 0;
+    }
+    #yith-ywraq-form #yith-ywrq-table-list td.product-name {
+        flex: 1 1 50%;
+        order: 4;
+    }
+    #yith-ywraq-form .product-name ul li {
+        line-height: 18px;
+        padding: 5px 0;
     }
     #yith-ywraq-form #yith-ywrq-table-list td.product-thumbnail {
         display: block !important;
@@ -1229,13 +1345,12 @@ a.pp_close {
     }
     #yith-ywraq-form #yith-ywrq-table-list td.product-thumbnail img {
         display: inline-block;
-        width: 200px;
+        width: 100%;
     }
     #yith-ywraq-form #yith-ywrq-table-list td.product-name {
-        order: 2;
+        /* order: 2; */
     }
     #yith-ywraq-form #yith-ywrq-table-list td.product-quantity {
-        text-align: center;
     }
     .woocommerce table#yith-ywrq-table-list.cart td.actions {
         width: 100%;

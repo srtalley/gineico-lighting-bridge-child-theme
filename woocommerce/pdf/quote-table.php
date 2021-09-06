@@ -1,4 +1,4 @@
-  <?php
+<?php
 /**
  * HTML Template Email
  *

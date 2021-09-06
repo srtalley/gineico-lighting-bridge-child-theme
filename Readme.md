@@ -2,6 +2,12 @@
 
 Gineico Lighting Bridge child theme documented changes.
 
+## [1.1.9] - 2021-09-05 
+* Updates to the header by adding the "SEARCH" text to the search icon.
+* Header layout spacing.
+* New layout on mobile for quotes.
+* Shortcodes to show the WooCommerce login and registration forms on a custom page.
+
 ## [1.1.8] - 2021-07-04
 * Updated the quantity label display.
 
