@@ -3,6 +3,8 @@
 // custom child theme includes
 include_once('includes/qode-breadcrumbs.php');
 include_once('includes/class-woocommerce.php');
+include_once('includes/class-yith-woocommerce-quotes.php');
+include_once('includes/class-yith-woocommerce-wishlist.php');
 
 define('QODE_CHILD_ROOT', get_stylesheet_directory_uri());
 
@@ -19,6 +21,13 @@ function bridge_child_wp_enqueue_scripts() {
 	wp_enqueue_style( 'bridge-childstyle', get_stylesheet_directory_uri() . '/style.css', '', wp_get_theme()->get('Version'), 'all' );
 
 	wp_enqueue_script('qode_child', QODE_CHILD_ROOT . '/js/qode_child.js',array(),false,true);
+
+	wp_enqueue_script('gl-mods', QODE_CHILD_ROOT . '/js/gl-mods.js',array('jquery', 'wp-util', 'jquery-blockui'),wp_get_theme()->get('Version'),true);
+	wp_localize_script( 'gl-mods', 'gl_mods_init', array(
+        'ajaxurl'   => admin_url( 'admin-ajax.php' ),
+        'ajaxnonce' => wp_create_nonce( 'gl_mods_init_nonce' )
+    ) );
+
 	$current_post_posttype = get_post_type();
 	if( $current_post_posttype== 'portfolio_page') {
 		remove_shortcode('social_share');
@@ -788,36 +797,36 @@ if(!function_exists('qode_admin_custom_menu')) {
 	add_action( 'admin_menu', 'qode_admin_custom_menu' );
 }
 
-if(!function_exists('qode_yith_wcwl_before_wishlist_form')) {
-	function qode_yith_wcwl_before_wishlist_form($wishlist_meta) {
-		if(!empty($wishlist_meta) and isset($wishlist_meta['wishlist_name'])) {
-			$wishlist_name = apply_filters( 'qode_yith_wcwl_wishlist_name', $wishlist_meta['wishlist_name'] );
-			echo '<h1 class="wishlist-name">' . $wishlist_name . '</h1>';
-		}
-	}
-	add_action( 'yith_wcwl_before_wishlist_form', 'qode_yith_wcwl_before_wishlist_form' );
-}
+// if(!function_exists('qode_yith_wcwl_before_wishlist_form')) {
+// 	function qode_yith_wcwl_before_wishlist_form($wishlist_meta) {
+// 		if(!empty($wishlist_meta) and isset($wishlist_meta['wishlist_name'])) {
+// 			$wishlist_name = apply_filters( 'qode_yith_wcwl_wishlist_name', $wishlist_meta['wishlist_name'] );
+// 			echo '<h1 class="wishlist-name">' . $wishlist_name . '</h1>';
+// 		}
+// 	}
+// 	add_action( 'yith_wcwl_before_wishlist_form', 'qode_yith_wcwl_before_wishlist_form' );
+// }
 
-if(!function_exists('qode_yith_wcwl_wishlist_name')) {
-	function qode_yith_wcwl_wishlist_name($wishlist_name) {
-		if(empty($wishlist_name)) {
-			return get_option('yith_wcwl_wishlist_title');
-		}
-		return $wishlist_name;
-	}
-	add_filter( 'qode_yith_wcwl_wishlist_name', 'qode_yith_wcwl_wishlist_name' );
-}
+// if(!function_exists('qode_yith_wcwl_wishlist_name')) {
+// 	function qode_yith_wcwl_wishlist_name($wishlist_name) {
+// 		if(empty($wishlist_name)) {
+// 			return get_option('yith_wcwl_wishlist_title');
+// 		}
+// 		return $wishlist_name;
+// 	}
+// 	add_filter( 'qode_yith_wcwl_wishlist_name', 'qode_yith_wcwl_wishlist_name' );
+// }
 
-if(!function_exists('qode_yith_wcwl_table_after_product_name')) {
-	function qode_yith_wcwl_table_after_product_name($item) {
-		$excerpt = wp_trim_words( $item['post_excerpt'], 25, '...' );
-		if(!empty($excerpt)) {
-			echo '<p class="product-excerpt">' . $excerpt . ' <a href="' . esc_url( get_permalink( apply_filters( 'woocommerce_in_cart_product', $item['prod_id'] ) ) ) . '">' . __('read more', 'yith-woocommerce-wishlist') . '</a></p>';
-		}
-	}
-	add_action( 'qode_yith_wcwl_table_after_product_name', 'qode_yith_wcwl_table_after_product_name' );
-	add_action( 'yith_wcwl_table_after_product_name', 'qode_yith_wcwl_table_after_product_name' );
-}
+// if(!function_exists('qode_yith_wcwl_table_after_product_name')) {
+// 	function qode_yith_wcwl_table_after_product_name($item) {
+// 		$excerpt = wp_trim_words( $item['post_excerpt'], 25, '...' );
+// 		if(!empty($excerpt)) {
+// 			echo '<p class="product-excerpt">' . $excerpt . ' <a href="' . esc_url( get_permalink( apply_filters( 'woocommerce_in_cart_product', $item['prod_id'] ) ) ) . '">' . __('read more', 'yith-woocommerce-wishlist') . '</a></p>';
+// 		}
+// 	}
+// 	add_action( 'qode_yith_wcwl_table_after_product_name', 'qode_yith_wcwl_table_after_product_name' );
+// 	add_action( 'yith_wcwl_table_after_product_name', 'qode_yith_wcwl_table_after_product_name' );
+// }
 
 if(!class_exists('QODE_Add_Settings_Fields')) {
 	// Class for adding a new field to the options-general.php page
@@ -872,37 +881,37 @@ if(!class_exists('QODE_Add_Settings_Fields')) {
 	new QODE_Add_Settings_Fields();
 }
 
-if(!function_exists('qode_woocommerce_account_menu_items')) {
-	function qode_woocommerce_account_menu_items( $items ) {
-	    unset($items['downloads']);
-	    $new = array();
-		if(class_exists('YITH_WCWL')) {
-		    $new['schedule'] = 'Schedule';
-		}
-		if(class_exists('YITH_Request_Quote')) {
-		    $new['quotation'] = 'Quotation';
-		}
-	    $items  = array_slice( $items, 0, 1, true ) 
-				+ $new 
-				+ array_slice( $items, 1, NULL, true );
-	    return $items;
-	}
-	add_filter( 'woocommerce_account_menu_items', 'qode_woocommerce_account_menu_items' );
-}
+// if(!function_exists('qode_woocommerce_account_menu_items')) {
+// 	function qode_woocommerce_account_menu_items( $items ) {
+// 	    unset($items['downloads']);
+// 	    $new = array();
+// 		// if(class_exists('YITH_WCWL')) {
+// 		//     $new['schedule'] = 'Schedule';
+// 		// }
+// 		if(class_exists('YITH_Request_Quote')) {
+// 		    $new['quotation'] = 'Quotation';
+// 		}
+// 	    $items  = array_slice( $items, 0, 1, true ) 
+// 				+ $new 
+// 				+ array_slice( $items, 1, NULL, true );
+// 	    return $items;
+// 	}
+// 	add_filter( 'woocommerce_account_menu_items', 'qode_woocommerce_account_menu_items' );
+// }
 
-if(!function_exists('qode_woocommerce_account_quotation_endpoint')) {
-	function qode_woocommerce_account_quotation_endpoint() {
-		add_rewrite_endpoint('quotation', EP_PAGES);
-	}
-	add_action('init', 'qode_woocommerce_account_quotation_endpoint');
-}
+// if(!function_exists('qode_woocommerce_account_quotation_endpoint')) {
+// 	function qode_woocommerce_account_quotation_endpoint() {
+// 		add_rewrite_endpoint('quotation', EP_PAGES);
+// 	}
+// 	add_action('init', 'qode_woocommerce_account_quotation_endpoint');
+// }
 
-if(!function_exists('qode_woocommerce_account_quotation_endpoint_content')) {
-	function qode_woocommerce_account_quotation_endpoint_content() {
-		wc_get_template('myaccount/my-quotes.php', null, '', YITH_YWRAQ_TEMPLATE_PATH.'/');
-	}
-	add_action('woocommerce_account_quotation_endpoint', 'qode_woocommerce_account_quotation_endpoint_content');
-}
+// if(!function_exists('qode_woocommerce_account_quotation_endpoint_content')) {
+// 	function qode_woocommerce_account_quotation_endpoint_content() {
+// 		wc_get_template('myaccount/my-quotes.php', null, '', YITH_YWRAQ_TEMPLATE_PATH.'/');
+// 	}
+// 	add_action('woocommerce_account_quotation_endpoint', 'qode_woocommerce_account_quotation_endpoint_content');
+// }
 
 // if(!function_exists('qode_woocommerce_get_endpoint_url')) {
 // 	function qode_woocommerce_get_endpoint_url( $url, $endpoint, $value, $permalink ){
@@ -1397,43 +1406,43 @@ if ( ! function_exists( 'bridge_child_woocommerce_email_footer_quote_conditions_
 	add_action( 'woocommerce_email_footer_quote_conditions_plain', 'bridge_child_woocommerce_email_footer_quote_conditions_plain' );
 }
 
-if ( ! function_exists( 'bridge_child_ywraq_pdf_file_name' ) ) {
-	function bridge_child_ywraq_pdf_file_name($pdf_file_name, $order_id) {
-		$order = wc_get_order($order_id);
-		$customer_lastname   = yit_get_prop( $order, '_billing_last_name', true );
+// if ( ! function_exists( 'bridge_child_ywraq_pdf_file_name' ) ) {
+// 	function bridge_child_ywraq_pdf_file_name($pdf_file_name, $order_id) {
+// 		$order = wc_get_order($order_id);
+// 		$customer_lastname   = yit_get_prop( $order, '_billing_last_name', true );
 
-		if($customer_lastname == null || $customer_lastname == '') {
-			$user_name = yit_get_prop( $order, 'ywraq_customer_name', true );
-			$user_name_parts = explode(" ", $user_name);
-			$customer_lastname = array_pop($user_name_parts);
-		}
-		// $temp_order_date_modified = yit_get_prop($order, '_temp_order_date_modified', true);
-		// $order_date_modified = get_the_modified_date('U', $order_id);
-		$order_date = yit_get_prop($order, 'date_created', true);
-		$order_date = substr($order_date, 0, 10);
-		$order_date = str_replace('-', '_', $order_date);
-		$pdf_file_name = 'Quote-' . $order_id . '-' . $order_date;
-		$YITH_Request_Quote = YITH_Request_Quote_Premium();
-		$path = $YITH_Request_Quote->create_storing_folder($order_id);
-		$file = YITH_YWRAQ_DOCUMENT_SAVE_DIR . $path . $pdf_file_name . '.pdf';
-		// yit_save_prop($order, '_temp_order_date_modified', $order_date_modified);
-		if(file_exists($file)) {
-			$new_pdf_file_name = YITH_YWRAQ_DOCUMENT_SAVE_DIR . $path . $pdf_file_name . '-' . $customer_lastname . '.pdf';
-			rename($file, $new_pdf_file_name);
-			return $pdf_file_name . '-' . $customer_lastname . '.pdf';
-		}
-		// if(intval($temp_order_date_modified) != intval($order_date_modified)) {
-		// 	$file = YITH_YWRAQ_DOCUMENT_SAVE_DIR . $path . $pdf_file_name . '-' . $temp_order_date_modified . '-'. $customer_lastname . '.pdf';
-		// 	if(file_exists($file)) {
-		// 		$new_pdf_file_name = YITH_YWRAQ_DOCUMENT_SAVE_DIR . $path . $pdf_file_name . '-' . $order_date_modified . '-'. $customer_lastname . '.pdf';
-		// 		rename($file, $new_pdf_file_name);
-		// 		return $pdf_file_name . '-' . $order_date_modified . '-'. $customer_lastname . '.pdf';
-		// 	}
-		// }
-		return $pdf_file_name . '-' . $customer_lastname . '.pdf';
-	}
-	add_filter( 'ywraq_pdf_file_name', 'bridge_child_ywraq_pdf_file_name', 10, 2 );
-}
+// 		if($customer_lastname == null || $customer_lastname == '') {
+// 			$user_name = yit_get_prop( $order, 'ywraq_customer_name', true );
+// 			$user_name_parts = explode(" ", $user_name);
+// 			$customer_lastname = array_pop($user_name_parts);
+// 		}
+// 		// $temp_order_date_modified = yit_get_prop($order, '_temp_order_date_modified', true);
+// 		// $order_date_modified = get_the_modified_date('U', $order_id);
+// 		$order_date = yit_get_prop($order, 'date_created', true);
+// 		$order_date = substr($order_date, 0, 10);
+// 		$order_date = str_replace('-', '_', $order_date);
+// 		$pdf_file_name = 'Quote-' . $order_id . '-' . $order_date;
+// 		$YITH_Request_Quote = YITH_Request_Quote_Premium();
+// 		$path = $YITH_Request_Quote->create_storing_folder($order_id);
+// 		$file = YITH_YWRAQ_DOCUMENT_SAVE_DIR . $path . $pdf_file_name . '.pdf';
+// 		// yit_save_prop($order, '_temp_order_date_modified', $order_date_modified);
+// 		if(file_exists($file)) {
+// 			$new_pdf_file_name = YITH_YWRAQ_DOCUMENT_SAVE_DIR . $path . $pdf_file_name . '-' . $customer_lastname . '.pdf';
+// 			rename($file, $new_pdf_file_name);
+// 			return $pdf_file_name . '-' . $customer_lastname . '.pdf';
+// 		}
+// 		// if(intval($temp_order_date_modified) != intval($order_date_modified)) {
+// 		// 	$file = YITH_YWRAQ_DOCUMENT_SAVE_DIR . $path . $pdf_file_name . '-' . $temp_order_date_modified . '-'. $customer_lastname . '.pdf';
+// 		// 	if(file_exists($file)) {
+// 		// 		$new_pdf_file_name = YITH_YWRAQ_DOCUMENT_SAVE_DIR . $path . $pdf_file_name . '-' . $order_date_modified . '-'. $customer_lastname . '.pdf';
+// 		// 		rename($file, $new_pdf_file_name);
+// 		// 		return $pdf_file_name . '-' . $order_date_modified . '-'. $customer_lastname . '.pdf';
+// 		// 	}
+// 		// }
+// 		return $pdf_file_name . '-' . $customer_lastname . '.pdf';
+// 	}
+// 	add_filter( 'ywraq_pdf_file_name', 'bridge_child_ywraq_pdf_file_name', 10, 2 );
+// }
 
 if ( ! function_exists( 'bridge_child_woocommerce_get_order_item_totals' ) ) {
 	function bridge_child_woocommerce_get_order_item_totals($total_rows, $obj, $tax_display) {
@@ -1565,37 +1574,37 @@ if (!function_exists('bridge_child_get_meta_sql')) {
 }
 
 /* Add Download PDF button to single product pages */
-add_action( 'woocommerce_single_product_summary', 'dl_after_add_to_cart_download_pdf',39 );
+// add_action( 'woocommerce_single_product_summary', 'dl_after_add_to_cart_download_pdf',39 );
  
-function dl_after_add_to_cart_download_pdf(){
+// function dl_after_add_to_cart_download_pdf(){
 
-	global $product;
+// 	global $product;
 
-	if(function_exists('get_field')) {
-		echo '<!-- Product Attached PDF Files -->';
-		$product_details = get_field('product_details', $product->get_id());
-		$installation_instructions = get_field('installation_instructions', $product->get_id());
-		$photometry = get_field('photometry', $product->get_id());
-		$dwg_file   = get_field('dwg_file', $product->get_id());
-		if(!empty($product_details) or !empty($installation_instructions) or !empty($photometry) or !empty($dwg_file)) {
-			// prepare product details link
-			$product_details_alt       = $product_details['alt'];
-			$product_details_url       = $product_details['url'];
-			$product_details_link_text = get_field('product_details_link_text', $product->get_id());
-			$product_details_link_obj  = get_field_object('product_details_link_text', $product->get_id());
-			$product_details_title     = $product_details_link_obj['default_value'];
-			if(!empty($product_details_link_text)) {
-				$product_details_title = $product_details_link_text;
-			}
-			echo '<div class="product-attached-pdf-buttons" style="margin: 0 0 20px;">';
+// 	if(function_exists('get_field')) {
+// 		echo '<!-- Product Attached PDF Files -->';
+// 		$product_details = get_field('product_details', $product->get_id());
+// 		$installation_instructions = get_field('installation_instructions', $product->get_id());
+// 		$photometry = get_field('photometry', $product->get_id());
+// 		$dwg_file   = get_field('dwg_file', $product->get_id());
+// 		if(!empty($product_details) or !empty($installation_instructions) or !empty($photometry) or !empty($dwg_file)) {
+// 			// prepare product details link
+// 			$product_details_alt       = $product_details['alt'];
+// 			$product_details_url       = $product_details['url'];
+// 			$product_details_link_text = get_field('product_details_link_text', $product->get_id());
+// 			$product_details_link_obj  = get_field_object('product_details_link_text', $product->get_id());
+// 			$product_details_title     = $product_details_link_obj['default_value'];
+// 			if(!empty($product_details_link_text)) {
+// 				$product_details_title = $product_details_link_text;
+// 			}
+// 			echo '<div class="product-attached-pdf-buttons" style="margin: 0 0 20px;">';
 
-			if(!empty($product_details)) {
-				echo '<p><a class="button" alt="' . $product_details_alt . '" href="' . $product_details_url . '">Download: ' . $product_details_title . '</a></p>';
-			}
-			echo '</div>';
-		}
-	}
-}
+// 			if(!empty($product_details)) {
+// 				echo '<p><a class="button" alt="' . $product_details_alt . '" href="' . $product_details_url . '">Download: ' . $product_details_title . '</a></p>';
+// 			}
+// 			echo '</div>';
+// 		}
+// 	}
+// }
 
 
 /**

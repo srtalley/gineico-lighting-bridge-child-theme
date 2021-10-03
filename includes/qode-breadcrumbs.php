@@ -23,19 +23,20 @@ if(!function_exists('bridge_qode_child_custom_breadcrumbs')) {
 		$before = '<span class="current"' . $bread_style . '>'; // tag before the current crumb
 		$after = '</span>'; // tag after the current crumb
 
-		if (is_home() && !is_front_page()) {
+		// if (is_home() && !is_front_page()) {
 
 
-			echo '<div class="breadcrumbs"><div itemprop="breadcrumb" class="breadcrumbs_inner"><a' . $bread_style . ' href="' . $homeLink . '">' . $home . '</a>' . $delimiter . ' <a' . $bread_style . ' href="' . $homeLink . '">' . get_the_title($pageid) . '</a></div></div>';
+			// echo '<div class="breadcrumbs"><div itemprop="breadcrumb" class="breadcrumbs_inner"><a' . $bread_style . ' href="' . $homeLink . '">' . $home . '</a>' . $delimiter . ' <a' . $bread_style . ' href="' . $homeLink . '">' . get_the_title($pageid) . '</a></div></div>';
 
-		} elseif (is_home()) {
+		// } elseif (is_home()) {
 
-			if ($showOnHome == 1) echo '<div class="breadcrumbs"><div itemprop="breadcrumb" class="breadcrumbs_inner"><a' . $bread_style . ' href="' . $homeLink . '">' . $home . '</a></div></div>';
-		} elseif (is_front_page()) {
+			// if ($showOnHome == 1) echo '<div class="breadcrumbs"><div itemprop="breadcrumb" class="breadcrumbs_inner"><a' . $bread_style . ' href="' . $homeLink . '">' . $home . '</a></div></div>';
+		// } elseif (is_front_page()) {
 
-			if ($showOnHome == 1) echo '<div class="breadcrumbs"><div itemprop="breadcrumb" class="breadcrumbs_inner"><a' . $bread_style . ' href="' . $homeLink . '">' . $home . '</a></div></div>';
-		} else {
+			// if ($showOnHome == 1) echo '<div class="breadcrumbs"><div itemprop="breadcrumb" class="breadcrumbs_inner"><a' . $bread_style . ' href="' . $homeLink . '">' . $home . '</a></div></div>';
+		// } else {
 
+		if(is_product() ||bridge_qode_is_product_category()) {
 			echo '<div class="breadcrumbs"><div itemprop="breadcrumb" class="breadcrumbs_inner"><a' . $bread_style . ' href="' . $homeLink . '">' . $home . '</a>' . $delimiter;
 
 			if (is_category() || bridge_qode_is_product_category()) {
@@ -43,20 +44,20 @@ if(!function_exists('bridge_qode_child_custom_breadcrumbs')) {
 				if (isset($thisCat->parent) && $thisCat->parent != 0) echo get_category_parents($thisCat->parent, TRUE, ' ' . $delimiter);
 				echo bridge_qode_get_module_part($before . single_cat_title('', false) . $after);
 
-			} elseif (is_search()) {
-				echo bridge_qode_get_module_part($before . esc_html__('Search results for "', 'bridge') . get_search_query() . '"' . $after);
+			// } elseif (is_search()) {
+			// 	echo bridge_qode_get_module_part($before . esc_html__('Search results for "', 'bridge') . get_search_query() . '"' . $after);
 
-			} elseif (is_day()) {
-				echo '<a' . $bread_style . ' href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a>' . $delimiter;
-				echo '<a' . $bread_style . ' href="' . get_month_link(get_the_time('Y'), get_the_time('m')) . '">' . get_the_time('F') . '</a>' . $delimiter;
-				echo bridge_qode_get_module_part($before . get_the_time('d') . $after);
+			// } elseif (is_day()) {
+			// 	echo '<a' . $bread_style . ' href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a>' . $delimiter;
+			// 	echo '<a' . $bread_style . ' href="' . get_month_link(get_the_time('Y'), get_the_time('m')) . '">' . get_the_time('F') . '</a>' . $delimiter;
+			// 	echo bridge_qode_get_module_part($before . get_the_time('d') . $after);
 
-			} elseif (is_month()) {
-				echo '<a' . $bread_style . ' href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a>' . $delimiter;
-				echo bridge_qode_get_module_part($before . get_the_time('F') . $after);
+			// } elseif (is_month()) {
+			// 	echo '<a' . $bread_style . ' href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a>' . $delimiter;
+			// 	echo bridge_qode_get_module_part($before . get_the_time('F') . $after);
 
-			} elseif (is_year()) {
-				echo bridge_qode_get_module_part($before . get_the_time('Y') . $after);
+			// } elseif (is_year()) {
+			// 	echo bridge_qode_get_module_part($before . get_the_time('Y') . $after);
 
 			} elseif (is_single() && !is_attachment()) {
 				if (get_post_type() != 'post' && get_post_type() != 'product') {

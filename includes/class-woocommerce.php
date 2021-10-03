@@ -1,12 +1,13 @@
 <?php 
 /**
- * v1.1.9
+ * v1.1.9.4
  */
 namespace GineicoLighting\Theme;
 
 class GL_WooCommerce {
 
     public function __construct() {
+
 
         add_filter( 'woocommerce_breadcrumb_defaults', array($this, 'gl_woocommerce_set_breadcrumbs'));
 
@@ -17,8 +18,23 @@ class GL_WooCommerce {
         add_action( 'woocommerce_before_add_to_cart_quantity', array($this, 'gl_add_quantity_label') );
         add_action( 'woocommerce_after_add_to_cart_quantity', array($this, 'gl_add_quantity_label_close') );
 
+        add_shortcode( 'gl_wc_login_reg_messages', array($this, 'gl_wc_login_reg_messages_function') );
+
         add_shortcode( 'gl_wc_login_form', array($this, 'gl_wc_login_form_function') );
         add_shortcode( 'gl_wc_registration_form', array($this, 'gl_wc_registration_form_function') );
+
+        // Single product PDF buttons
+        add_action( 'woocommerce_single_product_summary', array($this, 'dl_after_add_to_cart_download_pdf'),39 );
+
+        // My Account
+        add_filter( 'woocommerce_account_menu_items', array($this, 'gl_wc_account_menu_items'), 9999 );
+
+        add_filter( 'gettext', array($this,'gl_change_wc_text_strings'), 20, 3 );
+
+        add_action( 'woocommerce_after_my_account', array($this, 'gl_wc_after_my_account'), 10, 1);
+
+
+        add_filter( 'woocommerce_get_endpoint_url', array($this, 'gl_change_myaccount_quotation_url'), 10, 2 );
 
     } // end function construct
 
@@ -54,6 +70,18 @@ class GL_WooCommerce {
     }
 
     /**
+     * Shortcode to show the actions before the login form
+     */
+    public function gl_wc_login_reg_messages_function() {
+        ob_start();
+        echo '<div class="gl-wc-login-reg-messages">';
+        do_action( 'woocommerce_before_customer_login_form' );
+        echo '</div>';
+        return ob_get_clean();
+    }
+
+
+    /**
      * Shortcode that outputs the WooCommerce login form
      */
     public function gl_wc_login_form_function() {
@@ -65,7 +93,6 @@ class GL_WooCommerce {
         wp_enqueue_style('login_nocaptcha_css');
 
         ob_start();
-
         ?>
         <div class="woocommerce gl-wc-registration-form gl-wc-shortcode">
 
@@ -100,7 +127,6 @@ class GL_WooCommerce {
             </form>
         </div>
         <?php
-            
         return ob_get_clean();
     }
 
@@ -117,6 +143,7 @@ class GL_WooCommerce {
         wp_enqueue_style('login_nocaptcha_css');
                 
         ob_start();
+
         ?>
             <div class="woocommerce gl-wc-registration-form gl-wc-shortcode">
             <form method="post" class="woocommerce-form woocommerce-form-register register" <?php do_action( 'woocommerce_register_form_tag' ); ?> >
@@ -126,19 +153,7 @@ class GL_WooCommerce {
             <?php
                 if(function_exists('get_field')) {
                     ?>
-                    <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-                        <label for="account_elect"><?php esc_html_e( 'Elect', 'woocommerce' ); ?> <span class="required">*</span></label>
-                        <select class="woocommerce-Input woocommerce-Input--select input-select" name="account_elect" id="account_elect">
-                            <option value=""></option>
-                            <?php
-                                $elect_value =  !empty($_POST['account_elect']) ? esc_attr($_POST['account_elect']) : '';
-                                $elect_choices = qode_get_select_field_choices('acf_user-additional-information', 'elect');
-                                foreach ($elect_choices as $key => $value) {
-                                    echo '<option value="' . $key . '"' . selected($elect_value, $key) . '>' . $value . '</option>';
-                                }
-                            ?>
-                        </select>
-                    </p>
+                    
                     <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
                         <label for="account_first_name"><?php esc_html_e( 'First name', 'woocommerce' ); ?> <span class="required">*</span></label>
                         <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_first_name" id="account_first_name" value="<?php echo ( ! empty( $_POST['account_first_name'] ) ) ? esc_attr( wp_unslash( $_POST['account_first_name'] ) ) : ''; ?>" />
@@ -150,6 +165,19 @@ class GL_WooCommerce {
                     <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
                         <label for="account_company"><?php esc_html_e( 'Company', 'woocommerce' ); ?> <span class="required">*</span></label>
                         <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_company" id="account_company" value="<?php echo ( ! empty( $_POST['account_company'] ) ) ? esc_attr( wp_unslash( $_POST['account_company'] ) ) : ''; ?>" />
+                    </p>
+                    <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
+                        <label for="account_elect"><?php esc_html_e( 'Category', 'woocommerce' ); ?> <span class="required">*</span></label>
+                        <select class="woocommerce-Input woocommerce-Input--select input-select" name="account_elect" id="account_elect">
+                            <option value=""></option>
+                            <?php
+                                $elect_value =  !empty($_POST['account_elect']) ? esc_attr($_POST['account_elect']) : '';
+                                $elect_choices = qode_get_select_field_choices('acf_user-additional-information', 'elect');
+                                foreach ($elect_choices as $key => $value) {
+                                    echo '<option value="' . $key . '"' . selected($elect_value, $key) . '>' . $value . '</option>';
+                                }
+                            ?>
+                        </select>
                     </p>
                     <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
                         <label for="account_phone_number"><?php esc_html_e( 'Phone Number', 'woocommerce' ); ?> <span class="required">*</span></label>
@@ -234,6 +262,108 @@ class GL_WooCommerce {
             
         return ob_get_clean();
     }
+
+    /**
+     * Add PDF Download buttons on products
+     */
+
+    public function dl_after_add_to_cart_download_pdf(){
+
+        global $product;
+
+        if(function_exists('get_field')) {
+            echo '<!-- Product Attached PDF Files -->';
+            $product_details = get_field('product_details', $product->get_id());
+            $installation_instructions = get_field('installation_instructions', $product->get_id());
+            $photometry = get_field('photometry', $product->get_id());
+            $dwg_file   = get_field('dwg_file', $product->get_id());
+            if(!empty($product_details) or !empty($installation_instructions) or !empty($photometry) or !empty($dwg_file)) {
+                // prepare product details link
+                $product_details_alt       = $product_details['alt'];
+                $product_details_url       = $product_details['url'];
+                $product_details_link_text = get_field('product_details_link_text', $product->get_id());
+                $product_details_link_obj  = get_field_object('product_details_link_text', $product->get_id());
+                $product_details_title     = $product_details_link_obj['default_value'];
+                if(!empty($product_details_link_text)) {
+                    $product_details_title = $product_details_link_text;
+                }
+                echo '<div class="product-attached-pdf-buttons" style="margin: 0 0 20px;">';
+
+                if(!empty($product_details)) {
+                    echo '<p><a class="button" alt="' . $product_details_alt . '" href="' . $product_details_url . '" target="_blank">Download: ' . $product_details_title . '</a></p>';
+                }
+                echo '</div>';
+            }
+        }
+    }
+
+    /**
+     * 
+     * MY ACCOUNT
+     * 
+     */
+
+    /**
+     * Rename/Add My Account tabs
+     */
+    public function gl_wc_account_menu_items( $items ) {
+	    unset($items['downloads']);
+	    $new = array();
+		// if(class_exists('YITH_WCWL')) {
+		//     $new['schedule'] = 'Schedule';
+		// }
+		if(class_exists('YITH_Request_Quote')) {
+		    $new['quotation'] = 'Schedule/Quote';
+		}
+        
+        $items['quotes'] = 'Quotations';
+
+	    $items  = array_slice( $items, 0, 1, true ) 
+				+ $new 
+				+ array_slice( $items, 1, NULL, true );
+                wl($items);
+
+	    return $items;
+	}
+    /**
+     * Change the endpoint URL for the quotation (renamed Schedule/Quote)
+     * item in the WC My Account nav
+     */
+    public function gl_change_myaccount_quotation_url( $url, $endpoint ){
+        if( $endpoint == 'quotation' ) {
+            $url = site_url() . '/request-quote/'; // Your custom URL to add to the My Account menu
+        }
+        return $url;
+    }
+
+    /**
+     * Change various text strings
+     */
+    public function gl_change_wc_text_strings($translated_text, $text, $domain) {
+
+        if($domain == 'woocommerce') {
+            switch ( $translated_text ) {
+               
+                case (substr( $translated_text, 0, 45 ) == "From your account dashboard you can view your"):
+                    $translated_text = __( 'From your account dashboard you can view', 'woocommerce');
+                    break;
+            }
+        } 
+        return $translated_text;
+    }
+    public function gl_wc_after_my_account() {
+        ?>
+        <ul>
+            <li><a href="<?php echo site_url(); ?>/request-quote/">Schedule/Quote</a> that you are creating</li>
+            <li><a href="<?php echo site_url(); ?>/my-account/quotes/">Quotations</a> from Gineico</li>
+            <li><a href="<?php echo site_url(); ?>/my-account/orders/">Orders</a></li>
+        </ul>
+        <p>You can manage your <a href="<?php echo site_url(); ?>/my-account/edit-address/">shipping</a> and <a href="<?php echo site_url(); ?>/my-account/edit-address/">billing addresses</a>, and edit your <a href="<?php echo site_url(); ?>/my-account/edit-account/">password</a> and <a href="<?php echo site_url(); ?>/my-account/edit-account/">account details</a>.</p>
+
+        <?php 
+    }
+
+
 } // end class
 
 $gl_woocommerce = new GL_WooCommerce();
