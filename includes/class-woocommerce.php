@@ -25,6 +25,11 @@ class GL_WooCommerce {
 
         // Single product PDF buttons
         add_action( 'woocommerce_single_product_summary', array($this, 'dl_after_add_to_cart_download_pdf'),39 );
+        // Change the product tabs
+        add_filter( 'woocommerce_product_description_tab_title', array($this, 'gl_change_single_product_description_tab_title') );
+        // Move the product tabs
+        add_action( 'woocommerce_before_single_product', array($this, 'gl_change_single_product_layout'), 60);
+
 
         // My Account
         add_filter( 'woocommerce_account_menu_items', array($this, 'gl_wc_account_menu_items'), 9999 );
@@ -35,6 +40,16 @@ class GL_WooCommerce {
 
 
         add_filter( 'woocommerce_get_endpoint_url', array($this, 'gl_change_myaccount_quotation_url'), 10, 2 );
+
+        // Registration redirect
+        add_filter( 'woocommerce_registration_redirect', array($this, 'gl_redirection_after_registration'), 10, 1 );
+
+
+        // Customize new user email
+        add_filter( 'woocommerce_email_heading_customer_new_account', array($this, 'gl_change_customer_new_account_email_heading'), 10, 2);
+
+        // add_filter( 'gettext', array($this,'gl_change_customer_new_account_email_text_strings'), 20, 3 );
+
 
     } // end function construct
 
@@ -296,7 +311,77 @@ class GL_WooCommerce {
             }
         }
     }
+    /**
+     * Change the tab title on the single product page
+     */
+    public function gl_change_single_product_description_tab_title() {
+        return 'More Details';
+    }
 
+    /**
+     * Move the tabs (buttons) above the request a quote button
+     */
+    public function gl_change_single_product_layout() {
+        remove_action('woocommerce_single_product_summary', 'woocommerce_output_product_data_tabs', 60);
+
+        // global $product;
+        // if ( $product->is_type( 'variable' ) ) {
+        //     add_action('woocommerce_after_single_variation', 'woocommerce_output_product_data_tabs', 10);
+
+        // } else {
+        //     // add_action( 'woocommerce_after_add_to_cart_button', array( $this, 'add_button_single_page' ), 15 );
+        //     add_action('woocommerce_after_add_to_cart_button', 'woocommerce_output_product_data_tabs', 10);
+        // }
+        add_action( 'woocommerce_single_product_summary', 'woocommerce_output_product_data_tabs', 38 );
+
+        // remove the additional information tab
+        add_filter('woocommerce_product_tabs', array($this, 'gl_woocommerce_product_tabs'), 10);
+
+        // add to the description tab
+        add_filter( 'the_content', array($this, 'gl_add_additional_information_to_description_tab') );
+
+    }
+    /**
+     * Remove the additional information tab/button
+     */
+    public function gl_woocommerce_product_tabs($tabs){
+        
+        // if only the additional_information tab exists, set 
+        // the description tab array so we can show the info there
+        if(!array_key_exists('description', $tabs) && array_key_exists('additional_information', $tabs)) {
+            $tabs['description'] = array(
+                'title' => 'Description',
+                'priority' => 10,
+                'callback' => 'woocommerce_product_description_tab'
+            );
+        }
+
+        unset( $tabs['additional_information'] ); 
+        return $tabs;
+    }
+    /**
+     * Add the information that is usually under Additional Information to
+     * the Description tab
+     */
+    public function gl_add_additional_information_to_description_tab($content) {
+        if(is_product()) {
+            global $product;
+            ob_start();
+            $product->list_attributes();
+            $product_attributes = ob_get_clean();
+            if($product_attributes != '') {
+
+                if(strip_tags($content) == '') {
+                    $content = $content  . $product_attributes;
+
+                } else {
+                    $content = $content . '<h4 class="additional-information">Additional Information</h4>' . $product_attributes;
+
+                }
+            }
+        }
+        return $content;
+    }
     /**
      * 
      * MY ACCOUNT
@@ -309,11 +394,13 @@ class GL_WooCommerce {
     public function gl_wc_account_menu_items( $items ) {
 	    unset($items['downloads']);
 	    $new = array();
-		// if(class_exists('YITH_WCWL')) {
-		//     $new['schedule'] = 'Schedule';
-		// }
+
+        if(class_exists('YITH_WCWL')) {
+            $new['favourites'] = 'Favourites';
+            $new['projects'] = 'Projects/Schedules';
+        }
 		if(class_exists('YITH_Request_Quote')) {
-		    $new['quotation'] = 'Schedule/Quote';
+            $new['quotation'] = 'Request Quotes';
 		}
         
         $items['quotes'] = 'Quotations';
@@ -321,7 +408,6 @@ class GL_WooCommerce {
 	    $items  = array_slice( $items, 0, 1, true ) 
 				+ $new 
 				+ array_slice( $items, 1, NULL, true );
-                wl($items);
 
 	    return $items;
 	}
@@ -330,10 +416,24 @@ class GL_WooCommerce {
      * item in the WC My Account nav
      */
     public function gl_change_myaccount_quotation_url( $url, $endpoint ){
+        if( $endpoint == 'favourites' ) {
+            $url = site_url() . '/my-favourites/'; // Your custom URL to add to the My Account menu
+        }
+        if( $endpoint == 'projects' ) {
+            $url = site_url() . '/my-projects/manage/'; // Your custom URL to add to the My Account menu
+        }
         if( $endpoint == 'quotation' ) {
             $url = site_url() . '/request-quote/'; // Your custom URL to add to the My Account menu
         }
         return $url;
+    }
+    /**
+     * Redirect user after login
+     */
+    public function gl_redirection_after_registration( $redirection_url ){
+        // Change the redirection Url
+        $redirection_url = site_url('/account-thank-you/'); // Home page
+        return $redirection_url;
     }
 
     /**
@@ -351,19 +451,31 @@ class GL_WooCommerce {
         } 
         return $translated_text;
     }
+    /**
+     * Change my account links
+     */
     public function gl_wc_after_my_account() {
         ?>
         <ul>
-            <li><a href="<?php echo site_url(); ?>/request-quote/">Schedule/Quote</a> that you are creating</li>
-            <li><a href="<?php echo site_url(); ?>/my-account/quotes/">Quotations</a> from Gineico</li>
-            <li><a href="<?php echo site_url(); ?>/my-account/orders/">Orders</a></li>
+            <li><a href="<?php echo site_url('/my-favourites/'); ?>">Favourites</a> your favourite products</li>
+            <li><a href="<?php echo site_url('/my-projects/manage/'); ?>">Projects/Schedules</a> that you are creating for different jobs</li>
+            <li><a href="<?php echo site_url('/request-quote/'); ?>">Request Quotes</a> that you are getting ready for pricing</li>
+            <li><a href="<?php echo wc_get_page_permalink( 'myaccount' ) . 'quotes/'; ?>">Quotations</a> received with pricing from Gineico Lighting</li>
+            <li><a href="<?php echo wc_get_endpoint_url('/orders'); ?>">Orders</a></li>
         </ul>
         <p>You can manage your <a href="<?php echo site_url(); ?>/my-account/edit-address/">shipping</a> and <a href="<?php echo site_url(); ?>/my-account/edit-address/">billing addresses</a>, and edit your <a href="<?php echo site_url(); ?>/my-account/edit-account/">password</a> and <a href="<?php echo site_url(); ?>/my-account/edit-account/">account details</a>.</p>
 
         <?php 
     }
 
-
+    /**
+     * Remove the heading from the new customer email since 
+     * we are using the template
+     */
+    public function gl_change_customer_new_account_email_heading($heading, $object) {
+        return '';
+    }
+    
 } // end class
 
 $gl_woocommerce = new GL_WooCommerce();

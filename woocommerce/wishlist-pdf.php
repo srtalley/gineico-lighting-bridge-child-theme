@@ -74,8 +74,8 @@ $show_dateadded = false;
 		.wishlist-title h2 {
 			margin-bottom: 0;
 			text-align: left;
-    		font-size: 30px;
-			margin: 15px 5px;
+    		font-size: 18px;
+			margin: 15px 5px 0;
 		}
         table{
             border: 0;
@@ -94,6 +94,7 @@ $show_dateadded = false;
 			font-size: 5px;
 			line-height: 5px;
 		}
+		/** SRT */
         .small-title p {
             margin-bottom: 0;
         }
@@ -104,6 +105,7 @@ $show_dateadded = false;
         .admin_info_part_right {
             width: 50%;
             float: right;
+			text-align: right;
         }
         .small-title p {
 			margin: 0 0 5px;
@@ -125,30 +127,32 @@ $show_dateadded = false;
 		table.shop_table tr td:first-child {
 			border-left: 1px solid #818181;
 		}
+
+		/** SRT */
 		/* table.shop_table tr th:last-child, */
 		table.shop_table tr td:last-child {
 			border-right: 1px solid #818181;
         }
 		table.shop_table .product-thumbnail {
 			padding: 10px;
-			width: 120px;
+			width: 80px;
 		}
-		table.shop_table .product-thumbnail a,
-		table.shop_table .product-thumbnail img {
+		table.shop_table .product-thumbnail a {
 			display: block !important;
-			max-width: 120px !important;
+			max-width: 80px !important;
 		}
 		table.shop_table .product-name {
-			padding: 10px;
+			padding: 5px;
 		}
 		table.shop_table .product-name a {
 			font-weight: 700;
-			font-size: 18px;
+			font-size: 14px;
 		}
 		table.shop_table .product-name .product-description,
         table.shop_table .product-name .product-description a {
 			font-size: 14px;
 			font-weight: 400;
+			line-height: 16px;
 		}
 		.variation-description {
 			margin: 5px 0 0;
@@ -175,7 +179,6 @@ $show_dateadded = false;
 		dl.variation dt {
 			font-weight: bolder;
 			margin: 0 6px 0 0;
-			text-transform: uppercase;
 		}
 
         .gl-ywcwl-footer  {
@@ -206,13 +209,13 @@ $show_dateadded = false;
 </div>
 <div class="admin_info right">
 	<div class="admin_info_part_left">
+	</div>
+	<div class="admin_info_part_right">
 		<div class="small-title">
 			<p class="title">Gineico Lighting</p>
 			<p><a href="https://www.gineicolighting.com.au" target="_blank">www.gineicolighting.com.au</a></p>
 			<p><a href="mailto:showroom@gineico.com" target="_blank">showroom@gineico.com</a></p>
 		</div>
-	</div>
-	<div class="admin_info_part_right">
 	</div>
 </div>
 <div class="clear"></div>

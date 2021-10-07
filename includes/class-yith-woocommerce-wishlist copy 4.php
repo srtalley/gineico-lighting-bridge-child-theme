@@ -20,17 +20,14 @@ class GL_YITH_WooCommerce_Wishlist {
             // add a the my favourites and my favourites buttons to the 
             // single product pages
 
+            
             add_action( 'woocommerce_single_product_summary', array($this, 'gl_add_yith_wcwl_to_single_product'), 38 );
+
+            // add_action( 'woocommerce_after_add_to_cart_form', array($this, 'gl_add_yith_wcwl_to_single_product'), 25 );
 
             add_action( 'bridge_qode_action_woocommerce_after_product_image', array($this, 'gl_add_yith_wcwl_to_shop'), 11);
 
-            add_filter( 'yith_wcwl_button_label', array($this, 'gl_change_wcwl_button_label'), 10, 1 );
-
-            // add_action( 'woocommerce_before_shop_loop_item', array($this, 'gl_change_loop_wishlist_button') );
-
-            // add a project icon for the add to projects label
-            add_filter( 'yith_wcwl_button_label', array($this, 'gl_change_yith_wcwl_add_to_wishlist_title') );
-
+            add_action( 'woocommerce_before_shop_loop_item', array($this, 'gl_change_loop_wishlist_button') );
 
             // Ajax for add to favourites
             add_action( 'wp_ajax_nopriv_gl_add_to_my_favourites', array($this, 'gl_add_to_my_favourites') );
@@ -65,9 +62,6 @@ class GL_YITH_WooCommerce_Wishlist {
             add_filter( 'yith_wcwl_create_new_list_text', array($this, 'gl_change_create_new_list_text') );
             add_filter( 'yith_wcwl_new_list_title_text', array($this, 'gl_change_new_list_title_text') );
             add_action( 'yith_wcwl_before_wishlist_title', array($this, 'gl_yith_wcwl_before_wishlist_title') );
-
-            // add a PDF download link to the project list
-            add_action( 'yith_wcwl_wishlist_before_wishlist_content', array( $this, 'gl_add_wishlist_download_link' ), 20, 1 );
 
             // shortcode to output the my favourites URL
             add_shortcode( 'gl_my_favourites_url', array( $this, 'gl_my_favourites_url_shortcode' ) );
@@ -186,14 +180,8 @@ class GL_YITH_WooCommerce_Wishlist {
         if(is_user_logged_in()) {
             global $product;
             $product_id = $product->get_id();
-            $extra_classes = '';
-            // do not show quote button if it's a parent product
-            if($product->is_type('variable')) {
-                $extra_classes .= ' disable-project-list';
-            }
-            echo '<div class="gl-yith-wcwl-wrapper ' . $extra_classes . '">';
-            echo '<div class ="gl-wcwl-button-wrapper gl-wcwl-add-to-favourites-wrapper">';
-            echo '<div class="yith-wcwl-add-to-wishlist">';
+            echo '<div class="gl-yith-wcwl-wrapper">';
+            echo '<div class ="yith-wcwl-add-to-wishlist">';
             // ADD JS TO SWITCH BUTTONS
             $wishlist_status = '';
             $product_message;
@@ -201,6 +189,7 @@ class GL_YITH_WooCommerce_Wishlist {
                 $wishlist_status = 'in_my_favourites';
                 $product_message = 'Already Added';
             }
+              
             echo '<div class="yith-wcwl-add-button gl-wcwl-add-to-my-favourites ' . $wishlist_status . '">
                     <a href="?add_tod_wishlist=' . $product_id . '" rel="nofollow" data-product_id="' . $product_id . '" class="gl_add_to_favourites single_add_to_wishlist button alt" data-title="Add to my favourites">
                         <i class="yith-wcwl-icon fa fa-heart-o"></i>		<span>Add to my favourites</span>
@@ -209,82 +198,54 @@ class GL_YITH_WooCommerce_Wishlist {
                 </div>';
             
             echo '<div class="gl-yith-wcwl-add-product-message">' . $product_message . '</div>';
+           
             echo '</div> <!-- .yith-wcwl-add-to-wishlist -->';
-            echo '</div> <!-- .gl-wcwl-button-wrapper.gl-wcwl-add-to-favourites-wrapper -->';
-
-            echo '<div class="gl-wcwl-button-wrapper gl-wcwl-add-to-projects-wrapper">';
+           
             echo do_shortcode( "[yith_wcwl_add_to_wishlist]" );
-            echo '<div class="gl-yith-wcwl-add-to-projects-message"><a href="' . site_url('/my-projects/manage/') . '"><span class="gl-save-project-icon"></span> View Projects</a></div>';
-            echo '</div> <!-- .gl-wcwl-button-wrapper.gl-wcwl-add-to-projects-wrapper -->';
+
             echo '</div> <!-- .gl-yith-wcwl-wrapper -->';
         } else {
-            echo '<div class="gl-wcwl-button-wrapper-logged-out">';
             echo do_shortcode( "[yith_wcwl_add_to_wishlist]" );
-            echo '<div class="yith-wcwl-add-button gl-yith-wcwl-logged-out-view-favourites"><a href="' . site_url('/my-favourites') . '" rel="nofollow" class="view-favourites button alt" data-title="View My favourites"><i class="yith-wcwl-icon fa fa-heart"></i>		View My Favourites 	</a></div>';
-            echo '</div> <!-- .gl-wcwl-button-wrapper-logged-out -->';
         }
 
     }
-
-    /**
-     * Add the favourites and projects icons to the shop listings
-     */
     public function gl_add_yith_wcwl_to_shop() {
+        echo '<div class="gl-yith-wcwl-wrapper">';
+        echo '<div class ="yith-wcwl-add-to-wishlist">';
+        global $product;
+            $product_id = $product->get_id();
 
-        if(is_user_logged_in()) {
+            // ADD JS TO SWITCH BUTTONS
+            $wishlist_status = '';
+            $product_message = '';
+            if($this->gl_is_product_in_default_wishlist($product_id)) {
+                $wishlist_status = 'in_my_favourites';
+                $product_message = 'Already Added';
+            }
+              
+            echo '<div class="yith-wcwl-add-button gl-wcwl-add-to-my-favourites ' . $wishlist_status . '">
+                    <a href="?add_tod_wishlist=' . $product_id . '" rel="nofollow" data-product_id="' . $product_id . '" class="gl_add_to_favourites single_add_to_wishlist button alt" data-title="Add to my favourites">
+                        <i class="yith-wcwl-icon fa fa-heart-o"></i><span class="help-text-wrapper"><span class="help-text">Add to My favourites</span></span>
+                    </a>
+                    <a href="' . $this->gl_get_default_wishlist_url() . '" rel="nofollow" class="view-favourites button alt" data-title="View My favourites"><i class="yith-wcwl-icon fa fa-heart"></i><span class="help-text-wrapper"><span class="help-text">View My favourites</span></span></a>
+                </div>';
+            // echo '<div class="gl-wcwl-add-to-my-favourites-tooltip">Add to My favourites</div>';
+            echo '<div class="gl-yith-wcwl-add-product-message">' . $product_message . '</div>';
+        echo '</div> <!-- .yith-wcwl-add-to-wishlist -->';
+           
+        echo do_shortcode( "[yith_wcwl_add_to_wishlist]" );
+        // echo '<div class="yith-wcwl-add-to-wishlist-tooltip">Add to My Project</div>';
 
-            echo '<div class="gl-yith-wcwl-wrapper">';
-            echo '<div class ="yith-wcwl-add-to-wishlist">';
-            global $product;
-                $product_id = $product->get_id();
-
-                // ADD JS TO SWITCH BUTTONS
-                $wishlist_status = '';
-                $product_message = '';
-                if($this->gl_is_product_in_default_wishlist($product_id)) {
-                    $wishlist_status = 'in_my_favourites';
-                    $product_message = 'Already Added';
-                }
-                
-                echo '<div class="yith-wcwl-add-button gl-wcwl-add-to-my-favourites ' . $wishlist_status . '">
-                        <a href="?add_tod_wishlist=' . $product_id . '" rel="nofollow" data-product_id="' . $product_id . '" class="gl_add_to_favourites single_add_to_wishlist button alt" data-title="Add to my favourites">
-                            <i class="yith-wcwl-icon fa fa-heart-o"></i><span class="help-text-wrapper"><span class="help-text">Add to My favourites</span></span>
-                        </a>
-                        <a href="' . $this->gl_get_default_wishlist_url() . '" rel="nofollow" class="view-favourites button alt" data-title="View My favourites"><i class="yith-wcwl-icon fa fa-heart"></i><span class="help-text-wrapper"><span class="help-text">View My favourites</span></span></a>
-                    </div>';
-                echo '<div class="gl-yith-wcwl-add-product-message">' . $product_message . '</div>';
-            echo '</div> <!-- .yith-wcwl-add-to-wishlist -->';
-            
-            echo do_shortcode( "[yith_wcwl_add_to_wishlist]" );
-
-        } else {
-            echo '<div class="gl-yith-wcwl-wrapper gl-wcwl-button-wrapper-logged-out">';
-            echo do_shortcode( "[yith_wcwl_add_to_wishlist]" );
-            echo '<div class="yith-wcwl-add-button gl-yith-wcwl-logged-out-view-favourites"><a href="' . site_url('/my-favourites') . '" rel="nofollow" class="view-favourites button alt" data-title="View My favourites"><i class="yith-wcwl-icon fa fa-heart"></i><span class="help-text-wrapper"><span class="help-text">View My Favourites</span></span></a></div>';
-            echo '</div> <!-- .gl-wcwl-button-wrapper-logged-out -->';
-        }
-    }
-    /**
-     * Change the button label for people not logged in
-     */
-    public function gl_change_wcwl_button_label($label) {
-        if(!is_user_logged_in()) {
-            $label = "Add to My Favourites";
-        }
-        return $label;
+        echo '</div> <!-- .gl-yith-wcwl-wrapper -->';
     }
     /**
      * Change the my projects wishlist button in the shop
      */
-    // public function gl_change_loop_wishlist_button() {
-    //     add_filter( 'yith_wcwl_button_label', array($this, 'gl_change_yith_wcwl_add_to_wishlist_title') );
-    // }
-    public function gl_change_yith_wcwl_add_to_wishlist_title($title) {
-        if(is_user_logged_in()) {
-            return '<span class="gl-save-project-icon"></span><span class="help-text-wrapper"><span class="help-text">' . $title . '</span></span>';
-        } else {
-            return '<span class="gl-save-project-icon"></span><span class="help-text-wrapper"><span class="help-text">Add to My Favourites</span></span>';
-        }
+    public function gl_change_loop_wishlist_button() {
+        add_filter( 'yith_wcwl_button_label', array($this, 'gl_change_yith_wcwl_add_to_wishlist_title') );
+    }
+    public function gl_change_yith_wcwl_add_to_wishlist_title() {
+        return '<span class="gl-save-project-icon"></span><span class="help-text-wrapper"><span class="help-text">Add to My Project</span></span>';
     }
     /**
      * Change various text strings
@@ -668,69 +629,169 @@ class GL_YITH_WooCommerce_Wishlist {
 		return '<div class="woocommerce">' . ob_get_clean() . '</div>';
     }
 
+
+    // COPIED
     /**
-     * Ajax to handle copying to another list
-     */
-    public function gl_copy_to_another_list() {
-        $nonce_check = check_ajax_referer( 'gl_mods_init_nonce', 'nonce' );
+		 * Move an item to another wishlist on an ajax call
+		 *
+		 * @return void
+		 * @since 3.0.0
+		 */
+		public static function move_to_another_wishlist() {
+			$origin_wishlist_token = isset( $_POST['wishlist_token'] ) ? sanitize_text_field( wp_unslash( $_POST['wishlist_token'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification
+			$destination_wishlist_token = isset( $_POST['destination_wishlist_token'] ) ? sanitize_text_field( wp_unslash( $_POST['destination_wishlist_token'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification
+			$item_id = isset( $_POST['item_id'] ) ? intval( $_POST['item_id'] ) : false; // phpcs:ignore WordPress.Security.NonceVerification
+			$fragments = isset( $_REQUEST['fragments'] ) ? $_REQUEST['fragments'] : false; // phpcs:ignore WordPress.Security
+			$moved = false;
+			$message = '';
 
-        $origin_wishlist_token = isset( $_POST['wishlist_token'] ) ? sanitize_text_field( wp_unslash( $_POST['wishlist_token'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification
-        $destination_wishlist_token = isset( $_POST['destination_wishlist_token'] ) ? sanitize_text_field( wp_unslash( $_POST['destination_wishlist_token'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification
-        $item_id = isset( $_POST['item_id'] ) ? intval( $_POST['item_id'] ) : false; // phpcs:ignore WordPress.Security.NonceVerification
-        $fragments = isset( $_REQUEST['fragments'] ) ? $_REQUEST['fragments'] : false; // phpcs:ignore WordPress.Security
-        $message = '';
+			if ( $destination_wishlist_token && $origin_wishlist_token && $item_id ) {
+				if ( 'new' == $destination_wishlist_token ) {
+					try {
+						$destination_wishlist = YITH_WCWL()->add_wishlist();
+					} catch ( Exception $e ) {
+						$destination_wishlist = false;
+					}
+				}
 
-        if ( $destination_wishlist_token && $origin_wishlist_token && $item_id ) {
+				$origin_wishlist = YITH_WCWL_Wishlist_Factory::get_wishlist( $origin_wishlist_token );
+				$destination_wishlist = isset( $destination_wishlist ) ? $destination_wishlist : YITH_WCWL_Wishlist_Factory::get_wishlist( $destination_wishlist_token );
 
-            $origin_wishlist = \YITH_WCWL_Wishlist_Factory::get_wishlist( $origin_wishlist_token );
+				if ( $origin_wishlist && $destination_wishlist && $origin_wishlist->current_user_can( 'remove_from_wishlist' ) && $destination_wishlist->current_user_can( 'add_to_wishlist' ) ) {
+					$item = $origin_wishlist->get_product( $item_id );
 
-            $destination_wishlist = isset( $destination_wishlist ) ? $destination_wishlist : \YITH_WCWL_Wishlist_Factory::get_wishlist( $destination_wishlist_token );
-            
-            if ( $destination_wishlist && $destination_wishlist->current_user_can( 'add_to_wishlist' ) ) {
-                $item = $origin_wishlist->get_product( $item_id );
+					if ( $item ) {
+						if ( $destination_item = $destination_wishlist->get_product( $item_id ) ) {
+							$destination_item->set_date_added( current_time( 'mysql' ) );
 
-                $add_to_new_list_status = $destination_wishlist->add_product($item_id);
-                if($add_to_new_list_status) {
-                    $message = '<p>Item was copied to the <strong>' . $destination_wishlist->get_name() . '</strong> list. <strong><a href="' . $destination_wishlist->get_url() . '">View &raquo;</a></strong></p>';
-                } else {
-                    $message = '<p>Item was already in the <strong>' . $destination_wishlist->get_name() . '</strong> list. <strong><a href="' . $destination_wishlist->get_url() . '">View &raquo;</a></strong></p>';
+							$destination_item->save();
+							$item->delete();
+						} else {
+							$item->set_wishlist_id( $destination_wishlist->get_id() );
+							$item->set_date_added( current_time( 'mysql' ) );
+
+							$item->save();
+						}
+
+						$moved = true;
+						wp_cache_delete( 'wishlist-items-' . $origin_wishlist->get_id(), 'wishlists' );
+						wp_cache_delete( 'wishlist-items-' . $destination_wishlist->get_id(), 'wishlists' );
+
+					}
+				}
+			}
+
+			$wishlists = YITH_WCWL_Wishlist_Factory::get_wishlists();
+			$wishlists_to_prompt = array();
+
+			foreach ( $wishlists as $wishlist ) {
+				$wishlists_to_prompt[] = array(
+					'id'                       => $wishlist->get_id(),
+					'wishlist_name'            => $wishlist->get_formatted_name(),
+					'default'                  => $wishlist->is_default(),
+					'add_to_this_wishlist_url' => isset( $item ) ? add_query_arg(
+						array(
+							'add_to_wishlist' => $item->get_product_id(),
+							'wishlist_id' => $wishlist->get_id(),
+						)
+					) : '',
+				);
+			}
+
+			if ( $moved ) {
+				// translators: 1. Destination wishlist name.
+				$message = apply_filters( 'yith_wcwl_moved_element_message', sprintf( __( 'Element correctly moved to %s', 'yith-woocommerce-wishlist' ), $destination_wishlist->get_name() ) );
+			}
+
+			$return = array(
+				'result' => $moved,
+				'fragments' => YITH_WCWL_Ajax_Handler::refresh_fragments( $fragments ),
+				'user_wishlists' => $wishlists_to_prompt,
+				'message' => $message,
+			);
+
+			wp_send_json( $return );
+		}
+
+        public function gl_copy_to_another_list() {
+            $nonce_check = check_ajax_referer( 'gl_mods_init_nonce', 'nonce' );
+
+			$origin_wishlist_token = isset( $_POST['wishlist_token'] ) ? sanitize_text_field( wp_unslash( $_POST['wishlist_token'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification
+			$destination_wishlist_token = isset( $_POST['destination_wishlist_token'] ) ? sanitize_text_field( wp_unslash( $_POST['destination_wishlist_token'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification
+			$item_id = isset( $_POST['item_id'] ) ? intval( $_POST['item_id'] ) : false; // phpcs:ignore WordPress.Security.NonceVerification
+			$fragments = isset( $_REQUEST['fragments'] ) ? $_REQUEST['fragments'] : false; // phpcs:ignore WordPress.Security
+			$message = '';
+
+            if ( $destination_wishlist_token && $origin_wishlist_token && $item_id ) {
+
+                $origin_wishlist = \YITH_WCWL_Wishlist_Factory::get_wishlist( $origin_wishlist_token );
+
+				$destination_wishlist = isset( $destination_wishlist ) ? $destination_wishlist : \YITH_WCWL_Wishlist_Factory::get_wishlist( $destination_wishlist_token );
+                wl($destination_wishlist->get_url());
+                
+                if ( $destination_wishlist && $destination_wishlist->current_user_can( 'add_to_wishlist' ) ) {
+                    wl('hi');
+					$item = $origin_wishlist->get_product( $item_id );
+               
+                    // if ( $item ) {
+
+                        // if ( $destination_item = $destination_wishlist->get_product( $item_id ) ) {
+                        //     // see if the item is already in that list and update the time
+                        //     $destination_item->set_date_added( current_time( 'mysql' ) );
+                        //     $destination_item->save();
+                        // } else {
+
+                            // $unko = $destination_wishlist->add_item($item);
+                            $add_to_new_list_status = $destination_wishlist->add_product($item_id);
+                            wl($unko);
+                            if($add_to_new_list_status) {
+                                $message = '<p>Item was copied to the <strong>' . $destination_wishlist->get_name() . '</strong> list. <strong><a href="' . $destination_wishlist->get_url() . '">View &raquo;</a></strong></p>';
+                            } else {
+                                $message = '<p>Item was already in the <strong>' . $destination_wishlist->get_name() . '</strong> list. <strong><a href="' . $destination_wishlist->get_url() . '">View &raquo;</a></strong></p>';
+                            }
+                            $destination_wishlist->save();
+                            // $item->set_wishlist_id( $destination_wishlist->get_id() );
+                            // $item->set_date_added( current_time( 'mysql' ) );
+                            // $item->save();
+                        // }
+
+                        // wp_cache_delete( 'wishlist-items-' . $origin_wishlist->get_id(), 'wishlists' );
+                        wp_cache_delete( 'wishlist-items-' . $destination_wishlist->get_id(), 'wishlists' );
+
+                    // }
+
+
                 }
-                $destination_wishlist->save();
-
-                wp_cache_delete( 'wishlist-items-' . $destination_wishlist->get_id(), 'wishlists' );
             }
+
+
+
+
+            // wl($_POST);
+            // $status = $_POST;
+            $return_arr = array(
+
+                'message' => $message
+            );
+    
+            wp_send_json($return_arr);
         }
-
-        $return_arr = array(
-
-            'message' => $message
-        );
-
-        wp_send_json($return_arr);
-    }
-
-    /** 
-     * Get the YITH Wishlist parameters that are used by the shortcode
-     * so we can use the same parameters. There may be a better way 
-     * to get this directly from YITH, but this works at the moment.
-     */
-    public function gl_get_yith_wcwl_shortcode_params($additional_params, $atts) {
-        $this->wishlist_params = $additional_params;
-        return $additional_params;
-    }
-    /**
-     * Set up our custom template used for the copy to another
-     * wishlist functionality
-     */
-    public function gl_copy_to_another_list_template($wishlist) {
-        yith_wcwl_get_template( 'wishlist-popup-copy-gl.php', $this->wishlist_params);
-    }
-
-    public function gl_add_wishlist_download_link($wishlist) {
-        if($wishlist['wishlist_id'] != '' && is_object($wishlist['wishlist'])) {
-            echo '<div class="gl-wishlist-download-wrapper"><a class="wishlist-download" href="' . esc_url( $wishlist['wishlist']->get_download_url() ) . '">Download &nbsp;<i class="fa fa-download"></i></a></div>';
+        /** 
+         * Get the YITH Wishlist parameters that are used by the shortcode
+         * so we can use the same parameters. There may be a better way 
+         * to get this directly from YITH, but this works at the moment.
+         */
+        public function gl_get_yith_wcwl_shortcode_params($additional_params, $atts) {
+            $this->wishlist_params = $additional_params;
+            return $additional_params;
         }
-    }
+        /**
+         * Set up our custom template used for the copy to another
+         * wishlist functionality
+         */
+        public function gl_copy_to_another_list_template($wishlist) {
+            yith_wcwl_get_template( 'wishlist-popup-copy-gl.php', $this->wishlist_params);
+        }
 } // end class
 
 $gl_yith_woocommerce_wishlist = new GL_YITH_WooCommerce_Wishlist();

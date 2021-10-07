@@ -305,6 +305,8 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 									</a>
 								<?php endif; ?>
 
+								<a href="#gl_copy_to_another_wishlist" class="gl-open-popup-copy-to-another-wishlist-button" data-product_id="<?php $product->get_id();?>">Copy to another list &rsaquo;</a>
+
 								<?php do_action( 'yith_wcwl_table_product_after_move_to_another_wishlist', $item, $wishlist ); ?>
 								<?php do_action( 'yith_wcwl_table_product_before_add_to_cart', $item, $wishlist ); ?>
 
