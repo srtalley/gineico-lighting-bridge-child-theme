@@ -140,14 +140,7 @@ jQuery(function($) {
                         success: function(data) {
                             console.log(data)
                             $('#pp_full_res').find('.pp_inline .gl-wcwl-quote-select-option-variation').html(data.html);
-                            // $('#gl-wcwl-quote-select-options-' + product_id).html(data.html);
-                            // $('.gl-yith-wcwl-add-product-message').text(data.status_msg);
-                            // if(data.product_id_exists == 'yes') {
-                                
-                            //     $('.gl-wcwl-add-to-my-favourites').addClass('in_my_favourites');
-                            // } else {
-                            //     $('.gl-wcwl-add-to-my-favourites').removeClass('in_my_favourites');
-                            // }
+                       
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
                             console.log(jqXHR + ' :: ' + textStatus + ' :: ' + errorThrown);
@@ -156,31 +149,6 @@ jQuery(function($) {
 
                 },
         });
-        // $(document).on('click', '.gl-wcwl-quote-select-options', function(e) {
-        //         console.log('click');
-        //     e.preventDefault();
-        //     var t = $(this),
-        //     popup = $('#move_to_another_wishlist'),
-        //     form = popup.find('form'),
-        //     row_id = form.find( '.row-id' ),
-        //     id = t.closest('[data-row-id]').data('row-id');
-
-        // if( row_id.length ){
-        //     row_id.remove();
-        // }
-
-        // form.append( '<input type="hidden" name="row_id" class="row-id" value="' + id + '"/>' );
-    // } ).prettyPhoto( ppParams );
-    // $('#pp_full_res').find('.pp_inline .gl-wcwl-quote-select-option-variation .variations_form  select')
-        // $(document).on('mouseout', '#pp_full_res .pp_inline .gl-wcwl-quote-select-option-variation .variations_form select', function() {
-
-        //     console.log($(this));
-        //     // Fires whenever variation selects are changed
-        //     $(this).each(function() {
-        //         console.log($(this).val());
-             
-        //     });
-        // });
         
     }
     /**

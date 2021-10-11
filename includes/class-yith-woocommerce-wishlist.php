@@ -26,19 +26,30 @@ class GL_YITH_WooCommerce_Wishlist {
 
             add_filter( 'yith_wcwl_button_label', array($this, 'gl_change_wcwl_button_label'), 10, 1 );
 
+            // show the logged out projects message for a single item
+            add_action( 'woocommerce_after_single_product', array($this, 'gl_add_logged_out_projects_message') );
+
+            // show the logged out projects message in the shop
+            add_action( 'woocommerce_after_shop_loop', array($this, 'gl_add_logged_out_projects_message') );
+
             // add_action( 'woocommerce_before_shop_loop_item', array($this, 'gl_change_loop_wishlist_button') );
 
             // add a project icon for the add to projects label
             add_filter( 'yith_wcwl_button_label', array($this, 'gl_change_yith_wcwl_add_to_wishlist_title') );
 
-
             // Ajax for add to favourites
             add_action( 'wp_ajax_nopriv_gl_add_to_my_favourites', array($this, 'gl_add_to_my_favourites') );
             add_action( 'wp_ajax_gl_add_to_my_favourites', array($this, 'gl_add_to_my_favourites') );
 
-            // Ajax to show variation form for products to select options
-            add_action( 'wp_ajax_nopriv_gl_select_variation_options', array($this, 'gl_select_variation_options') );
-            add_action( 'wp_ajax_gl_select_variation_options', array($this, 'gl_select_variation_options') );
+            // Ajax to show variation form for products to select options 
+            // for the quote
+            add_action( 'wp_ajax_nopriv_gl_popup_select_variation_options', array($this, 'gl_popup_select_variation_options') );
+            add_action( 'wp_ajax_gl_popup_select_variation_options', array($this, 'gl_popup_select_variation_options') );
+
+            // Ajax to show variation form for products to select options 
+            // for the project list
+            add_action( 'wp_ajax_nopriv_gl_update_wcwl_list_with_variation', array($this, 'gl_update_wcwl_list_with_variation') );
+            add_action( 'wp_ajax_gl_update_wcwl_list_with_variation', array($this, 'gl_update_wcwl_list_with_variation') );
 
             // Ajax to see if product id is in my favourites list
             add_action( 'wp_ajax_nopriv_gl_check_if_product_id_in_my_favourites', array($this, 'gl_check_if_product_id_in_my_favourites') );
@@ -178,7 +189,8 @@ class GL_YITH_WooCommerce_Wishlist {
         return $item->get_id();
     }
     /**
-     * Add the my favourites and my projects buttons to the single product pages
+     * Add the my favourites and my projects buttons to the single product pages, Show
+     * different options for logged in or out users.
      */
     public function gl_add_yith_wcwl_to_single_product() {
         // Check if logged in
@@ -218,22 +230,31 @@ class GL_YITH_WooCommerce_Wishlist {
             echo '</div> <!-- .gl-wcwl-button-wrapper.gl-wcwl-add-to-projects-wrapper -->';
             echo '</div> <!-- .gl-yith-wcwl-wrapper -->';
         } else {
-            echo '<div class="gl-wcwl-button-wrapper-logged-out">';
+            echo '<div class="gl-yith-wcwl-wrapper gl-wcwl-button-wrapper-logged-out">';
+            echo '<div class ="gl-wcwl-button-wrapper gl-wcwl-add-to-favourites-wrapper">';
             echo do_shortcode( "[yith_wcwl_add_to_wishlist]" );
             echo '<div class="yith-wcwl-add-button gl-yith-wcwl-logged-out-view-favourites"><a href="' . site_url('/my-favourites') . '" rel="nofollow" class="view-favourites button alt" data-title="View My favourites"><i class="yith-wcwl-icon fa fa-heart"></i>		View My Favourites 	</a></div>';
+            echo '</div> <!-- .gl-wcwl-button-wrapper.gl-wcwl-add-to-favourites-wrapper -->';
+            echo '<div class="gl-wcwl-button-wrapper gl-wcwl-add-to-projects-wrapper">';
+            echo '<div class="yith-wcwl-add-to-wishlist"><div class="yith-wcwl-add-button gl-yith-wcwl-logged-out-add-to-projects"><a href="#gl-projects-message-logged-out" rel="prettyPhoto" class="view-favourites button alt" data-title="Add to My Projects"><span class="gl-save-project-icon"></span><span class="help-text-wrapper"><span class="help-text">Add to My Project</span></span></a></div></div>';
+            echo '</div> <!-- .gl-wcwl-button-wrapper.gl-wcwl-add-to-projects-wrapper -->';
+
             echo '</div> <!-- .gl-wcwl-button-wrapper-logged-out -->';
         }
 
     }
 
     /**
-     * Add the favourites and projects icons to the shop listings
+     * Add the favourites and projects icons to the shop listings. Show
+     * different options for logged in or out users.
      */
     public function gl_add_yith_wcwl_to_shop() {
 
         if(is_user_logged_in()) {
 
             echo '<div class="gl-yith-wcwl-wrapper">';
+            echo '<div class ="gl-wcwl-button-wrapper gl-wcwl-add-to-favourites-wrapper">';
+
             echo '<div class ="yith-wcwl-add-to-wishlist">';
             global $product;
                 $product_id = $product->get_id();
@@ -254,15 +275,37 @@ class GL_YITH_WooCommerce_Wishlist {
                     </div>';
                 echo '<div class="gl-yith-wcwl-add-product-message">' . $product_message . '</div>';
             echo '</div> <!-- .yith-wcwl-add-to-wishlist -->';
-            
+            echo '</div> <!-- .gl-wcwl-button-wrapper.gl-wcwl-add-to-favourites-wrapper -->';
+            echo '<div class="gl-wcwl-button-wrapper gl-wcwl-add-to-projects-wrapper">';
             echo do_shortcode( "[yith_wcwl_add_to_wishlist]" );
+            echo '</div> <!-- .gl-wcwl-button-wrapper.gl-wcwl-add-to-projects-wrapper -->';
 
         } else {
             echo '<div class="gl-yith-wcwl-wrapper gl-wcwl-button-wrapper-logged-out">';
+            echo '<div class ="gl-wcwl-button-wrapper gl-wcwl-add-to-favourites-wrapper">';
+
             echo do_shortcode( "[yith_wcwl_add_to_wishlist]" );
             echo '<div class="yith-wcwl-add-button gl-yith-wcwl-logged-out-view-favourites"><a href="' . site_url('/my-favourites') . '" rel="nofollow" class="view-favourites button alt" data-title="View My favourites"><i class="yith-wcwl-icon fa fa-heart"></i><span class="help-text-wrapper"><span class="help-text">View My Favourites</span></span></a></div>';
+            echo '</div> <!-- .gl-wcwl-button-wrapper.gl-wcwl-add-to-favourites-wrapper -->';
+            echo '<div class="gl-wcwl-button-wrapper gl-wcwl-add-to-projects-wrapper">';
+            echo '<div class="yith-wcwl-add-to-wishlist"><div class="yith-wcwl-add-button gl-yith-wcwl-logged-out-add-to-projects"><a href="#gl-projects-message-logged-out" rel="prettyPhoto" class="add-to-projects button alt" data-title="Add to My Projects"><span class="gl-save-project-icon"></span><span class="help-text-wrapper"><span class="help-text">Add to My Project</span></span></a></div></div>';
+            echo '</div> <!-- .gl-wcwl-button-wrapper.gl-wcwl-add-to-projects-wrapper -->';
+
             echo '</div> <!-- .gl-wcwl-button-wrapper-logged-out -->';
         }
+    }
+
+    /** 
+     * Add content for a lightbox to show a message about projects to logged out users
+     */
+    public function gl_add_logged_out_projects_message() {
+        echo '<div id="gl-projects-message-logged-out">';
+        echo '<div class="gl-projects-message-logged-out-message">';
+        echo '<h3>Add to My Project</h3>';
+        echo '<p>To use our projects feature you need to login or create an account:</p>';
+        echo '<div class="login-button-wrapper"><a href="' . site_url('/login') . '" class="gl-login button">Login</a>&nbsp;<a href="' . site_url('/login') . '" class="gl-register button">Create an Account</a></div>';     
+        echo '</div> <!-- .gl-projects-message-logged-out-message -->';
+        echo '</div> <!-- #gl-projects-message-logged-out -->';
     }
     /**
      * Change the button label for people not logged in
@@ -526,13 +569,17 @@ class GL_YITH_WooCommerce_Wishlist {
      * NOTE: The wp-util scripts must be called so make sure that is a
      * dependency on the JS file containing the JS that calls this Ajax
      */
-    public function gl_select_variation_options() {
+    public function gl_popup_select_variation_options() {
         $nonce_check = check_ajax_referer( 'gl_mods_init_nonce', 'nonce' );
 
         $product_id = sanitize_text_field($_POST['product_id']);
 
         $html = '';
 
+        $wraq_button = isset($_POST['wraq_button']) ? $_POST['wraq_button'] : false;
+        $update_wcwl_button = isset($_POST['update_wcwl_button']) ? $_POST['update_wcwl_button'] : false; 
+
+        
         // First we must manually add the variation js scripts or 
         // this won't work in Ajax
         $html .= "<script type='text/javascript' id='wc-add-to-cart-variation-js-extra'>
@@ -548,18 +595,79 @@ class GL_YITH_WooCommerce_Wishlist {
         wc_get_template( 'single-product/add-to-cart/variation.php' );
         $html .= ob_get_clean();
 
-
-        $html .= $this->gl_add_to_cart_form_shortcode(array('id' => $product_id));
+        $html .= $this->gl_add_to_cart_form_shortcode(array('id' => $product_id, 'wraq_button' => $wraq_button, 'update_wcwl_button' => $update_wcwl_button));
         
-       
         $return_arr = array(
-
             'html' => $html
         );
 
         wp_send_json($return_arr);
     }
 
+    /**
+     * Ajax to show the popup to add a specific variation to the
+     * project list
+     */
+    public function gl_update_wcwl_list_with_variation() {
+        $nonce_check = check_ajax_referer( 'gl_mods_init_nonce', 'nonce' );
+
+        $product_id = sanitize_text_field($_POST['product_id']);
+        $variation_id = sanitize_text_field($_POST['variation_id']);
+        $message = '';
+        $wishlist_token = isset( $_POST['wishlist_token'] ) ? sanitize_text_field( wp_unslash( $_POST['wishlist_token'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification
+
+        $already_in_list = false;
+        if ( $product_id && $variation_id && $wishlist_token ) {
+
+            $wishlist = \YITH_WCWL_Wishlist_Factory::get_wishlist( $wishlist_token );
+            if ( $wishlist && $wishlist->current_user_can( 'add_to_wishlist' ) ) {
+                // add the variation 
+                $add_to_new_list_status = $wishlist->add_product($variation_id);
+                if($add_to_new_list_status) {
+                    // remove the old product
+                    $wishlist->remove_product($product_id);
+                    $message = '<p>Selected product options added to  <strong>' . $wishlist->get_name() . '</strong> list. Reloading...</p>';
+                } else {
+                    $already_in_list = true;
+                    $message = '<p>The selected variation is already in the  <strong>' . $wishlist->get_name() . '</strong> list.</p>';
+                }
+               
+                $wishlist->save();
+                wp_cache_delete( 'wishlist-items-' . $wishlist->get_id(), 'wishlists' );
+            }
+
+        }
+
+    //     $html = '';
+
+    //     $wraq_button = isset($_POST['wraq_button']) ? $_POST['wraq_button'] : false;
+    //     $update_wcwl_button = isset($_POST['update_wcwl_button']) ? $_POST['update_wcwl_button'] : false; 
+
+    //     // First we must manually add the variation js scripts or 
+    //     // this won't work in Ajax
+    //     $html .= "<script type='text/javascript' id='wc-add-to-cart-variation-js-extra'>
+    //     /* <![CDATA[ */";
+    //     $html .= 'var wc_add_to_cart_variation_params = {"wc_ajax_url":"\/?wc-ajax=%%endpoint%%","i18n_no_matching_variations_text":"Sorry, no products matched your selection. Please choose a different combination.","i18n_make_a_selection_text":"Please select some product options before adding this product to your cart.","i18n_unavailable_text":"Sorry, this product is unavailable. Please choose a different combination."};
+    //     /* ]]> */
+    //     </script>';
+
+    //     $html .= "<script type='text/javascript' src='" . plugins_url( 'assets/js/frontend/add-to-cart-variation.js', WC_PLUGIN_FILE) . "' id='gl-wc-add-to-cart-variation-js'></script>";
+
+    //     // Next get the variation template which adds some more JS
+    //     ob_start();
+    //     wc_get_template( 'single-product/add-to-cart/variation.php' );
+    //     $html .= ob_get_clean();
+
+    //     $html .= $this->gl_add_to_cart_form_shortcode(array('id' => $product_id, 'wraq_button' => $wraq_button, 'update_wcwl_button' => $update_wcwl_button));
+       
+        $return_arr = array(
+
+            'html' => $message,
+            'already_in_list' => $already_in_list
+        );
+
+        wp_send_json($return_arr);
+    }
     /**
      * Shortcode to display an add to cart form; can also
      * be called by other functions
@@ -579,6 +687,8 @@ class GL_YITH_WooCommerce_Wishlist {
 			'post_status'         => 'publish',
 			'ignore_sticky_posts' => 1,
 			'no_found_rows'       => 1,
+            'wraq_button'         => true,
+            'update_wcwl_button'  => false,
 		);
 
 		if ( isset( $atts['sku'] ) ) {
@@ -606,7 +716,7 @@ class GL_YITH_WooCommerce_Wishlist {
 			// Set preselected id to be used by JS to provide context.
 			$preselected_id = $single_product->post->ID;
 
-			// Get the parent product object.
+            // Get the parent product object.
 			$args = array(
 				'posts_per_page'      => 1,
 				'post_type'           => 'product',
@@ -649,10 +759,30 @@ class GL_YITH_WooCommerce_Wishlist {
 			$single_product->the_post();
            
 			?>
-			<div class="single-product" data-product-page-preselected-id="<?php echo esc_attr( $preselected_id ); ?>">
+			<div class="single-product <?php echo get_the_ID(); ?>" data-product-page-preselected-id="<?php echo esc_attr( $preselected_id ); ?>">
 				<?php 
                 woocommerce_template_single_add_to_cart(); 
-                yith_ywraq_render_button();
+
+                if ( isset( $atts['wraq_button'] ) ) {
+                    if($atts['wraq_button'] == 'true') {
+                        ?>
+                        <div class="gl-update-wraq-list-wrapper disabled">
+                        <?php
+                        yith_ywraq_render_button();
+                        ?>
+                        </div>
+                        <?php
+                    }
+                }
+                if ( isset( $atts['update_wcwl_button'] ) ) {
+                    if($atts['update_wcwl_button'] == 'true') {
+                        ?>
+                        <div class="gl-update-wcwl-list-wrapper disabled">
+                            <a href="#" class="gl-update-wcwl-list" data-product_id="<?php echo get_the_ID(); ?>">Add to List</a>
+                        </div>
+                        <?php
+                    }
+                }
                 // do_shortcode('[yith_ywraq_button_quote]');
                   ?>
 			</div>
@@ -723,9 +853,19 @@ class GL_YITH_WooCommerce_Wishlist {
      * wishlist functionality
      */
     public function gl_copy_to_another_list_template($wishlist) {
-        yith_wcwl_get_template( 'wishlist-popup-copy-gl.php', $this->wishlist_params);
+        yith_wcwl_get_template( 'wishlist-popup-copy-to-another-list-gl.php', $this->wishlist_params);
     }
 
+    /** 
+     * Set up the template for the add product options template
+     */
+    // public function gl_copy_to_another_list_template($wishlist) {
+    //     yith_wcwl_get_template( 'wishlist-popup-copy-to-another-list-gl.php', $this->wishlist_params);
+    // }
+
+    /**
+     * Add a download link to the list view
+     */
     public function gl_add_wishlist_download_link($wishlist) {
         if($wishlist['wishlist_id'] != '' && is_object($wishlist['wishlist'])) {
             echo '<div class="gl-wishlist-download-wrapper"><a class="wishlist-download" href="' . esc_url( $wishlist['wishlist']->get_download_url() ) . '">Download &nbsp;<i class="fa fa-download"></i></a></div>';

@@ -166,6 +166,15 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 						</a>
 
 						<?php do_action( 'yith_wcwl_table_after_product_thumbnail', $item, $wishlist ); ?>
+
+						<!-- Date added -->
+						<?php
+						if ( $show_dateadded && $item->get_date_added() ) :
+							// translators: date added label: 1 date added.
+							echo '<span class="dateadded">' . esc_html( sprintf( __( 'Added on: %s', 'yith-woocommerce-wishlist' ), $item->get_date_added_formatted() ) ) . '</span>';
+						endif;
+						?>
+
 					</td>
 
 					<td class="product-name">
@@ -175,22 +184,48 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 							<?php echo wp_kses_post( apply_filters( 'woocommerce_in_cartproduct_obj_title', $product->get_title(), $product ) ); ?>
 						</a>
 
-						<?php do_action( 'gl_yith_wcwl_table_before_product_varition', $item, $wishlist ); ?>
-
 						<?php
+						// if ( $show_variation && $product->is_type( 'variation' ) ) {
+						// 	// phpcs:ignore Generic.Commenting.DocComment
+						// 	/**
+						// 	 * @var $product \WC_Product_Variation
+						// 	 */
+						// 	echo wc_get_formatted_variation( $product ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						// }
+						echo '<div class="product-description">';
+						$product_id  = '';
+						$variation_description = '';
+						$main_product = $product;
 						if ( $show_variation && $product->is_type( 'variation' ) ) {
-							// phpcs:ignore Generic.Commenting.DocComment
 							/**
 							 * @var $product \WC_Product_Variation
 							 */
-							echo wc_get_formatted_variation( $product ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+							$product_id = $product->get_parent_id();
+							$main_product = wc_get_product($product_id);
+							$variation_description_raw = strip_tags($product->get_description());
+							if($variation_description_raw != '' && $variation_description_raw != null) {
+								$variation_description = '<p class="variation-description"><strong>DESCRIPTION:&nbsp;</strong>' . $variation_description_raw . '</p>';
+							}
+						} else {
+							$product_id = $product->get_id();
 						}
+
+						$product_short_description = $main_product->get_short_description();
+
+						// echo strip_tags( substr($product_short_description, 0 , 200)) . '&hellip; <a style="text-decoration: none; color: #38aa2e;" target="_blank" href="' . esc_url( $product->get_permalink() ) . '">Read More</a>';
+						echo strip_tags( substr($product_short_description, 0 , 200)) . '&hellip;';
+						echo '</div>';
+						echo $variation_description;
+
+						echo wc_get_formatted_variation( $product ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						?>
+						<div class="gl-wishlist-qty"><label>QTY <input type="number" min="1" step="1" name="items[<?php echo esc_attr( $item->get_product_id() ); ?>][quantity]" value="<?php echo esc_attr( $item->get_quantity() ); ?>"/></label></div>
 
-						<?php do_action( 'yith_wcwl_table_after_product_name', $item, $wishlist ); ?>
-
-						<?php do_action( 'gl_yith_wcwl_table_after_product_name', $item, $wishlist ); ?>
-
+						<?php do_action( 'yith_wcwl_table_after_product_name', $item, $wishlist ); 
+						
+						// echo do_shortcode('[add_to_cart_form id=' . $product->get_id() . ']');
+						?>
 					</td>
 
 					<?php if ( $show_price || $show_price_variations ) : ?>
@@ -211,19 +246,19 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 						</td>
 					<?php endif ?>
 
-					<?php if ( $show_quantity ) : ?>
-						<td class="product-quantity">
-							<?php do_action( 'yith_wcwl_table_before_product_quantity', $item, $wishlist ); ?>
+					<?php //if ( $show_quantity ) : ?>
+						<!-- <td class="product-quantity"> -->
+							<?php //do_action( 'yith_wcwl_table_before_product_quantity', $item, $wishlist ); ?>
 
-							<?php if ( ! $no_interactions && $wishlist->current_user_can( 'update_quantity' ) ) : ?>
-								<input type="number" min="1" step="1" name="items[<?php echo esc_attr( $item->get_product_id() ); ?>][quantity]" value="<?php echo esc_attr( $item->get_quantity() ); ?>"/>
-							<?php else : ?>
-								<?php echo esc_html( $item->get_quantity() ); ?>
-							<?php endif; ?>
+							<?php //if ( ! $no_interactions && $wishlist->current_user_can( 'update_quantity' ) ) : ?>
+								<!-- <input type="number" min="1" step="1" name="items[<?php //echo esc_attr( $item->get_product_id() ); ?>][quantity]" value="<?php //echo esc_attr( $item->get_quantity() ); ?>"/> -->
+							<?php //else : ?>
+								<?php //echo esc_html( $item->get_quantity() ); ?>
+							<?php //endif; ?>
 
-							<?php do_action( 'yith_wcwl_table_after_product_quantity', $item, $wishlist ); ?>
-						</td>
-					<?php endif; ?>
+							<?php //do_action( 'yith_wcwl_table_after_product_quantity', $item, $wishlist ); ?>
+						<!-- </td> -->
+					<?php //endif; ?>
 
 					<?php if ( $show_stock_status ) : ?>
 						<td class="product-stock-status">
@@ -238,24 +273,6 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 					<?php if ( $show_last_column ) : ?>
 						<td class="product-add-to-cart">
 							<?php do_action( 'yith_wcwl_table_before_product_cart', $item, $wishlist ); ?>
-
-							<!-- Date added -->
-							<?php
-							if ( $show_dateadded && $item->get_date_added() ) :
-								// translators: date added label: 1 date added.
-								echo '<span class="dateadded">' . esc_html( sprintf( __( 'Added on: %s', 'yith-woocommerce-wishlist' ), $item->get_date_added_formatted() ) ) . '</span>';
-							endif;
-							?>
-
-							<?php do_action( 'yith_wcwl_table_product_before_add_to_cart', $item, $wishlist ); ?>
-
-							<!-- Add to cart button -->
-							<?php $show_add_to_cart = apply_filters( 'yith_wcwl_table_product_show_add_to_cart', $show_add_to_cart, $item, $wishlist ); ?>
-							<?php if ( $show_add_to_cart && isset( $stock_status ) && 'out-of-stock' !== $stock_status ) : ?>
-								<?php woocommerce_template_loop_add_to_cart( array( 'quantity' => $show_quantity ? $item->get_quantity() : 1 ) ); ?>
-							<?php endif ?>
-
-							<?php do_action( 'yith_wcwl_table_product_after_add_to_cart', $item, $wishlist ); ?>
 
 							<!-- Change wishlist -->
 							<?php $move_to_another_wishlist = apply_filters( 'yith_wcwl_table_product_move_to_another_wishlist', $move_to_another_wishlist, $item, $wishlist ); ?>
@@ -286,7 +303,18 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 									</a>
 								<?php endif; ?>
 
+								<a href="#gl_copy_to_another_wishlist" class="gl-open-popup-copy-to-another-wishlist-button" data-product_id="<?php $product->get_id();?>">Copy to another list &rsaquo;</a>
+
 								<?php do_action( 'yith_wcwl_table_product_after_move_to_another_wishlist', $item, $wishlist ); ?>
+								<?php do_action( 'yith_wcwl_table_product_before_add_to_cart', $item, $wishlist ); ?>
+
+								<!-- Add to cart button -->
+								<?php $show_add_to_cart = apply_filters( 'yith_wcwl_table_product_show_add_to_cart', $show_add_to_cart, $item, $wishlist ); ?>
+								<?php if ( $show_add_to_cart && isset( $stock_status ) && 'out-of-stock' !== $stock_status ) : ?>
+									<?php woocommerce_template_loop_add_to_cart( array( 'quantity' => $show_quantity ? $item->get_quantity() : 1 ) ); ?>
+								<?php endif ?>
+
+								<?php do_action( 'yith_wcwl_table_product_after_add_to_cart', $item, $wishlist ); ?>
 
 							<?php endif; ?>
 
@@ -294,7 +322,46 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 							<?php if ( $repeat_remove_button ) : ?>
 								<a href="<?php echo esc_url( add_query_arg( 'remove_from_wishlist', $item->get_product_id() ) ); ?>" class="remove_from_wishlist button" title="<?php echo esc_html( apply_filters( 'yith_wcwl_remove_product_wishlist_message_title', __( 'Remove this product', 'yith-woocommerce-wishlist' ) ) ); ?>"><?php esc_html_e( 'Remove', 'yith-woocommerce-wishlist' ); ?></a>
 							<?php endif; ?>
+							<!-- Request a Quote -->
+							<?php
+							// do not show quote button if it's a parent product
+							if($product->is_type('variable')) {
+								?>
+								<div class="yith-ywraq-add-to-quote gl-wcwl-quote-select-options-wrapper">
+									<div class="yith-ywraq-add-button show" style="display:block" data-product_id="<?php $product->get_id();?>">
+										<a href="#gl-wcwl-quote-select-options-<?php echo $product->get_id();?>" class="gl-wcwl-quote-select-options button" data-product_id="<?php $product->get_id();?>" >
+													Request a Quote	</a>
+										<p>* product options required</p>
 
+									</div>
+									<div id="gl-wcwl-quote-select-options-<?php echo $product->get_id();?>" ><div class="gl-wcwl-quote-select-option-variation"></div>
+									<div class="gl-wcwl-quote-select-option-variation-loader"></div>
+									<div class="gl-wcwl-quote-select-option-variation-ywraq-buttons">
+								
+								</div></div>							
+								</div> <!-- .gl-wcwl-quote-select-options-wrapper -->
+							<?php
+							} else {
+
+								if( function_exists( 'YITH_Request_Quote_Premium' ) ) {
+									add_filter('yith_ywraq-btn_other_pages', '__return_true');
+									add_filter('yith_ywraq_show_button_in_loop_product_type', function(){
+										$types = array(
+											'simple',
+											'subscription',
+											'external',
+											'yith-composite',
+											'variation',
+											'variable'
+										);
+										return $types;
+									});
+								YITH_Request_Quote_Premium()->add_button_shop();
+								}
+							} // end if
+
+
+							?>
 							<?php do_action( 'yith_wcwl_table_after_product_cart', $item, $wishlist ); ?>
 						</td>
 					<?php endif; ?>

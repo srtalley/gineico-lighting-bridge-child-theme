@@ -8,10 +8,10 @@ jQuery(function($) {
 
         // Adds the ability to select options for a product so a
         // quote can be generated on a list page
-        setup_select_product_options_for_quote_and_list();
+        setup_select_product_options_for_quote();
 
         // Allow replacing the item in the list with one with product options
-        // setup_select_product_options_for_list();
+        setup_select_product_options_for_list();
 
         // Adds the ability to copy items to other lists
         setup_copy_to_another_list();
@@ -36,17 +36,6 @@ jQuery(function($) {
         // enable the request a quote button in the wishlist popup
         if($('#pp_full_res').find('.pp_inline .gl-wcwl-quote-select-option-variation').length) {
             $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation .add-request-quote-button.button').removeClass('disabled');
-        }
-
-        // enable the add to quote button in the wishlist popup
-        if($('#pp_full_res').find('.pp_inline .yith-ywraq-add-to-quote .add-request-quote-button').length) {
-            $('#pp_full_res').find('.gl-update-wraq-list-wrapper').removeClass('disabled');
-        }
-
-        // enable the add to list button in the wishlist popup and add the variation ID
-        if($('#pp_full_res').find('.pp_inline .gl-update-wcwl-list').length) {
-            $('#pp_full_res').find('.gl-update-wcwl-list-wrapper').removeClass('disabled');
-            $('#pp_full_res').find('.gl-update-wcwl-list').attr('data-variation_id', variation.variation_id);
         }
     } );
    
@@ -154,28 +143,16 @@ jQuery(function($) {
      * are needed to add to quote.
      */
     var gl_wcwl_variation_selection_id;
-    var wraq_button = false;
-    var update_wcwl_button = false;
-
-    function setup_select_product_options_for_quote_and_list(){
+    function setup_select_product_options_for_quote(){
 
         if( typeof $.prettyPhoto === 'undefined' ){
             return;
         }
         // The href of this link must match the ID of the div
         // we want to open
-        $('.gl-wcwl-quote-select-options, .gl-wcwl-list-select-options').on('click', function(){
+        $('.gl-wcwl-quote-select-options').on('click', function(){
             
             var t = $(this);
-           wraq_button = $(this).data('wraq_button');
-           update_wcwl_button = $(this).data('update_wcwl_button');
-
-            if(typeof wraq_button === 'undefined') {
-                wraq_button = false;
-            }
-            if(typeof update_wcwl_button === 'undefined') {
-                update_wcwl_button = false;
-            }
 
             gl_wcwl_variation_selection_id = t.closest('[data-row-id]').data('row-id');
 
@@ -193,19 +170,16 @@ jQuery(function($) {
                 default_height        : 100,
                 allow_resize          : true,
                 changepicturecallback : function(){
-                    console.log(wraq_button);
-                    console.log(update_wcwl_button);
+                    
                     $(document).trigger( 'yith_wcwl_popup_opened', [ this ] );
                     $.ajax({
                         type: 'POST',
                         dataType: 'json',
                         url: gl_mods_init.ajaxurl,
                         data: {
-                            'action': 'gl_popup_select_variation_options',
+                            'action': 'gl_wraq_select_variation_options',
                             'nonce': gl_mods_init.ajaxnonce,
                             'product_id': gl_wcwl_variation_selection_id,
-                            'wraq_button': wraq_button,
-                            'update_wcwl_button': update_wcwl_button
                         },
                         complete: function(){
                             
@@ -215,6 +189,7 @@ jQuery(function($) {
                         },
                         success: function(data) {
                             $('#pp_full_res').find('.pp_inline .gl-wcwl-quote-select-option-variation').html(data.html);
+
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
                             console.log(jqXHR + ' :: ' + textStatus + ' :: ' + errorThrown);
@@ -242,64 +217,9 @@ jQuery(function($) {
                 }
             }
         });
-
-        /**
-         * Add an item with a variation ID to the list
-         */
-        $( document ).on('click', '.gl-update-wcwl-list', function (e) {
-            e.preventDefault();
-
-            var product_id = $(this).data('product_id');
-            var variation_id = $(this).data('variation_id');
-            var popup_window = $('.gl-wcwl-quote-select-options-popup'),
-            // form = popup_content.find('form'),
-            // row_id = form.find( '.row-id' ).val(),
-            table = $('.cart.wishlist_table'),
-            wishlist_token = table.data('token');
-            $.ajax({
-                type: 'POST',
-                dataType: 'json',
-                url: gl_mods_init.ajaxurl,
-                data: {
-                    'action': 'gl_update_wcwl_list_with_variation',
-                    'nonce': gl_mods_init.ajaxnonce,
-                    'product_id': product_id,
-                    'variation_id': variation_id,
-                    'wishlist_token': wishlist_token
-                },
-                beforeSend: function(){
-                    block($(popup_window).find('.gl-wcwl-quote-select-option-variation'));
-                },
-                complete: function(){
-                    $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation-loader').hide();
-
-                    unblock($(popup_window).find('.gl-wcwl-quote-select-option-variation'));
-
-                    // $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation .add-request-quote-button.button').addClass('disabled');
-                    // $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation .yith_ywraq_add_item_browse_message a').attr('target', '_blank');
-                },
-                success: function(data) {
-                    if(data.already_in_list) {
-                        $('#pp_full_res').find('.pp_inline .gl-wcwl-select-option-variation-message').html(data.html);
-
-                    } else {
-                        $('#pp_full_res').find('.pp_inline .gl-wcwl-quote-select-option-variation').html('<div style="text-align: center;">' + data.html + '</div>');
-                        $('.pp_content_container').find('.pp_content').css('height', 'auto');
-                        setTimeout(function () {
-                            location.reload(true);
-                          }, 2000);
-                    }
-
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.log(jqXHR + ' :: ' + textStatus + ' :: ' + errorThrown);
-                }
-            });
-
-        });
     }
 
-    // var gl_wcwl_variation_selection_id;
+    var gl_wcwl_variation_selection_id;
     function setup_select_product_options_for_list(){
 
         if( typeof $.prettyPhoto === 'undefined' ){
@@ -307,56 +227,54 @@ jQuery(function($) {
         }
         // The href of this link must match the ID of the div
         // we want to open
-        // $('.gl-wcwl-list-select-options').on('click', function(){
-        //     console.log('cliccc');
-        //     var t = $(this);
+        $('.gl-wcwl-list-select-options').on('click', function(){
+            
+            var t = $(this);
 
-        //     gl_wcwl_variation_selection_id = t.closest('[data-row-id]').data('row-id');
+            gl_wcwl_variation_selection_id = t.closest('[data-row-id]').data('row-id');
 
-        // }).prettyPhoto(
-        //     {
+        }).prettyPhoto(
+            {
 
-        //         social_tools          : false,
-        //         social_tools          : false,
-        //         theme                 : 'pp_woocommerce gl-wcwl-quote-select-options-popup',
-        //         horizontal_padding    : 20,
-        //         opacity               : 0.8,
-        //         deeplinking           : false,
-        //         overlay_gallery       : false,
-        //         default_width         : 500,
-        //         default_height        : 100,
-        //         allow_resize          : true,
-        //         changepicturecallback : function(){
+                social_tools          : false,
+                social_tools          : false,
+                theme                 : 'pp_woocommerce gl-wcwl-list-select-options-popup',
+                horizontal_padding    : 20,
+                opacity               : 0.8,
+                deeplinking           : false,
+                overlay_gallery       : false,
+                default_width         : 500,
+                default_height        : 100,
+                allow_resize          : true,
+                changepicturecallback : function(){
                     
-        //             $(document).trigger( 'yith_wcwl_popup_opened', [ this ] );
-        //             $.ajax({
-        //                 type: 'POST',
-        //                 dataType: 'json',
-        //                 url: gl_mods_init.ajaxurl,
-        //                 data: {
-        //                     'action': 'gl_popup_select_variation_options',
-        //                     'nonce': gl_mods_init.ajaxnonce,
-        //                     'product_id': gl_wcwl_variation_selection_id,
-        //                     'wraq_button': false,
-        //                     'update_wcwl_button': true
-        //                 },
-        //                 complete: function(){
+                    $(document).trigger( 'yith_wcwl_popup_opened', [ this ] );
+                    $.ajax({
+                        type: 'POST',
+                        dataType: 'json',
+                        url: gl_mods_init.ajaxurl,
+                        data: {
+                            'action': 'gl_wraq_select_variation_options',
+                            'nonce': gl_mods_init.ajaxnonce,
+                            'product_id': gl_wcwl_variation_selection_id,
+                        },
+                        complete: function(){
                             
-        //                     $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation-loader').hide();
-        //                     $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation .add-request-quote-button.button').addClass('disabled');
-        //                     $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation .yith_ywraq_add_item_browse_message a').attr('target', '_blank');
-        //                 },
-        //                 success: function(data) {
-        //                     $('#pp_full_res').find('.pp_inline .gl-wcwl-quote-select-option-variation').html(data.html);
+                            $('#pp_full_res').find('.gl-wcwl-list-select-option-variation-loader').hide();
+                            $('#pp_full_res').find('.gl-wcwl-list-select-option-variation .add-request-quote-button.button').addClass('disabled');
+                            $('#pp_full_res').find('.gl-wcwl-list-select-option-variation .yith_ywraq_add_item_browse_message a').attr('target', '_blank');
+                        },
+                        success: function(data) {
+                            $('#pp_full_res').find('.pp_inline .gl-wcwl-list-select-option-variation').html(data.html);
 
-        //                 },
-        //                 error: function(jqXHR, textStatus, errorThrown) {
-        //                     console.log(jqXHR + ' :: ' + textStatus + ' :: ' + errorThrown);
-        //                 }
-        //             });
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.log(jqXHR + ' :: ' + textStatus + ' :: ' + errorThrown);
+                        }
+                    });
 
-        //         },
-        // });
+                },
+        });
     }
 
     /**
@@ -469,22 +387,16 @@ jQuery(function($) {
      */
     function change_disabled_ywraq_and_projects_button_message() {
 
-        $(document).on('click', '.woocommerce-variation-add-to-cart-disabled + .yith-ywraq-add-to-quote, .gl-yith-wcwl-wrapper.disable-project-list .gl-wcwl-add-to-projects-wrapper .yith-wcwl-add-button, .gl-update-wraq-list-wrapper.disabled, .gl-update-wcwl-list-wrapper.disabled', function (event) {
+        $(document).on('click', '.woocommerce-variation-add-to-cart-disabled + .yith-ywraq-add-to-quote, .gl-yith-wcwl-wrapper.disable-project-list .gl-wcwl-add-to-projects-wrapper .yith-wcwl-add-button', function (event) {
+            // window.alert = function() {};
             event.stopPropagation();
             // select the first drop down
-            if($(this).parentsUntil('.qode-single-product-summary').parent().length) {
-                console.log('this');
-                var product_summary = $(this).parentsUntil('.qode-single-product-summary').parent();
-            } else if($(this).parent().hasClass('single-product')) {
-                var product_summary = $(this).parent();
-            }
-            // var product_summary = $(this).parentsUntil('.qode-single-product-summary').parent();
-            var product_summary = $(this).parentsUntil('.summary').parent();
+            var product_summary = $(this).parentsUntil('.qode-single-product-summary').parent();
             var form = $(product_summary).find('.variations_form');
             form.find('.variations').addClass('variation_highlight');
             var selections = $(form).find('select');
             selections.first().focus();
-            // var gl_yith_wcwl = $(product_summary).find('.gl-yith-wcwl-wrapper');
+            var gl_yith_wcwl = $(product_summary).find('.gl-yith-wcwl-wrapper');
             // remove it if they choose an option
             $( document ).on( "show_variation", ".single_variation_wrap", function ( event, variation ) {
                 // remove a variation highlight 

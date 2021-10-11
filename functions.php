@@ -5,6 +5,7 @@ include_once('includes/qode-breadcrumbs.php');
 include_once('includes/class-woocommerce.php');
 include_once('includes/class-yith-woocommerce-quotes.php');
 include_once('includes/class-yith-woocommerce-wishlist.php');
+include_once('includes/class-yith-woocommerce-wishlist-page-template.php');
 
 define('QODE_CHILD_ROOT', get_stylesheet_directory_uri());
 

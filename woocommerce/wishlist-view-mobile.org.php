@@ -89,8 +89,6 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 										<?php echo wp_kses_post( apply_filters( 'woocommerce_in_cartproduct_obj_title', $product->get_title(), $product ) ); ?>
 									</a>
 								</h3>
-								<?php do_action( 'gl_yith_wcwl_table_before_product_varition', $item, $wishlist ); ?>
-
 								<?php do_action( 'yith_wcwl_table_after_product_name', $item ); ?>
 							</div>
 
@@ -164,8 +162,6 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 
 								</table>
 							<?php endif; ?>
-							<?php do_action( 'gl_yith_wcwl_table_after_product_name', $item, $wishlist ); ?>
-
 						</div>
 					</div>
 
@@ -238,8 +234,6 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 								<?php endif; ?>
 							</div>
 						<?php endif; ?>
-
-						<?php do_action( 'gl_yith_wcwl_table_mobile_after_move_to_another_wishlist', $item, $wishlist ); ?>
 
 						<?php if ( $show_remove_product || $repeat_remove_button ) : ?>
 							<div class="product-remove">
