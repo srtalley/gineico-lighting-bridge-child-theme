@@ -16,7 +16,7 @@ class GL_YITH_WooCommerce_Wishlist_Page_Template {
 
             add_action( 'gl_yith_wcwl_table_after_product_name', array($this, 'gl_yith_wcwl_table_after_product_name'), 10, 2 );
             
-            add_action( 'yith_wcwl_table_product_after_move_to_another_wishlist', array($this, 'gl_yith_wcwl_table_product_after_move_to_another_wishlist'), 10, 2 );
+            add_action( 'gl_yith_wcwl_table_after_move_to_another_wishlist', array($this, 'gl_yith_wcwl_table_product_after_move_to_another_wishlist'), 10, 2 );
             add_action( 'gl_yith_wcwl_table_mobile_after_move_to_another_wishlist', array($this, 'gl_yith_wcwl_table_product_after_move_to_another_wishlist'), 10, 2 );
 
         } // end if class exists
@@ -32,7 +32,7 @@ class GL_YITH_WooCommerce_Wishlist_Page_Template {
         endif;
 
     }
-  
+
     /** 
      * Hook into custom GL template location above the product
      * variation listing
@@ -71,7 +71,7 @@ class GL_YITH_WooCommerce_Wishlist_Page_Template {
         <?php
         $product = wc_get_product($item['product_id']);
 
-        if($product->is_type('variable')) {
+        if($product->is_type('variableddd')) {
 
         ?>
         <div class="yith-ywraq-add-to-quote gl-wcwl-quote-select-options-wrapper">
@@ -92,16 +92,46 @@ class GL_YITH_WooCommerce_Wishlist_Page_Template {
     }
 
     public function gl_yith_wcwl_table_product_after_move_to_another_wishlist( $item, $wishlist ) {
-        echo '<a href="#gl_copy_to_another_wishlist" class="gl-open-popup-copy-to-another-wishlist-button" data-product_id="<?php $product->get_id();?>">Copy to another list &rsaquo;</a>';
+        $has_project_lists = false;
+        if(is_user_logged_in()) {
+            $default_wishlist = \YITH_WCWL_Wishlist_Factory::get_default_wishlist();
+            $default_wishlist_token = $default_wishlist->get_token();
+            foreach (\YITH_WCWL()->get_current_user_wishlists() as $wishlist) {
+                $wishlist_token = $wishlist->get_token();
+                if($wishlist_token != $default_wishlist_token) {
+                    $has_project_lists = true;
+                    break;
+                }
+            }
+        } // end if logged in
+
+        // check if there is more than one wishlist because we don't
+        // want to show this if there is only one wishlist
+        if($has_project_lists) {
+            echo '<a href="#gl_copy_to_another_wishlist" class="gl-open-popup-copy-to-another-wishlist-button" data-product_id="<?php $product->get_id();?>">Copy to another list &rsaquo;</a>';
+        }
 
         $product = wc_get_product($item['product_id']);
 
         if($product->is_type('variable')) {
             ?>
             <div class="yith-ywraq-add-to-quote gl-wcwl-quote-select-options-wrapper">
+            <div class="yith-ywraq-add-button show" style="display:block" data-product_id="<?php $product->get_id();?>">
+            <a href="#gl-wcwl-list-select-options-<?php echo $product->get_id();?>" class="gl-wcwl-list-select-options button" data-product_id="<?php $product->get_id();?>" data-update_wcwl_button="true">Add Product Options</a>
+
+
+            </div>
+            <div id="gl-wcwl-list-select-options-<?php echo $product->get_id();?>" ><div class="gl-wcwl-quote-select-option-variation"></div>
+                <div class="gl-wcwl-select-option-variation-message"></div>
+            <div class="gl-wcwl-quote-select-option-variation-loader"></div>
+
+        
+        </div>							
+        </div> <!-- .gl-wcwl-quote-select-options-wrapper -->
+            <div class="yith-ywraq-add-to-quote gl-wcwl-quote-select-options-wrapper disabled">
                 <div class="yith-ywraq-add-button show" style="display:block" data-product_id="<?php $product->get_id();?>">
                     <a href="#gl-wcwl-quote-select-options-<?php echo $product->get_id();?>" class="gl-wcwl-quote-select-options button" data-product_id="<?php $product->get_id();?>" data-wraq_button="true">Request a Quote	</a>
-                    <p>* product options required</p>
+                    <!-- <p>* product options required</p> -->
 
                 </div>
                 <div id="gl-wcwl-quote-select-options-<?php echo $product->get_id();?>" ><div class="gl-wcwl-quote-select-option-variation"></div>
@@ -129,9 +159,7 @@ class GL_YITH_WooCommerce_Wishlist_Page_Template {
             YITH_Request_Quote_Premium()->add_button_shop();
             }
         } // end if
-
     }
-
 } // end class
 
 $gl_yith_woocommerce_wishlist_page_template = new GL_YITH_WooCommerce_Wishlist_Page_Template();

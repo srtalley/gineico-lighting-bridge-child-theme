@@ -105,7 +105,7 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
                     <?php //echo $title
                     //BEGIN GL CUSTOM
                     //app.launchURL("http://www.mycompany.com/pdfDocument.pdf", true);
-							echo '<a style="text-decoration: none; color: #38aa2e; font-weight: bold;" target="_blank" href="' . esc_url( $_product->get_permalink() ) . '">' . esc_html( $title ) . '</a>';
+							echo '<a style="text-decoration: none; color: #e2ae68; font-weight: bold;" target="_blank" href="' . esc_url( $_product->get_permalink() ) . '">' . esc_html( $title ) . '</a>';
                     // END GL CUSTOM ?>
                        <small><?php
 
@@ -127,7 +127,7 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
 								$product = wc_get_product($product_id);
 								$product_short_description = $product->get_short_description();
 
-									echo strip_tags( substr($product->get_short_description(), 0 , 200)) . '&hellip; <a style="text-decoration: none; color: #38aa2e;" target="_blank" href="' . esc_url( $_product->get_permalink() ) . '">Read More</a>';
+									echo strip_tags( substr($product->get_short_description(), 0 , 200)) . '&hellip; <a style="text-decoration: none; color: #e2ae68;" target="_blank" href="' . esc_url( $_product->get_permalink() ) . '">Read More</a>';
 								
 							}
 							echo '</div>';

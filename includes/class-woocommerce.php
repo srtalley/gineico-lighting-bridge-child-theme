@@ -403,7 +403,7 @@ class GL_WooCommerce {
             $new['quotation'] = 'Request Quotes';
 		}
         
-        $items['quotes'] = 'Quotations';
+        $items['quotes'] = 'Quotes Submitted';
 
 	    $items  = array_slice( $items, 0, 1, true ) 
 				+ $new 
@@ -460,7 +460,7 @@ class GL_WooCommerce {
             <li><a href="<?php echo site_url('/my-favourites/'); ?>">Favourites</a> your favourite products</li>
             <li><a href="<?php echo site_url('/my-projects/manage/'); ?>">Projects/Schedules</a> that you are creating for different jobs</li>
             <li><a href="<?php echo site_url('/request-quote/'); ?>">Request Quotes</a> that you are getting ready for pricing</li>
-            <li><a href="<?php echo wc_get_page_permalink( 'myaccount' ) . 'quotes/'; ?>">Quotations</a> received with pricing from Gineico Lighting</li>
+            <li><a href="<?php echo wc_get_page_permalink( 'myaccount' ) . 'quotes/'; ?>">Quotes Submitted</a> your list of quotations</li>
             <li><a href="<?php echo wc_get_endpoint_url('/orders'); ?>">Orders</a></li>
         </ul>
         <p>You can manage your <a href="<?php echo site_url(); ?>/my-account/edit-address/">shipping</a> and <a href="<?php echo site_url(); ?>/my-account/edit-address/">billing addresses</a>, and edit your <a href="<?php echo site_url(); ?>/my-account/edit-account/">password</a> and <a href="<?php echo site_url(); ?>/my-account/edit-account/">account details</a>.</p>

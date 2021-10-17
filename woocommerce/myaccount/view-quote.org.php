@@ -48,12 +48,7 @@ $af4              = $order->get_meta( 'ywraq_other_email_fields' );
 $is_new = $order->get_status() === 'ywraq-new';
 
 $raq_version = $order->get_meta( '_ywraq_version' );
-// BEGIN GM CUSTOM
-if($is_new) {
-	$show_price        = false;
-	$show_total_column = false;
-}
-// END GM CUSTOM
+
 if ( $is_new ) {
 	$admin_message = get_option( 'ywraq_quote_admin_text_new_quotes_status', '' );
 	$show_price    = ! ( 'yes' === get_option( 'ywraq_quote_my_account_hide_price_new_quote', 'yes' ) || 'yes' === get_option( 'ywraq_hide_price' ) );
@@ -157,10 +152,7 @@ if ( $is_new ) {
 		?>
 		<p class="ywraq-buttons">
 			<?php
-			// if ( get_option( 'ywraq_show_accept_link' ) !== 'no' ) :
-			//BEGIN GM CUSTOM
-			if ( $show_price && get_option( 'ywraq_show_accept_link' ) !== 'no' ) :
-			// END GM CUSTOM
+			if ( get_option( 'ywraq_show_accept_link' ) !== 'no' ) :
 				?>
 			<a class="ywraq-big-button ywraq-accept"
 				href="<?php echo esc_url( ywraq_get_accepted_quote_page( $order ) ); ?>">
@@ -268,25 +260,7 @@ if ( $is_new ) {
 							}
 
 							echo wp_kses_post( apply_filters( 'woocommerce_order_item_quantity_html', ' <strong class="product-quantity">' . sprintf( '&times; %s', esc_html( $item['qty'] ) ) . '</strong>', $item ) );
-							// BEGIN GM CUSTOM
-							echo '<div class="product-description">';
-							$product_id  = '';
-							if($_product->is_type('variable') || $_product->is_type('variation')) {
-								$product_id = $_product->get_parent_id();
 
-							} else if($_product->is_type('simple')) {
-								$product_id = $_product->get_id();
-							}
-							if($product_id != '') {
-								$product = wc_get_product($product_id);
-								$product_short_description = $product->get_short_description();
-
-									echo strip_tags( substr($product->get_short_description(), 0 , 100)) . '&hellip;';
-								
-							}
-
-							echo '</div>';
-							// END GM CUSTOM
 							// Allow other plugins to add additional product information here.
 							do_action( 'woocommerce_order_item_meta_start', $item_id, $item, $order );
 
@@ -390,10 +364,7 @@ if ( $is_new ) {
 	<div class="ywraq-additional-information">
 		<div class="ywraq-customer-information">
 			<header>
-				<!-- BEGIN GM CUSTOM -->
-				<!-- <h3><?php esc_html_e( 'Customer\'s details', 'yith-woocommerce-request-a-quote' ); ?></h3> -->
-				<h3><?php esc_html_e( 'Your details', 'yith-woocommerce-request-a-quote' ); ?></h3> 
-				<!-- END GM CUSTOM -->
+				<h3><?php esc_html_e( 'Customer\'s details', 'yith-woocommerce-request-a-quote' ); ?></h3>
 			</header>
 
 

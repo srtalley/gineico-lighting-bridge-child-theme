@@ -57,7 +57,7 @@ $show_dateadded = false;
             font-family: <?php echo $pdf_font ?> !important;
         }
 		a, p a {
-			color: #38aa2e;
+			color: #e2ae68;
 			text-decoration: none;
 		}
         .logo{
@@ -344,7 +344,7 @@ do_action( 'yith_wcwl_pdf_before_wishlist', $wishlist );
 
 						$product_short_description = $main_product->get_short_description();
 
-						echo strip_tags( substr($product_short_description, 0 , 200)) . '&hellip; <a style="text-decoration: none; color: #38aa2e;" target="_blank" href="' . esc_url( $product->get_permalink() ) . '">Read More</a>';
+						echo strip_tags( substr($product_short_description, 0 , 200)) . '&hellip; <a style="text-decoration: none; color: #e2ae68;" target="_blank" href="' . esc_url( $product->get_permalink() ) . '">Read More</a>';
 						echo '</div>';
 						echo $variation_description;
 

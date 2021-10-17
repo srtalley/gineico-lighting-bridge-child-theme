@@ -18,7 +18,7 @@
 
 ?>
 <div class="yith-ywraq-mail-form-wrapper">
-    <h3><?php echo apply_filters( 'ywraq_form_title', __( 'Send the request', 'yith-woocommerce-request-a-quote' ) ) ?></h3>
+    <h3><?php echo apply_filters( 'ywraq_form_title', __( 'SEND QUOTE REQUEST', 'yith-woocommerce-request-a-quote' ) ) ?></h3>
     <form id="yith-ywraq-default-form" name="yith-ywraq-default-form"
           action="<?php echo esc_url( YITH_Request_Quote()->get_raq_page_url() ) ?>" method="post"
           enctype="multipart/form-data">
@@ -48,7 +48,13 @@
             echo '<div class="request-quote-clear"></div>';
 	    ?>
 
-	    <?php if ( ! is_user_logged_in() && 'yes' == $registration_is_enabled ) : ?>
+        <p class="form-row form-row-wide">
+            <input type="hidden" id="ywraq-mail-wpnonce" name="ywraq_mail_wpnonce"
+                   value="<?php echo wp_create_nonce( 'ywraq-default-form-request' ) ?>">
+            <input class="button raq-send-request" type="submit"
+                   value="<?php echo apply_filters( 'ywraq_form_defaul_submit_label', __( 'Send Your Request', 'yith-woocommerce-request-a-quote' ) ) ?>">
+        </p>
+        <?php if ( ! is_user_logged_in() && 'yes' == $registration_is_enabled ) : ?>
 		    <?php do_action( 'ywraq_before_registration_default_form' ); ?>
             <div class="woocommerce-account-fields">
 	            <?php if ( 'no' == $force_registration ) : ?>
@@ -80,13 +86,7 @@
                  data-sitekey="<?php echo esc_attr( get_option( 'ywraq_reCAPTCHA_sitekey' ) ) ?>"></div>
             </p>
 		<?php endif; ?>
-
-        <p class="form-row form-row-wide">
-            <input type="hidden" id="ywraq-mail-wpnonce" name="ywraq_mail_wpnonce"
-                   value="<?php echo wp_create_nonce( 'ywraq-default-form-request' ) ?>">
-            <input class="button raq-send-request" type="submit"
-                   value="<?php echo apply_filters( 'ywraq_form_defaul_submit_label', __( 'Send Your Request', 'yith-woocommerce-request-a-quote' ) ) ?>">
-        </p>
+        <div class="gl-quote-request-footer"><p>All quotes requested on our website create a user account area for your convenience. Emails will be sent to you containing a copy of your quote request. If this is your first time using our Projects/Quoting tools then a second email will be sent containing login details.</p></div>
 
 		<?php if ( defined( 'ICL_LANGUAGE_CODE' ) ): ?>
             <input type="hidden" class="lang_param" name="lang" value="<?php echo( ICL_LANGUAGE_CODE ); ?>"/>
@@ -94,4 +94,5 @@
 
 	    <?php do_action( 'ywraq_after_content_default_form' ); ?>
     </form>
+    <?php do_action( 'gl_ywraq_after_default_form' ); ?>
 </div>

@@ -21,7 +21,7 @@ function bridge_child_wp_enqueue_scripts() {
 	// wp_enqueue_style('childstyle');
 	wp_enqueue_style( 'bridge-childstyle', get_stylesheet_directory_uri() . '/style.css', '', wp_get_theme()->get('Version'), 'all' );
 
-	wp_enqueue_script('qode_child', QODE_CHILD_ROOT . '/js/qode_child.js',array(),false,true);
+	wp_enqueue_script('qode_child', QODE_CHILD_ROOT . '/js/qode_child.js',array(),wp_get_theme()->get('Version'),true);
 
 	wp_enqueue_script('gl-mods', QODE_CHILD_ROOT . '/js/gl-mods.js',array('jquery', 'wp-util', 'jquery-blockui'),wp_get_theme()->get('Version'),true);
 	wp_localize_script( 'gl-mods', 'gl_mods_init', array(
@@ -1340,8 +1340,9 @@ if ( ! function_exists( 'bridge_child_woocommerce_email_footer' ) ) {
 if ( ! function_exists( 'bridge_child_woocommerce_quote_email_pdf_footer' ) ) {
 	function bridge_child_woocommerce_quote_email_pdf_footer($order_id) {
 		?>
-		<p style="margin-top: 100px; font-style: italic; font-size: 12px;">
-			PLEASE TAKE NOTE OF ALL THE CONDITIONS OF THIS QUOTE AS STATED BELOW, BEFORE PLACING AN ORDER
+		<div class="gineico-pdf-footer" style="margin-top: 100px; font-style: italic; font-size: 12px;">
+		<p style="font-style: italic; font-size: 12px;">
+			PLEASE TAKE NOTE OF ALL THE CONDITIONS OF THIS QUOTE AS STATED BELOW, BEFORE PLACING AN ORDER</p>
 			<ol>
 				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Until fully Paid, goods remain the sole property of Gineico Queensland Pty Ltd.</li>
 				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Unless otherwise specified, indicated costs are unit costs.</li>
@@ -1360,7 +1361,7 @@ if ( ! function_exists( 'bridge_child_woocommerce_quote_email_pdf_footer' ) ) {
 				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Custom or non standard / stock hardware cannot be returned.</li>
 				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Clients should take care to download the product specific data sheets, or to request technical information in writing, to ensure all items ordered are in every way compatible for each specific intended application.</li>
 			</ol>
-		</p>
+		</div>
 		<?php
 	}
 	add_action( 'yith_ywraq_quote_template_after_content', 'bridge_child_woocommerce_quote_email_pdf_footer' );

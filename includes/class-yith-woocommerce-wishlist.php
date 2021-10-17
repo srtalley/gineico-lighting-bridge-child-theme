@@ -77,6 +77,9 @@ class GL_YITH_WooCommerce_Wishlist {
             add_filter( 'yith_wcwl_new_list_title_text', array($this, 'gl_change_new_list_title_text') );
             add_action( 'yith_wcwl_before_wishlist_title', array($this, 'gl_yith_wcwl_before_wishlist_title') );
 
+            add_filter( 'yith_wcwl_no_product_to_remove_message' , array($this, 'gl_yith_wcwl_no_product_to_remove_message'), 10, 1);
+            add_filter( 'yith_wcwl_login_notice', array($this,'gl_yith_wcwl_login_notice'), 10, 1 );
+
             // add a PDF download link to the project list
             add_action( 'yith_wcwl_wishlist_before_wishlist_content', array( $this, 'gl_add_wishlist_download_link' ), 20, 1 );
 
@@ -154,6 +157,8 @@ class GL_YITH_WooCommerce_Wishlist {
         if(is_object($default_wishlist)) {
             $default_wishlist_url = $default_wishlist ? $default_wishlist->get_url() : YITH_WCWL()->get_wishlist_url();
             return $default_wishlist_url;
+        } else {
+            return false;
         }
     }
 
@@ -203,7 +208,7 @@ class GL_YITH_WooCommerce_Wishlist {
             if($product->is_type('variable')) {
                 $extra_classes .= ' disable-project-list';
             }
-            echo '<div class="gl-yith-wcwl-wrapper ' . $extra_classes . '">';
+            echo '<div class="gl-yith-wcwl-wrapper ' . $extra_classes . ' logged_in">';
             echo '<div class ="gl-wcwl-button-wrapper gl-wcwl-add-to-favourites-wrapper">';
             echo '<div class="yith-wcwl-add-to-wishlist">';
             // ADD JS TO SWITCH BUTTONS
@@ -252,7 +257,7 @@ class GL_YITH_WooCommerce_Wishlist {
 
         if(is_user_logged_in()) {
 
-            echo '<div class="gl-yith-wcwl-wrapper">';
+            echo '<div class="gl-yith-wcwl-wrapper logged_in">';
             echo '<div class ="gl-wcwl-button-wrapper gl-wcwl-add-to-favourites-wrapper">';
 
             echo '<div class ="yith-wcwl-add-to-wishlist">';
@@ -301,8 +306,10 @@ class GL_YITH_WooCommerce_Wishlist {
     public function gl_add_logged_out_projects_message() {
         echo '<div id="gl-projects-message-logged-out">';
         echo '<div class="gl-projects-message-logged-out-message">';
+        echo '<div class="gl-projects-message-logged-out-message-header">';
         echo '<h3>Add to My Project</h3>';
-        echo '<p>To use our projects feature you need to login or create an account:</p>';
+        echo '<p>To use our projects feature you need to log in or create an account:</p>';
+        echo '</div> <!-- .gl-projects-message-logged-out-message -->';
         echo '<div class="login-button-wrapper"><a href="' . site_url('/login') . '" class="gl-login button">Login</a>&nbsp;<a href="' . site_url('/login') . '" class="gl-register button">Create an Account</a></div>';     
         echo '</div> <!-- .gl-projects-message-logged-out-message -->';
         echo '</div> <!-- #gl-projects-message-logged-out -->';
@@ -354,9 +361,6 @@ class GL_YITH_WooCommerce_Wishlist {
                     break;
                 case '&lsaquo; Back to all wishlists': 
                     $translated_text = __( '&lsaquo; Back to projects', 'yith-woocommerce-wishlist');
-                    break;
-                case 'No products added to the wishlist':
-                    $translated_text = __( 'No products are in the list', 'yith-woocommerce-wishlist');
                     break;
             }
         } 
@@ -425,11 +429,24 @@ class GL_YITH_WooCommerce_Wishlist {
         return 'Enter project name';
     }
     /**
+     * Change the no products message
+     */
+    public function gl_yith_wcwl_no_product_to_remove_message() {
+        return 'No products are in the list.';
+
+    }
+     /**
+     * Change the message shown when a person needs to log in
+     */
+    public function gl_yith_wcwl_login_notice($notice) {
+        return 'Please <a href="' . site_url('/login/') . '">log in</a> or <a href="' . site_url('/login/') . '">create an account</a> to use all of the My Favourites and My Projects features.';
+    }
+    /**
      * CSS before the wishlist table
      */
     public function gl_yith_wcwl_before_wishlist_title($wishlist) {
         $default_wishlist_id = $this->gl_get_default_wishlist_id();
-        echo '<style>.shop_table.wishlist_table tr[data-wishlist-id="' . $default_wishlist_id . '"] { display: none; }</style>';
+        echo '<style>.shop_table.wishlist_table tr[data-wishlist-id="' . $default_wishlist_id . '"], li[data-wishlist-id="' . $default_wishlist_id . '"] { display: none; }</style>';
         // hide project links on the default list; prevent renaming list
         if(is_object($wishlist)) {
 
@@ -455,7 +472,12 @@ class GL_YITH_WooCommerce_Wishlist {
         global $wp;
         $current_url =  home_url( $wp->request );
         if($current_url == home_url( '/my-favourites' )) {
-            wp_redirect( $this->gl_get_default_wishlist_url() );
+            $default_wishlist_url = $this->gl_get_default_wishlist_url();
+            if($default_wishlist_url) {
+                wp_redirect( $this->gl_get_default_wishlist_url() );
+            } else {
+                wp_redirect( site_url('/my-projects/') );
+            }
         }
     }
 
@@ -760,6 +782,7 @@ class GL_YITH_WooCommerce_Wishlist {
            
 			?>
 			<div class="single-product <?php echo get_the_ID(); ?>" data-product-page-preselected-id="<?php echo esc_attr( $preselected_id ); ?>">
+            <h3 class="product-title"><?php echo get_the_title(); ?></h3>
 				<?php 
                 woocommerce_template_single_add_to_cart(); 
 
@@ -853,7 +876,9 @@ class GL_YITH_WooCommerce_Wishlist {
      * wishlist functionality
      */
     public function gl_copy_to_another_list_template($wishlist) {
-        yith_wcwl_get_template( 'wishlist-popup-copy-to-another-list-gl.php', $this->wishlist_params);
+        if(is_user_logged_in()) {
+            yith_wcwl_get_template( 'wishlist-popup-copy-to-another-list-gl.php', $this->wishlist_params);
+        }
     }
 
     /** 

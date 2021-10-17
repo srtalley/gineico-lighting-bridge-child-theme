@@ -30,8 +30,8 @@ else: ?>
 			<thead>
 			<tr>
 				<th class="product-remove">&nbsp;</th>
-				<th class="product-thumbnail">&nbsp;</th>
-				<th class="product-name"><?php _e( 'Product', 'yith-woocommerce-request-a-quote' ) ?></th>
+				<th class="product-thumbnail"><?php _e( 'Product', 'yith-woocommerce-request-a-quote' ) ?></th>
+				<th class="product-name"><?php // _e( 'Product', 'yith-woocommerce-request-a-quote' ) ?></th>
 				<th class="product-quantity"><?php _e( 'Quantity', 'yith-woocommerce-request-a-quote' ) ?></th>
 				<?php if ( get_option( 'ywraq_hide_total_column', 'yes' ) == 'no' && get_option( 'ywraq_hide_price' ) != 'yes' ): ?>
 					<th class="product-subtotal"><?php _e( 'Total', 'yith-woocommerce-request-a-quote' ); ?></th>

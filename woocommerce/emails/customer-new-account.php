@@ -38,7 +38,7 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 		<li><a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' )  ); ?>" target="_blank">MY ACCOUNT</a> to login</li>
 		<li><a href="<?php echo esc_url( site_url('/my-favourites/')  ); ?>" target="_blank">MY FAVOURITES</a> a list of your favourite fittings.</li>
 		<li><a href="<?php echo esc_url( site_url('/my-projects/manage/')  ); ?>" target="_blank">MY PROJECTS</a> a list of your current project schedules with features to download PDF copies for reference or to share. Once final fittings have been decided you will be able to select individual fittings for a quote.</li>
-		<li><a href="<?php echo esc_url( site_url('/request-quote/')  ); ?>" target="_blank">MY REQUEST QUOTES</a> a list of your requested quotes</li>
+		<li><a href="<?php echo esc_url( site_url('/request-quote/')  ); ?>" target="_blank">MY REQUEST QUOTES</a> your quote work in progress</li>
 		<li><a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) . 'quotes/'); ?>" target="_blank">MY QUOTATIONS</a> a list of quotes with prices from Gineico Lighting</li>
 	</ul>
 </p>
@@ -47,8 +47,8 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
 <p>
 	<ul>
-		<li><strong>Username:</strong> <?php echo esc_html( $user_login ); ?></li>
-		<li><strong>Password:</strong> <?php echo esc_html( $user_pass ); ?></li>
+		<li><strong>Username: <?php echo esc_html( $user_login ); ?></strong></li>
+		<li><strong>Password: <?php echo esc_html( $user_pass ); ?></strong></li>
 	</ul>
 </p>
 

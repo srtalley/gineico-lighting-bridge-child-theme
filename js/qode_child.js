@@ -1,4 +1,7 @@
 //v2.0
+/**
+ * This is the original JS file for the theme which has had a few updates in 2021.
+ */
 var add_to_quote_buttons_check_timer = null;
 
 $j(document).ready(function() {
@@ -150,6 +153,9 @@ $j(document).ready(function() {
 		});
 	});
 
+	/** 
+	 * Move the error messages on the request a quote page
+	 */
 	var send_req_btn_container = $j('#yith-ywraq-default-form .raq-send-request').parent();
 	if(send_req_btn_container.length > 0) {
 		var fix_req_error_message_timer = null;
@@ -157,15 +163,27 @@ $j(document).ready(function() {
 			fix_req_error_message_timer = setInterval(function() {
 					var send_req_error_message = $j('#yith-ywraq-default-form .woocommerce-error.woocommerce-message');
 					if(send_req_error_message.length > 0 && !send_req_error_message.hasClass('moved')) {
-						send_req_btn_container.before(send_req_error_message);
+						send_req_btn_container.after(send_req_error_message);
 						send_req_error_message.addClass('moved');
-						send_req_error_message.prepend('<span class="msg-title">Your request was not send<br>The following information is needed:</span><br>');
+						// send_req_error_message.prepend('<span class="msg-title">Your request was not send<br>The following information is needed:</span><br>');
 						new_scroll_to_notices();
 						clearInterval(fix_req_error_message_timer);
 					}
 				}, 10);
 		});
 	}
+	/**
+	 * Show the login form on the request a quote page when clicked
+	 */
+	$j(document).on('click', '#yith-ywraq-default-form .woocommerce-error .showlogin', function (e) {
+		e.preventDefault();
+		$j('.woocomerce-form.woocommerce-form-login').slideDown();
+		var header_height = $j('.header_top_bottom_holder').first().height();
+		$j([document.documentElement, document.body]).animate({
+			scrollTop: $j(".woocomerce-form.woocommerce-form-login").offset().top - header_height - 300
+		}, 500);
+		$j('.woocomerce-form.woocommerce-form-login .form-row.form-row-first input').focus();
+	});
 
 	$j('.show-top-header').click(function(event) {
 		var header_top = $j(this).parents('.header_top');
@@ -205,15 +223,10 @@ function new_scroll_to_notices() {
     }
 
     if (scrollElement.length) {
-        if (isSmoothScrollSupported) {
-            scrollElement[0].scrollIntoView({
-                behavior: 'smooth'
-            });
-        } else {
-            $j('html, body').stop().animate({
-                scrollTop: (scrollElement.offset().top - 100)
-            }, 1000);
-        }
+		var header_height = $j('.header_top_bottom_holder').first().height();
+		$j('html, body').stop().animate({
+			scrollTop: (scrollElement.offset().top - header_height - 100)
+		}, 1000);
     }
 }
 

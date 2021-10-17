@@ -3,15 +3,17 @@ jQuery(function($) {
 
     $('document').ready(function() {
 
+        // add target blank if the view your quote button is visible
+        if($('.yith_ywraq_add_item_browse_message a').length) {
+            $('.yith_ywraq_add_item_browse_message a').attr('target', '_blank');
+        }
+
         // Add the ajax to the add to my favourites button
         setup_add_to_favourites_button();
 
         // Adds the ability to select options for a product so a
         // quote can be generated on a list page
         setup_select_product_options_for_quote_and_list();
-
-        // Allow replacing the item in the list with one with product options
-        // setup_select_product_options_for_list();
 
         // Adds the ability to copy items to other lists
         setup_copy_to_another_list();
@@ -105,10 +107,12 @@ jQuery(function($) {
             });
         });
 
+        // This is for clicking add to my projects while logged in
+        // and for the add to my favourites button when logged out
         $( document ).on('added_to_wishlist', function(event, element){
             console.log(event);
             if(event.type == 'added_to_wishlist') {
-                $('.gl-wcwl-add-to-projects-wrapper').addClass('added_to_wishlist');
+                $('.logged_in .gl-wcwl-add-to-projects-wrapper').addClass('added_to_wishlist');
             }
         });
     }
@@ -165,7 +169,6 @@ jQuery(function($) {
         // The href of this link must match the ID of the div
         // we want to open
         $('.gl-wcwl-quote-select-options, .gl-wcwl-list-select-options').on('click', function(){
-            
             var t = $(this);
            wraq_button = $(this).data('wraq_button');
            update_wcwl_button = $(this).data('update_wcwl_button');
@@ -193,8 +196,6 @@ jQuery(function($) {
                 default_height        : 100,
                 allow_resize          : true,
                 changepicturecallback : function(){
-                    console.log(wraq_button);
-                    console.log(update_wcwl_button);
                     $(document).trigger( 'yith_wcwl_popup_opened', [ this ] );
                     $.ajax({
                         type: 'POST',
@@ -208,7 +209,6 @@ jQuery(function($) {
                             'update_wcwl_button': update_wcwl_button
                         },
                         complete: function(){
-                            
                             $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation-loader').hide();
                             $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation .add-request-quote-button.button').addClass('disabled');
                             $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation .yith_ywraq_add_item_browse_message a').attr('target', '_blank');
@@ -235,6 +235,7 @@ jQuery(function($) {
          */
         $( document ).on( "yith_wwraq_added_successfully", function (response, prod_id) {
             if(response.type == 'yith_wwraq_added_successfully') {
+                // $('.yith_ywraq_add_item_browse_message a').attr('target', '_blank');
                 if($('#pp_full_res').find('.pp_inline .gl-wcwl-quote-select-option-variation').length) {
                     $('#pp_full_res').find('.variations_form').slideUp();
                     $('#pp_full_res .pp_inline .gl-wcwl-quote-select-option-variation .yith-ywraq-add-to-quote').addClass('view-quote');
@@ -242,9 +243,26 @@ jQuery(function($) {
                 }
             }
         });
+        
+        /**
+         * Highlight the add product options button when clicking the disabled
+         * request a quote button
+         */
+         $( document ).on('click', '.gl-wcwl-quote-select-options-wrapper.disabled .yith-ywraq-add-button', function (e) {
+            e.preventDefault();
+            var wishlist_row = $(this).parentsUntil('td').parent();
+            var add_product_options = $(wishlist_row).find('.gl-wcwl-quote-select-options-wrapper')
+
+            $(add_product_options).addClass('highlight_button');
+            setTimeout(function(){
+                $(add_product_options).removeClass('highlight_button');
+
+            }, 6000);
+
+         });
 
         /**
-         * Add an item with a variation ID to the list
+         * Add an item with a variation ID to the list and remove the original product
          */
         $( document ).on('click', '.gl-update-wcwl-list', function (e) {
             e.preventDefault();
@@ -252,8 +270,6 @@ jQuery(function($) {
             var product_id = $(this).data('product_id');
             var variation_id = $(this).data('variation_id');
             var popup_window = $('.gl-wcwl-quote-select-options-popup'),
-            // form = popup_content.find('form'),
-            // row_id = form.find( '.row-id' ).val(),
             table = $('.cart.wishlist_table'),
             wishlist_token = table.data('token');
             $.ajax({
@@ -272,11 +288,7 @@ jQuery(function($) {
                 },
                 complete: function(){
                     $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation-loader').hide();
-
                     unblock($(popup_window).find('.gl-wcwl-quote-select-option-variation'));
-
-                    // $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation .add-request-quote-button.button').addClass('disabled');
-                    // $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation .yith_ywraq_add_item_browse_message a').attr('target', '_blank');
                 },
                 success: function(data) {
                     if(data.already_in_list) {
@@ -297,66 +309,6 @@ jQuery(function($) {
             });
 
         });
-    }
-
-    // var gl_wcwl_variation_selection_id;
-    function setup_select_product_options_for_list(){
-
-        if( typeof $.prettyPhoto === 'undefined' ){
-            return;
-        }
-        // The href of this link must match the ID of the div
-        // we want to open
-        // $('.gl-wcwl-list-select-options').on('click', function(){
-        //     console.log('cliccc');
-        //     var t = $(this);
-
-        //     gl_wcwl_variation_selection_id = t.closest('[data-row-id]').data('row-id');
-
-        // }).prettyPhoto(
-        //     {
-
-        //         social_tools          : false,
-        //         social_tools          : false,
-        //         theme                 : 'pp_woocommerce gl-wcwl-quote-select-options-popup',
-        //         horizontal_padding    : 20,
-        //         opacity               : 0.8,
-        //         deeplinking           : false,
-        //         overlay_gallery       : false,
-        //         default_width         : 500,
-        //         default_height        : 100,
-        //         allow_resize          : true,
-        //         changepicturecallback : function(){
-                    
-        //             $(document).trigger( 'yith_wcwl_popup_opened', [ this ] );
-        //             $.ajax({
-        //                 type: 'POST',
-        //                 dataType: 'json',
-        //                 url: gl_mods_init.ajaxurl,
-        //                 data: {
-        //                     'action': 'gl_popup_select_variation_options',
-        //                     'nonce': gl_mods_init.ajaxnonce,
-        //                     'product_id': gl_wcwl_variation_selection_id,
-        //                     'wraq_button': false,
-        //                     'update_wcwl_button': true
-        //                 },
-        //                 complete: function(){
-                            
-        //                     $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation-loader').hide();
-        //                     $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation .add-request-quote-button.button').addClass('disabled');
-        //                     $('#pp_full_res').find('.gl-wcwl-quote-select-option-variation .yith_ywraq_add_item_browse_message a').attr('target', '_blank');
-        //                 },
-        //                 success: function(data) {
-        //                     $('#pp_full_res').find('.pp_inline .gl-wcwl-quote-select-option-variation').html(data.html);
-
-        //                 },
-        //                 error: function(jqXHR, textStatus, errorThrown) {
-        //                     console.log(jqXHR + ' :: ' + textStatus + ' :: ' + errorThrown);
-        //                 }
-        //             });
-
-        //         },
-        // });
     }
 
     /**
@@ -473,7 +425,6 @@ jQuery(function($) {
             event.stopPropagation();
             // select the first drop down
             if($(this).parentsUntil('.qode-single-product-summary').parent().length) {
-                console.log('this');
                 var product_summary = $(this).parentsUntil('.qode-single-product-summary').parent();
             } else if($(this).parent().hasClass('single-product')) {
                 var product_summary = $(this).parent();
@@ -500,13 +451,13 @@ jQuery(function($) {
 
         $( document ).on( "show_variation", ".single_variation_wrap", function ( event, variation ) {
             // enable the project button
-            $('.gl-yith-wcwl-wrapper').removeClass('disable-project-list');
+            $('.summary .gl-yith-wcwl-wrapper').removeClass('disable-project-list');
         });
 
         // add the project disabled if the variations are cleared
         $( document ).on( "reset_data", function ( event ) {
             // disable the add to projects button
-            $('.gl-yith-wcwl-wrapper').addClass('disable-project-list');
+            $('.summary .gl-yith-wcwl-wrapper').addClass('disable-project-list');
         });
     }
     /**

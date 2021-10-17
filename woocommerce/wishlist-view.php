@@ -289,6 +289,7 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 								<?php do_action( 'yith_wcwl_table_product_after_move_to_another_wishlist', $item, $wishlist ); ?>
 
 							<?php endif; ?>
+							<?php do_action( 'gl_yith_wcwl_table_after_move_to_another_wishlist', $item, $wishlist ); ?>
 
 							<!-- Remove from wishlist -->
 							<?php if ( $repeat_remove_button ) : ?>

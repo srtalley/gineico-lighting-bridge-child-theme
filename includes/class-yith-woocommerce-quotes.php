@@ -19,6 +19,27 @@ class GL_YITH_WooCommerce_Quotes {
         // Fix the issue with color selectors because of the bridge theme
         add_action('admin_head', array($this, 'gl_yith_admin_css'));
 
+        // Add a login form to the request-quote-default-form template
+        add_action('gl_ywraq_after_default_form', array($this, 'gl_add_login_form'), 10, 1);
+
+        // add a redirect that will go back to the quote page if they 
+        // log in from there
+        add_filter( 'woocommerce_login_redirect', array($this, 'gl_login_redirect'), 10, 1);
+
+        // make sure the return to products button on the request quote
+        // page actually says return to products because it does not
+        // after you submit a quote.
+        add_filter('yith_ywraq_return_to_shop_after_sent_the_request_label', array($this, 'gl_yith_ywraq_return_to_shop_after_sent_the_request_label'), 10, 1);
+    
+        // get the shop URL after the quote has been submitted
+        add_filter('yith_ywraq_return_to_shop_after_sent_the_request_url', array($this, 'gl_yith_ywraq_return_to_shop_after_sent_the_request_url'), 10, 1);
+
+        // change the my account quote title
+        add_filter('ywraq_my_account_my_quotes_title', array($this, 'gl_change_ywraq_my_account_my_quotes_title'), 10, 1);
+
+        //Remove all quote statuses except for new from showing for the my account area
+        add_filter('ywraq_my_account_my_quotes_query', array($this, 'gl_change_ywraq_my_account_my_quotes_query'), 10, 1);
+
     }
 
     /** 
@@ -72,8 +93,67 @@ class GL_YITH_WooCommerce_Quotes {
      */
     public function gl_yith_admin_css() {
         echo '<style type="text/css">.yith-plugin-ui .yith-single-colorpicker { position: static; background: none; height: auto; overflow: auto; }</style>';
+    }
 
-        
+    /**
+     * Add a login form to the request-quote-default-form template
+     */
+    public function gl_add_login_form() {
+        // these two lines enqueue the login nocaptcha scripts
+        wp_enqueue_script('login_nocaptcha_google_api');
+        wp_enqueue_style('login_nocaptcha_css');
+        woocommerce_login_form(
+            array(
+                'message'  => esc_html__( 'Please log in with your account details below.', 'woocommerce' ),
+                'redirect' => wc_get_checkout_url(),
+                'hidden'   => true,
+            )
+        );
+    }   
+    /**
+     * add a redirect that will go back to the quote page if they
+     * log in from there
+     */
+    public function gl_login_redirect (){
+        $referer = wp_get_referer();
+        if($referer == '') {
+            $referer = $_SERVER['HTTP_REFERER'];
+        }
+        wp_redirect($referer);
+    }
+
+    /**
+     * make sure the return to products button on the request quote
+     * page actually says return to products because it does not
+     * after you submit a quote.
+     */
+
+    public function gl_yith_ywraq_return_to_shop_after_sent_the_request_label ($label) {
+        return  'Add Products to Quote';
+    }
+    /**
+     * Return the shop URL after the quote has been submitted
+     */
+    public function gl_yith_ywraq_return_to_shop_after_sent_the_request_url($url) {
+        return get_permalink( wc_get_page_id( 'shop' ) );
+    }
+    /**
+     * Change the my account quotes title
+     */
+    public function gl_change_ywraq_my_account_my_quotes_title() {
+        return 'Recent Quotes';
+    }
+    /**
+     * Remove all quote statuses except for new from showing for the my account area
+     */
+    public function gl_change_ywraq_my_account_my_quotes_query($options) {
+        $unset_order_statuses = array('wc-ywraq-pending', 'wc-ywraq-expired', 'wc-ywraq-rejected', 'wc-ywraq-accepted');
+        foreach ($options['status'] as $key => $status) {
+            if(in_array($status, $unset_order_statuses)) {
+                unset($options['status'][$key]);
+            }
+        }
+        return $options;
     }
 } // end class
 
