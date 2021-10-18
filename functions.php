@@ -3,11 +3,17 @@
 // custom child theme includes
 include_once('includes/qode-breadcrumbs.php');
 include_once('includes/class-woocommerce.php');
+include_once('includes/class-woocommerce-customers.php');
+// include_once('includes/class-woocommerce-customers-list.php');
+// include_once('includes/class-woocommerce-customers-table.php');
+
 include_once('includes/class-yith-woocommerce-quotes.php');
 include_once('includes/class-yith-woocommerce-wishlist.php');
+include_once('includes/class-yith-woocommerce-wishlist-admin.php');
 include_once('includes/class-yith-woocommerce-wishlist-page-template.php');
 
 define('QODE_CHILD_ROOT', get_stylesheet_directory_uri());
+define( 'QODE_CHILD__FILE__', __FILE__ );
 
 // Remove the recaptcha from the wp-admin login form
 // remove_action('login_form',array('LoginNocaptcha', 'nocaptcha_form'));
@@ -595,240 +601,6 @@ if(function_exists('update_field')) {
 	}
 }
 
-if(!function_exists('qode_filter_users_by_course_section')) {
-	function qode_filter_users_by_course_section( $query ) {
-	    global $pagenow;
-	    if(is_admin() && 'users.php' == $pagenow) {
-		    if(isset($_GET['role']) and $_GET['role'] == 'customer') {
-		        $query->set('role__in', 'customer');
-			    add_filter('parent_file', 'qode_set_woocommerce_as_current');
-			    add_filter('submenu_file', 'qode_set_woocommerce_customers_as_current');
-			    add_action('admin_head', 'qode_customers_custom_js');
-		    } else {
-		        $query->set('role__not_in', 'customer');
-		    }
-	    }
-	}
-	add_filter( 'pre_get_users', 'qode_filter_users_by_course_section' );
-}
-
-if(!function_exists('qode_set_woocommerce_as_current')) {
-	function qode_set_woocommerce_as_current( $parent_file ) {
-		global $pagenow;
-		$pagenow = 'woocommerce';
-		$parent_file = 'woocommerce';
-		return $parent_file;
-	}
-}
-
-if(!function_exists('qode_set_woocommerce_customers_as_current')) {
-	function qode_set_woocommerce_customers_as_current( $submenu_file ) {
-		global $self;
-		$self = 'users.php?role=customer';
-		$submenu_file = 'users.php?role=customer';
-		return $submenu_file;
-	}
-}
-
-if(!function_exists('qode_customers_custom_js')) {
-	function qode_customers_custom_js() {
-		if(isset($_GET['user_id']) and intval($_GET['user_id'])) {
-			$user = get_user_by( 'ID', intval($_GET['user_id']) );
-		}
-		if(!empty($user) and in_array('customer', $user->roles)) {
-			$_GET['update'] = 'add';
-			$_GET['id'] = intval($_GET['user_id']);
-		}
-		echo '<script type="text/javascript">';
-		echo '$j(document).ready(function() {';
-		echo '$j("h1.wp-heading-inline").html("Customers");';
-		// echo 'document.title = document.title.replace("User", "Customer");';
-		echo '$j("a.page-title-action").attr("href", $j("a.page-title-action").attr("href") + "?role=customer");';
-		// echo '$j("div#message p").html($j("div#message p").html().replace("New user created", "New customer created"));';
-		// echo '$j("div#message p").html($j("div#message p").html().replace("Edit user", "Edit customer"));';
-		// echo '$j(".check-column input[#cb-select-all-1]").on("click",function(){ var checked = $j(this).is(":checked");';
-		// echo 'if(checked){ $j("#the-list option").each(function() { $j(this).prop("selected", true); }); }';
-		// echo 'else { $j("#the-list option").each(function() { $j(this).prop("selected", false); }); } });';
-		// echo '});';
-		echo '$j(".check-column input[id^=\'#cb-select-all\']").on("click",function(){ ';
-		echo 'var checked = $j(this).is(":checked");';
-		echo 'if(checked){ $j("#the-list option").each(function() { $j(this).prop("selected", true); });';
-		echo '} else { $j("#the-list option").each(function() { $j(this).prop("selected", false); }); } ';
-		echo '}); });';
-		echo '</script>';
-	}
-}
-
-// Fix the display of Add New User page to be Add New Customer page if URL has role variable equals "customer"
-if(!function_exists('qode_new_customer_custom_js')) {
-	function qode_new_customer_custom_js() {
-		global $pagenow;
-	    if(is_admin() && 'user-new.php' == $pagenow) {
-	    	if(isset($_GET['role']) and $_GET['role'] == 'customer') {
-				echo '<script type="text/javascript">';
-				echo '$j(document).ready(function() {';
-				echo '$j("h1#add-new-user").html("Add New Customer");';
-				echo 'document.title = document.title.replace("User", "Customer");';
-				echo '$j(\'select#role option\').removeAttr("selected");';
-				echo '$j(\'select#role option[value="customer"]\').attr("selected", "selected");';
-				echo '$j("input#createusersub").val("Add New Customer");';
-				echo '});';
-				echo '</script>';
-			    add_filter('parent_file', 'qode_set_woocommerce_as_current');
-			    add_filter('submenu_file', 'qode_set_woocommerce_customers_as_current');
-			}
-	    }
-	}
-	add_action('admin_head', 'qode_new_customer_custom_js');
-}
-
-// Fix the display of Edit User page to be Edit Customer page if user has role "customer"
-if(!function_exists('qode_edit_customer_custom_js')) {
-	function qode_edit_customer_custom_js() {
-		global $pagenow;
-		$user = null;
-		if(isset($_GET['user_id']) and intval($_GET['user_id'])) {
-			$user = get_user_by( 'ID', intval($_GET['user_id']) );
-		}
-		if(empty($user)) {
-			return;
-		}
-		if(!in_array('customer', $user->roles)) {
-			return;
-		}
-	    if(is_admin() && 'user-edit.php' == $pagenow) {
-			echo '<script type="text/javascript">';
-			echo '$j(document).ready(function() {';
-			echo '$j("h1.wp-heading-inline").html($j("h1.wp-heading-inline").html().replace("User", "Customer"));';
-			echo 'document.title = document.title.replace("User", "Customer");';
-			echo '$j("a.page-title-action").attr("href", $j("a.page-title-action").attr("href") + "?role=customer");';
-			echo '$j("input#submit").val("Update Customer");';
-			echo '});';
-			echo '</script>';
-		    add_filter('parent_file', 'qode_set_woocommerce_as_current');
-		    add_filter('submenu_file', 'qode_set_woocommerce_customers_as_current');
-	    }
-	}
-	add_action('admin_head', 'qode_edit_customer_custom_js');
-}
-
-// Fix the display of Users page after adding Customer to be Customers page
-if(!function_exists('qode_after_add_customer_custom_js')) {
-	function qode_after_add_customer_custom_js() {
-		global $pagenow;
-		$user = null;
-		if(isset($_GET['id']) and intval($_GET['id'])) {
-			$user = get_user_by( 'ID', intval($_GET['id']) );
-		}
-		if(empty($user)) {
-			return;
-		}
-		if(!in_array('customer', $user->roles)) {
-			return;
-		}
-
-	    if(is_admin() && 'users.php' == $pagenow) {
-	    	wp_redirect(add_query_arg(array('role' => 'customer', 'user_id' => intval($_GET['id'])), 'users.php'));
-	    }
-	}
-	add_action('admin_head', 'qode_after_add_customer_custom_js');
-}
-
-if(!function_exists('qode_fix_users_counts_in_users_php')) {
-	function qode_fix_users_counts_in_users_php( $views ) {
-		if(isset($_GET['role']) and $_GET['role'] == 'customer') {
-			$new_views = array();
-			$new_views['customer'] = $views['customer'];
-			$views = $new_views;
-		} else {
-			$customers = wp_strip_all_tags($views['customer']);
-			$customers = str_replace('Customer', '', $customers);
-			$customers = str_replace('(', '', $customers);
-			$customers = str_replace(')', '', $customers);
-			$customers = intval($customers);
-			$all = wp_strip_all_tags($views['all']);
-			$all = str_replace('All', '', $all);
-			$all = str_replace('(', '', $all);
-			$all = str_replace(')', '', $all);
-			$all = intval($all);
-			$new_all = $all - $customers;
-			unset($views['customer']);
-			$views['all'] = str_replace($all, $new_all, $views['all']);
-		}
-	    return $views;
-	}
-	add_filter( 'views_users', 'qode_fix_users_counts_in_users_php' );
-}
-
-if(!function_exists('qode_admin_custom_menu')) {
-	function qode_admin_custom_menu() {
-		global $menu, $submenu, $pagenow, $parent_file, $submenu_file;
-
-		$user = wp_get_current_user();
-		$role = (array)$user->roles;
-		if(count($role) == 1) {
-			$role = $role[0];
-			if($role == 'sales_admin') {
-				foreach ($menu as $key => $menu_array) {
-				 	$found = array_search('menu-posts', $menu_array);
-				 	if($found) {
-				 		unset($menu[$key]);
-				 		break;
-				 	}
-				} 
-				foreach ($menu as $key => $menu_array) {
-				 	$found = array_search('menu-posts-portfolio_page', $menu_array);
-				 	if($found) {
-				 		unset($menu[$key]);
-				 		break;
-				 	}
-				} 
-				unset($submenu['edit.php']);
-				unset($submenu['edit.php?post_type=portfolio_page']);
-			}
-		}
-
-		$parent_menu = 'woocommerce';
-	    $menu_name = 'Customers';
-	    $capability = 'manage_woocommerce';
-	    $url = 'users.php?role=customer';
-
-	    $submenu[$parent_menu][] = array( $menu_name, $capability, $url );
-	}
-	add_action( 'admin_menu', 'qode_admin_custom_menu' );
-}
-
-// if(!function_exists('qode_yith_wcwl_before_wishlist_form')) {
-// 	function qode_yith_wcwl_before_wishlist_form($wishlist_meta) {
-// 		if(!empty($wishlist_meta) and isset($wishlist_meta['wishlist_name'])) {
-// 			$wishlist_name = apply_filters( 'qode_yith_wcwl_wishlist_name', $wishlist_meta['wishlist_name'] );
-// 			echo '<h1 class="wishlist-name">' . $wishlist_name . '</h1>';
-// 		}
-// 	}
-// 	add_action( 'yith_wcwl_before_wishlist_form', 'qode_yith_wcwl_before_wishlist_form' );
-// }
-
-// if(!function_exists('qode_yith_wcwl_wishlist_name')) {
-// 	function qode_yith_wcwl_wishlist_name($wishlist_name) {
-// 		if(empty($wishlist_name)) {
-// 			return get_option('yith_wcwl_wishlist_title');
-// 		}
-// 		return $wishlist_name;
-// 	}
-// 	add_filter( 'qode_yith_wcwl_wishlist_name', 'qode_yith_wcwl_wishlist_name' );
-// }
-
-// if(!function_exists('qode_yith_wcwl_table_after_product_name')) {
-// 	function qode_yith_wcwl_table_after_product_name($item) {
-// 		$excerpt = wp_trim_words( $item['post_excerpt'], 25, '...' );
-// 		if(!empty($excerpt)) {
-// 			echo '<p class="product-excerpt">' . $excerpt . ' <a href="' . esc_url( get_permalink( apply_filters( 'woocommerce_in_cart_product', $item['prod_id'] ) ) ) . '">' . __('read more', 'yith-woocommerce-wishlist') . '</a></p>';
-// 		}
-// 	}
-// 	add_action( 'qode_yith_wcwl_table_after_product_name', 'qode_yith_wcwl_table_after_product_name' );
-// 	add_action( 'yith_wcwl_table_after_product_name', 'qode_yith_wcwl_table_after_product_name' );
-// }
-
 if(!class_exists('QODE_Add_Settings_Fields')) {
 	// Class for adding a new field to the options-general.php page
 	class QODE_Add_Settings_Fields {
@@ -881,59 +653,6 @@ if(!class_exists('QODE_Add_Settings_Fields')) {
 	}
 	new QODE_Add_Settings_Fields();
 }
-
-// if(!function_exists('qode_woocommerce_account_menu_items')) {
-// 	function qode_woocommerce_account_menu_items( $items ) {
-// 	    unset($items['downloads']);
-// 	    $new = array();
-// 		// if(class_exists('YITH_WCWL')) {
-// 		//     $new['schedule'] = 'Schedule';
-// 		// }
-// 		if(class_exists('YITH_Request_Quote')) {
-// 		    $new['quotation'] = 'Quotation';
-// 		}
-// 	    $items  = array_slice( $items, 0, 1, true ) 
-// 				+ $new 
-// 				+ array_slice( $items, 1, NULL, true );
-// 	    return $items;
-// 	}
-// 	add_filter( 'woocommerce_account_menu_items', 'qode_woocommerce_account_menu_items' );
-// }
-
-// if(!function_exists('qode_woocommerce_account_quotation_endpoint')) {
-// 	function qode_woocommerce_account_quotation_endpoint() {
-// 		add_rewrite_endpoint('quotation', EP_PAGES);
-// 	}
-// 	add_action('init', 'qode_woocommerce_account_quotation_endpoint');
-// }
-
-// if(!function_exists('qode_woocommerce_account_quotation_endpoint_content')) {
-// 	function qode_woocommerce_account_quotation_endpoint_content() {
-// 		wc_get_template('myaccount/my-quotes.php', null, '', YITH_YWRAQ_TEMPLATE_PATH.'/');
-// 	}
-// 	add_action('woocommerce_account_quotation_endpoint', 'qode_woocommerce_account_quotation_endpoint_content');
-// }
-
-// if(!function_exists('qode_woocommerce_get_endpoint_url')) {
-// 	function qode_woocommerce_get_endpoint_url( $url, $endpoint, $value, $permalink ){
-// 		switch ($endpoint) {
-// 			case 'schedule':
-// 				if(class_exists('YITH_WCWL')) {
-// 					$url = esc_url( YITH_WCWL()->get_wishlist_url() );
-// 				}
-// 				break;
-// 			case 'quotation':
-// 				if(class_exists('YITH_Request_Quote')) {
-// 					$url = esc_url( YITH_Request_Quote()->get_raq_page_url() );
-// 				}
-// 				break;
-// 			default:
-// 				break;
-// 		}
-// 		return $url;
-// 	}
-// 	add_filter( 'woocommerce_get_endpoint_url', 'qode_woocommerce_get_endpoint_url', 10, 4 );
-// }
 
 if(!function_exists('qode_woocommerce_upsells_total')) {
 	function qode_woocommerce_upsells_total( $limit ) {
