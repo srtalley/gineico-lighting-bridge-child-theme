@@ -16,8 +16,7 @@
  * @var $wishlist_token               string Wishlist token
  * @var $heading_icon                 string Heading icon HTML tag
  */
-
-if ( ! defined( 'YITH_WCWL' ) ) {
+if ( ! defined( 'YITH_WCWL' ) || !is_object($wishlist) ) {
 	exit;
 } // Exit if accessed directly
 ?>

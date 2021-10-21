@@ -119,7 +119,9 @@ class GL_YITH_WooCommerce_Quotes {
         if($referer == '') {
             $referer = $_SERVER['HTTP_REFERER'];
         }
-        wp_redirect($referer);
+        if($referer == site_url( '/request-quote/') ){
+            wp_redirect( $referer );
+        }
     }
 
     /**

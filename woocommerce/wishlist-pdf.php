@@ -29,17 +29,20 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 // copied from the Request a Quote template
 $pdf_font = apply_filters( 'pdf_font_family', '"dejavu sans"' );
 $logo_url = get_option( 'ywraq_pdf_logo' );
+
 $logo_attachment_id = apply_filters( 'yith_pdf_logo_id', get_option( 'ywraq_pdf_logo-yith-attachment-id' ) );
+
+
 if ( ! $logo_attachment_id && $logo_url ) {
 	$logo_attachment_id = attachment_url_to_postid( $logo_url );
 }
 
 $logo = $logo_attachment_id ? get_attached_file( $logo_attachment_id ) : $logo_url;
 
-$image_type = wp_check_filetype( $logo );
-$mime_type  = array( 'image/jpeg', 'image/png' );
-$logo       = apply_filters( 'ywraq_pdf_logo', ( isset( $image_type['type'] ) && in_array( $image_type['type'], $mime_type ) ) ? $logo : '' );
 
+$image_type        = wp_check_filetype( $logo );
+$mime_type         = array( 'image/jpeg', 'image/png' );
+$logo              = apply_filters( 'ywraq_pdf_logo', ( isset( $image_type['type'] ) && in_array( $image_type['type'], $mime_type, true ) ) ? $logo : '' );
 $show_quantity = false;
 $show_dateadded = false;
 ?>

@@ -4,9 +4,9 @@ Theme URI: http://demo.qodeinteractive.com/bridge/
 Description: A child theme of Bridge Theme
 Author: Qode Interactive
 Author URI: http://www.qodethemes.com/
-Version: 1.1.8
-Date: 2021-10-16
-Template: bridg
+Version: 2.0.5
+Date: 2021-10-19
+Template: bridge
 */
 @import url("../bridge/style.css");
 ::selection {
@@ -463,7 +463,8 @@ ul.products li.product .yith-wcwl-add-button.gl-wcwl-add-to-my-favourites.in_my_
 .woocommerce.single-product .product-attached-pdf-buttons a.button:hover,
 .qode-single-product-summary .yith-wcwl-add-to-wishlist .yith-wcwl-add-button a.button:hover,
 .qode-single-product-summary .yith-wcwl-add-to-wishlist > a.button:hover, 
-.qode-single-product-summary .yith-wcwl-add-to-wishlist .yith-wcwl-wishlistexistsbrowse a:hover {
+.qode-single-product-summary .yith-wcwl-add-to-wishlist .yith-wcwl-wishlistexistsbrowse a:hover,
+.qode-single-product-summary .yith-wcwl-add-button a.button:hover {
     border-color: #2b2b2b;
 	background-color: #2b2b2b !important;
 	color: #fff;
@@ -640,6 +641,17 @@ ul.products li.product  {
     text-align: center;
     height: 52px;
     line-height: 46px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    letter-spacing: 3.6px;
+    text-transform: uppercase;
+    font-size: 13px;
+    font-family: Raleway,sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    outline: 0;
+    display: inline-block;
 }
 .gl-projects-message-logged-out-message .login-button-wrapper .button.gl-login {
     background-color: #e2ae68  !important;
@@ -675,14 +687,16 @@ ul.products li.product  {
     padding-bottom: 0;
 }
 /** Set a max width for the pp popups **/
-.pp_pic_holder.pp_default, 
+/* .pp_pic_holder.pp_default,  */
+.woocommerce-wishlist .pp_pic_holder.pp_default,
 .pp_pic_holder.pp_woocommerce,
 .pp_pic_holder.gl_copy_to_another_list {
     width: 360px !important;
     /* max-width: 400px; */
     left: calc(50% - 180px) !important;
 }
-.pp_pic_holder.pp_default .pp_content_container, 
+/* .pp_pic_holder.pp_default .pp_content_container,  */
+.woocommerce-wishlist .pp_pic_holder.pp_default .pp_content_container, 
 .pp_pic_holder.pp_woocommerce .pp_content_container,
 .pp_pic_holder.gl_copy_to_another_list .pp_content_container {
     width: 360px !important;
@@ -693,7 +707,8 @@ ul.products li.product  {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-.pp_pic_holder.pp_default .pp_content, 
+/* .pp_pic_holder.pp_default .pp_content,  */
+.woocommerce-wishlist .pp_pic_holder.pp_default .pp_content,
 .pp_pic_holder.pp_woocommerce .pp_content,
 .pp_pic_holder.gl_copy_to_another_list .pp_content {
     width: 300px !important;
@@ -738,6 +753,13 @@ div.pp_pic_holder:not(.pp_woocommerce) .pp_close::before {
     bottom: 0;
     text-align: center;
     text-indent: 0;
+}
+form.yith-wcwl-popup-form {
+    max-width: 450px;
+    margin: 0 auto;
+}
+form.yith-wcwl-popup-form .wishlist-select {
+    text-align: center;
 }
 div.pp_pic_holder:not(.pp_woocommerce) .form-row-wide label {
     padding-left: 25px;
@@ -800,6 +822,27 @@ body div.pp_default .pp_close:after {
 }
 div.pp_default .pp_details {
 	position: unset;
+}
+.woocommerce-wishlist .content .container .container_inner.qode-child-breadcrumb {
+    padding: 0;
+}
+.woocommerce-wishlist #yith-wcwl-form {
+    padding-top: 30px;
+}
+.woocommerce-wishlist #yith-wcwl-form .woocommerce-info,
+.woocommerce-wishlist #yith-wcwl-form .woocommerce-message,
+.woocommerce-wishlist #yith-wcwl-form .woocommerce-error {
+    margin-top: 10px;
+}
+.woocommerce-wishlist #yith-wcwl-form .wishlist-title {
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+.woocommerce-wishlist form#yith-wcwl-form > h2 {
+    /* font-size: 45px; */
+    /* line-height: 45px; */
+    /* font-weight: 400; */
+    /* text-transform: uppercase; */
 }
 .woocommerce-wishlist #yith-wcwl-form .woocommerce-info a {
     float: none;
@@ -1610,6 +1653,10 @@ body.woocommerce-js .yith_ywraq_add_item_browse_message a:hover,
 .yith-ywraq-mail-form-wrapper .woocomerce-form.woocommerce-form-login .lost_password {
     margin-left: 0;
 }
+#yith-ywraq-default-form .form-row.form-row-wide {
+    padding-left: 0;
+    padding-right: 0;
+}
 #yith-ywraq-default-form .button.raq-send-request {
     width: 100%;
     text-align: center;
@@ -1709,11 +1756,11 @@ header .shopping_cart_outer {
     text-align: right;
 }
 .woocommerce-wishlist form#yith-wcwl-form > h2 {
-	font-size: 30px;
-    line-height: 1.25em;
-    text-transform: initial;
-    font-weight: bold;
-    color: #303030;
+	/* font-size: 30px; */
+    /* line-height: 1.25em; */
+    /* text-transform: initial; */
+    /* font-weight: bold; */
+    /* color: #303030; */
 }
 .woocommerce .wishlist_manage_table tfoot a.create-new-wishlist {
 	padding: 7px 31.4px 7px 35px;
@@ -2520,9 +2567,9 @@ form.products-per-page select {
 		margin-left: 0;
 	}
 	.request-quote-column {
-		width: 100%;
-		float: none;
-		display: block;
+		/* width: 100%; */
+		/* float: none; */
+		/* display: block; */
 	}
     .home .quote-banner-block {
         margin-bottom: -40px !important;

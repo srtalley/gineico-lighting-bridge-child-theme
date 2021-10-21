@@ -11,18 +11,11 @@ class GL_YITH_WooCommerce_Wishlist {
     public function __construct() {
 
         if(class_exists('YITH_WCWL')) {
-            // add my-favourites query vars  
-            if(!is_admin()) {
-                add_filter( 'query_vars', array($this, 'gl_add_my_favourites_query_var' ) );
-            }
-            // add my-favourites rewrite rule for permalink
-            add_action( 'init', array($this, 'gl_my_favourites_rewrite_rule'), 10, 1);
-
-            // change the page title to my favourites when needed
-            add_filter( 'wpseo_title', array($this, 'gl_change_yith_wcwl_projects_page_title'), 10, 1 );
-
+                
             // modify the form layout
-            // add_action( 'init', array($this, 'gl_modify_yith_wcwl_form'), 10, 1);
+            add_action( 'init', array($this, 'gl_modify_yith_wcwl_form'), 10, 1);
+
+            add_shortcode( 'gl_yith_wcwl_wishlist', array($this,'gl_yith_wcwl_wishlist_shortcode') );
 
             // add the shortcode to display an add to cart form
             add_shortcode( 'add_to_cart_form', array($this,'gl_add_to_cart_form_shortcode') );
@@ -89,13 +82,10 @@ class GL_YITH_WooCommerce_Wishlist {
             add_filter( 'yith_wcwl_create_new_list_text', array($this, 'gl_change_create_new_list_text') );
             add_filter( 'yith_wcwl_new_list_title_text', array($this, 'gl_change_new_list_title_text') );
             add_action( 'yith_wcwl_before_wishlist_title', array($this, 'gl_yith_wcwl_before_wishlist_title') );
-            add_action( 'yith_wcwl_before_wishlist', array($this, 'gl_yith_wcwl_before_wishlist') );
-
             add_filter( 'yith_wcwl_no_product_to_remove_message' , array($this, 'gl_yith_wcwl_no_product_to_remove_message'), 10, 1);
-            // add_filter( 'yith_wcwl_login_notice', array($this,'gl_yith_wcwl_login_notice'), 10, 1 );
+            add_filter( 'yith_wcwl_login_notice', array($this,'gl_yith_wcwl_login_notice'), 10, 1 );
 
             // change the my projects title if coming from my favourites
-
             add_filter( 'yith_wcwl_wishlist_title', array($this, 'gl_change_yith_wcwl_wishlist_title'), 10, 1);
 
             // add a PDF download link to the project list
@@ -131,62 +121,165 @@ class GL_YITH_WooCommerce_Wishlist {
 
 			// add_action( 'init', array( $this, 'add_rewrite_rules' ), 1 );
 
-            // show the manage template when on the /my-projects page
-			add_filter( 'yith_wcwl_current_wishlist_view_params', array( $this, 'gl_change_my_projects_page_to_manage'), 5, 6 );
 
 
             // add_filter( 'yith_wcwl_available_wishlist_views', array( $this, 'add_wishlist_views' ) );
-           
-            // add_action( 'template_include', array($this, 'gl_template'));
+            add_action( 'init', array($this, 'custom_rewrite_tag'), 10, 1);
+            add_action( 'template_include', array($this, 'gl_template'));
 
-
+        // // query vars loaded 
+        if(!is_admin()) {
+            add_filter( 'query_vars', array($this, 'add_query_var' ) );
+        }
         } // end if class exists
     }
+
     /**
-     * Change the my-projects page to show the manage items 
-     * for logged in users
-     */
-    public function gl_change_my_projects_page_to_manage($template) {
-        global $wp;
-        $current_url = home_url( $wp->request );
-        // get the slug
-        if($current_url == home_url( '/my-projects')) {
-            return 'manage';
-        } else {
-            return $template;
-        }
-    }
-    /**
-	 * Register my-favourites query vars
+	 * Register query vars
     */ 
-    public function gl_add_my_favourites_query_var( $query_vars ) {
+    public function add_query_var( $query_vars ) {
+        // $query_vars[] = 'game_name';
+        // return $query_vars;
         $query_vars[] = 'my-favourites';
         return $query_vars;
     }
     /**
-     * Add the rewrite tag for my-favourites
+     * Add the rewrite tag for dslp-games
      */
-    public function gl_my_favourites_rewrite_rule( $vars ) {
+    public function custom_rewrite_tag( $vars ) {
+        // add_rewrite_tag( '%dslp-games%', '([^&]+)');
+
+        // Add the rules for the games directory that go in htaccess
+        // add_rewrite_rule('dslprewritecond',  'dslprewritecond');
+        // add_rewrite_rule('dslp-games/(.*)$', 'index.php?pagename=$matches[1]');
+        // add_rewrite_rule( 'my-favourites/([a-z0-9-]+)[/]?$', 'index.php?my-favourites=$matches[1]', 'top' );
+        // add_rewrite_rule( 'my-favourites/([a-z0-9-]+)[/]?$', 'index.php?my-favourites=$matches[1]', 'top' );
+
+        // add_rewrite_rule( 'my-favourites/([a-z0-9-]+)[/]?$', '/my-projects', 'top' );
+        // add_rewrite_rule('my-favourites/(.*)$', 'my-projects/view/$1');
+
+        // $regex_paged = '(([^/]+/)*' . $wishlist_page_slug . ')(/(.*))?/page/([0-9]{1,})/?$';
+        // $regex_simple = '(([^/]+/)*' . $wishlist_page_slug . ')(/(.*))?/?$';
+        // add_rewrite_rule( $regex_paged, 'index.php?pagename=$matches[1]&' . $wishlist_param . '=$matches[4]&paged=$matches[5]', 'top' );
+        // add_rewrite_rule( $regex_simple, 'index.php?pagename=$matches[1]&' . $wishlist_param . '=$matches[4]', 'top' );
         $regex_simple = '(([^/]+/)*my-favourites)(/(.*))?/?$';
+
         add_rewrite_rule( $regex_simple, 'index.php?pagename=my-projects', 'top' );
 
-        $rewrite_rules = get_option( 'rewrite_rules' );
 
-        if( ! is_array( $rewrite_rules ) || ! array_key_exists( $regex_paged, $rewrite_rules ) ){
-            flush_rewrite_rules();
-        }
+
     }
-
+    function gl_template( $template ) {
+        wl('hi there');
+        if ( get_query_var( 'my-favourites' ) == false || get_query_var( 'my-favourites' ) == '' ) {
+            wl('fals');
+            return $template;
+        }
+        $template = yith_wcwl_get_template( 'wishlist.php', $atts, true );
+        return $template;
+        // return get_template_directory() . '/template-name.php';
+    } 
     /**
      * Move the wishlist notices
      */
-    // public function gl_modify_yith_wcwl_form() {
-    //     if(!is_user_logged_in()) {
-    //         $yith_wcwl_frontend = \YITH_WCWL_Frontend();
-    //         remove_action('yith_wcwl_before_wishlist_title', array( $yith_wcwl_frontend, 'print_notices'));
-    //         add_action('yith_wcwl_after_wishlist', array( $yith_wcwl_frontend, 'print_notices'));
-    //     }
-    // }
+    public function gl_modify_yith_wcwl_form() {
+        $yith_wcwl_frontend = \YITH_WCWL_Frontend();
+        remove_action('yith_wcwl_before_wishlist_title', array( $yith_wcwl_frontend, 'print_notices'));
+        add_action('yith_wcwl_after_wishlist', array( $yith_wcwl_frontend, 'print_notices'));
+    }
+
+    /**
+     * Shortcode for the projects page
+     */
+
+     /**
+     * Shortcode to remove items on a list page
+     */
+    public function gl_yith_wcwl_wishlist_shortcode($attributes = [], $content = null, $tag = '') {
+
+        //make the array keys and attributes lowercase
+        $attributes = array_change_key_case((array)$attributes, CASE_LOWER);
+
+        //override any default attributes with the user defined parameters
+        $custom_attributes = shortcode_atts([
+            'post_id' => ''
+        ], $attributes, $tag);
+
+        // if(is_user_logged_in()) {
+            echo do_shortcode('[yith_wcwl_wishlist]');
+
+        // }
+
+    }
+    
+    function vrig() {
+ wl('fasd');
+        $page_id = 377; // update 2 (sample page) to your custom page ID where you can get the subscriber(s) data later
+        $page_data = get_post( $page_id );
+     wl($page_data);
+        if( ! is_object($page_data) ) { // post not there
+            return;
+        }
+     
+        add_rewrite_rule(
+            'subscriber/([^/]+)/?$',
+            'index.php?pagename=' . $page_data->post_name . '&my_subscribers=1&my_subscriber=$matches[1]',
+            'top'
+        );
+     
+    }
+    function vrigqv($vars) {
+        $vars[] = "my_subscriber";
+        return $vars;
+    }
+    
+        public function add_wishlist_views( $views ) {
+            return array_merge( $views, array( 'favourites' ) );
+        }
+
+
+    	/**
+		 * Add rewrite rules for wishlist
+		 *
+		 * @return void
+		 * @since 2.0.0
+		 */
+		public function add_rewrite_rules() {
+			global $wp_query;
+			// filter wishlist param
+			// $this->wishlist_param = apply_filters( 'yith_wcwl_wishlist_param', $this->wishlist_param );
+
+            $wishlist_param = 'wishlist-action';
+			$wishlist_page_id = 377; //isset( $_POST['yith_wcwl_wishlist_page_id'] ) ? $_POST['yith_wcwl_wishlist_page_id'] : get_option( 'yith_wcwl_wishlist_page_id' );
+			// $wishlist_page_id = yith_wcwl_object_id( $wishlist_page_id, 'page', true, 'default' );
+
+			if( empty( $wishlist_page_id ) ){
+				return;
+			}
+
+			$wishlist_page = get_post( $wishlist_page_id );
+			$wishlist_page_slug = $wishlist_page ? $wishlist_page->post_name : false;
+
+			if ( empty( $wishlist_page_slug ) ){
+				return;
+			}
+
+			if( defined( 'POLYLANG_VERSION' ) || defined( 'ICL_PLUGIN_PATH' ) ){
+				return;
+			}
+
+			$regex_paged = '(([^/]+/)*' . $wishlist_page_slug . ')(/(.*))?/page/([0-9]{1,})/?$';
+			$regex_simple = '(([^/]+/)*' . $wishlist_page_slug . ')(/(.*))?/?$';
+			add_rewrite_rule( $regex_paged, 'index.php?pagename=$matches[1]&' . $wishlist_param . '=$matches[4]&paged=$matches[5]', 'top' );
+			add_rewrite_rule( $regex_simple, 'index.php?pagename=$matches[1]&' . $wishlist_param . '=$matches[4]', 'top' );
+
+			$rewrite_rules = get_option( 'rewrite_rules' );
+
+			if( ! is_array( $rewrite_rules ) || ! array_key_exists( $regex_paged, $rewrite_rules ) || ! array_key_exists( $regex_simple, $rewrite_rules ) ){
+				flush_rewrite_rules();
+			}
+		}
+
 
     /**
      * Recreate a default wishlist if it is deleted
@@ -520,84 +613,41 @@ class GL_YITH_WooCommerce_Wishlist {
     /**
      * Change the message shown when a person needs to log in
      */
-    // public function gl_yith_wcwl_login_notice($notice) {
-    //     return 'To create SCHEDULES/PROJECTS please <a href="' . site_url('/login/') . '">log in</a> or <a href="' . site_url('/login/') . '">create an account</a>.';
-    // }
-    /**
-     * Change the my projects page title to favourites if coming from a 
-     * favourites link
-     */
-
-    public function gl_change_yith_wcwl_projects_page_title($title) {
-        global $wp;
-        $current_url = home_url( $wp->request );
-        // get the slug
-        if($current_url == home_url( '/my-favourites')) {
-            return 'My Favourites - Gineico Lighting';
-        } else {
-            return  $title;
-        }
+    public function gl_yith_wcwl_login_notice($notice) {
+        return 'To create SCHEDULES/PROJECTS please <a href="' . site_url('/login/') . '">log in</a> or <a href="' . site_url('/login/') . '">create an account</a>.';
     }
     /**
-     * Change the my favourites page title if coming from a my favourites link
+     * Change the my projects title if coming from a my favourites link
      */
     public function gl_change_yith_wcwl_wishlist_title($title) {
-        global $wp;
-        $current_url = home_url( $wp->request );
-        // get the slug
-        if($current_url == home_url( '/my-favourites')) {
-            return $title;
-        } else {
-            return '<h2>My Projects</h2>';
+        if(!is_user_logged_in()) {
+            if(isset($_GET['q']) && sanitize_text_field($_GET['q']) == 'my-favourites') {
+                return $title;
+            } else {
+                $default_wishlist_url = $this->gl_get_default_wishlist_url();
+                // see if there's a default wishlist URL. If not change this.
+                if(!$default_wishlist_url) {
+                    return '<h2>My Projects</h2>';       
+                }
+            }
         }
-        // if(!is_user_logged_in()) {
-        //     if(isset($_GET['q']) && sanitize_text_field($_GET['q']) == 'my-favourites') {
-        //         return $title;
-        //     } else {
-        //         $default_wishlist_url = $this->gl_get_default_wishlist_url();
-        //         // see if there's a default wishlist URL. If not change this.
-        //         if(!$default_wishlist_url) {
-        //             return '<h2>My Projects</h2>';       
-        //         }
-        //     }
-        // }
-        // return $title;
+        return $title;
     }
     /**
-     * CSS before the wishlist table to hide project links
+     * CSS before the wishlist table
      */
     public function gl_yith_wcwl_before_wishlist_title($wishlist) {
         $default_wishlist_id = $this->gl_get_default_wishlist_id();
         echo '<style>.shop_table.wishlist_table tr[data-wishlist-id="' . $default_wishlist_id . '"], li[data-wishlist-id="' . $default_wishlist_id . '"] { display: none; }</style>';
         // hide project links on the default list; prevent renaming list
         if(is_object($wishlist)) {
-            global $wp;
-            $current_url = home_url( $wp->request );
-            // get the slug
+
             if($wishlist->get_id() == $default_wishlist_id) {
                 echo "<script> jQuery(function($) { $('document').ready(function() { $(document).off('click', '.wishlist-title-with-form h2'); $(document).off('click', '.show-title-form'); }); });</script>";
                 echo '<style>.btn.button.show-title-form, .back-to-all-wishlists, .wishlist-page-links { display: none; } .wishlist-title.wishlist-title-with-form h2:hover {background:inherit;cursor:inherit;}</style>';
             }
         }
 
-    }
-    public function gl_yith_wcwl_before_wishlist($wishlist) {
-
-        if(!is_user_logged_in()) {
-            $default_wishlist_id = $this->gl_get_default_wishlist_id();
-            global $wp;
-            // get the slug
-            $current_url = home_url( $wp->request );
-            if($wishlist->get_id() == $default_wishlist_id) {
-                if($current_url != home_url( '/my-favourites')) {
-                   
-                    echo '<style>.shop_table.wishlist_table, .gl-wishlist-download-wrapper, .yith_wcwl_wishlist_footer { display: none; } .gl-my-projects-logged-out-message { margin: 30px 0 40px; } .gl-my-projects-logged-out-message p { font-size: 20px; } .gl-my-projects-logged-out-message p a { font-weight: 600; }</style>';
-                    echo '<div class="gl-my-projects-logged-out-message"><p>To create SCHEDULES/PROJECTS please <a href="' . site_url('/login/') . '">log in</a> or <a href="' . site_url('/login/') . '">create an account</a>.</p></div>';
-                }
-            }
-        }
-      
-        
     }
 
     /**
@@ -610,30 +660,30 @@ class GL_YITH_WooCommerce_Wishlist {
     /**
      * Redirect /my-favourites to the individual users favourites link
      */
-    // public function gl_my_favourites_redirect() {
-    //     global $wp;
-    //     $current_url = home_url( $wp->request );
-    //     if($current_url == home_url( '/my-favourites' )) {
-    //         $default_wishlist_url = $this->gl_get_default_wishlist_url();
-    //         if($default_wishlist_url) {
-    //             wp_redirect( $this->gl_get_default_wishlist_url() );
-    //         } else {
-    //             wp_redirect( site_url('/my-projects/?q=my-favourites') );
-    //         }
-    //     }
-    // }
+    public function gl_my_favourites_redirect() {
+        global $wp;
+        $current_url = home_url( $wp->request );
+        if($current_url == home_url( '/my-favourites' )) {
+            $default_wishlist_url = $this->gl_get_default_wishlist_url();
+            if($default_wishlist_url) {
+                wp_redirect( $this->gl_get_default_wishlist_url() );
+            } else {
+                wp_redirect( site_url('/my-projects/?q=my-favourites') );
+            }
+        }
+    }
     /**
      * redirect for /my-projects to the user's manage projects
      * link but only if user is logged in
      */
     public function gl_my_projects_manage_redirect() {
-        // global $wp;
-        // $current_url = home_url( $wp->request );
-        // if(is_user_logged_in()) {
-        //     if($current_url == home_url( '/my-projects')) {
-        //         wp_redirect( site_url( '/my-projects/manage'));
-        //     }
-        // }
+        global $wp;
+        $current_url = home_url( $wp->request );
+        if(is_user_logged_in()) {
+            if($current_url == home_url( '/my-projects')) {
+                wp_redirect( site_url( '/my-projects/manage'));
+            }
+        }
     }
 
     /** 

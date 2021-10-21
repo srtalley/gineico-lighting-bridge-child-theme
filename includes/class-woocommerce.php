@@ -23,6 +23,9 @@ class GL_WooCommerce {
         add_shortcode( 'gl_wc_login_form', array($this, 'gl_wc_login_form_function') );
         add_shortcode( 'gl_wc_registration_form', array($this, 'gl_wc_registration_form_function') );
 
+        // add a redirect that will go to the my account page
+        add_filter( 'woocommerce_login_redirect', array($this, 'gl_my_account_login_redirect'), 10, 1);
+
         // Single product PDF buttons
         add_action( 'woocommerce_single_product_summary', array($this, 'dl_after_add_to_cart_download_pdf'),39 );
         // Change the product tabs
@@ -49,7 +52,6 @@ class GL_WooCommerce {
         add_filter( 'woocommerce_email_heading_customer_new_account', array($this, 'gl_change_customer_new_account_email_heading'), 10, 2);
 
         // add_filter( 'gettext', array($this,'gl_change_customer_new_account_email_text_strings'), 20, 3 );
-
 
     } // end function construct
 
@@ -277,7 +279,19 @@ class GL_WooCommerce {
             
         return ob_get_clean();
     }
-
+    /**
+     * add a redirect that will go back to the my account page if they
+     * log in from there
+     */
+    public function gl_my_account_login_redirect (){
+        $referer = wp_get_referer();
+        if($referer == '') {
+            $referer = $_SERVER['HTTP_REFERER'];
+        }
+        if($referer == site_url( '/login/') ){
+            wp_redirect( site_url( '/my-account/') );
+        }
+    }
     /**
      * Add PDF Download buttons on products
      */
@@ -457,9 +471,9 @@ class GL_WooCommerce {
     public function gl_wc_after_my_account() {
         ?>
         <ul>
-            <li><a href="<?php echo site_url('/my-favourites/'); ?>">Favourites</a> your favourite products</li>
-            <li><a href="<?php echo site_url('/my-projects/manage/'); ?>">Projects/Schedules</a> that you are creating for different jobs</li>
-            <li><a href="<?php echo site_url('/request-quote/'); ?>">Request Quotes</a> that you are getting ready for pricing</li>
+            <li><a href="<?php echo site_url('/my-favourites/'); ?>" target="_blank">Favourites</a> your favourite products</li>
+            <li><a href="<?php echo site_url('/my-projects/manage/'); ?>" target="_blank">Projects/Schedules</a> that you are creating for different jobs</li>
+            <li><a href="<?php echo site_url('/request-quote/'); ?>" target="_blank">Request Quotes</a> that you are getting ready for pricing</li>
             <li><a href="<?php echo wc_get_page_permalink( 'myaccount' ) . 'quotes/'; ?>">Quotes Submitted</a> your list of quotations</li>
             <li><a href="<?php echo wc_get_endpoint_url('/orders'); ?>">Orders</a></li>
         </ul>
@@ -475,7 +489,8 @@ class GL_WooCommerce {
     public function gl_change_customer_new_account_email_heading($heading, $object) {
         return '';
     }
-    
+
+
 } // end class
 
 $gl_woocommerce = new GL_WooCommerce();

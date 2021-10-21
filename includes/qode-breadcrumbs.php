@@ -36,7 +36,8 @@ if(!function_exists('bridge_qode_child_custom_breadcrumbs')) {
 			// if ($showOnHome == 1) echo '<div class="breadcrumbs"><div itemprop="breadcrumb" class="breadcrumbs_inner"><a' . $bread_style . ' href="' . $homeLink . '">' . $home . '</a></div></div>';
 		// } else {
 
-		if(is_product() ||bridge_qode_is_product_category()) {
+		
+		if((function_exists('is_product') && is_product()) ||bridge_qode_is_product_category()) {
 			echo '<div class="breadcrumbs"><div itemprop="breadcrumb" class="breadcrumbs_inner"><a' . $bread_style . ' href="' . $homeLink . '">' . $home . '</a>' . $delimiter;
 
 			if (is_category() || bridge_qode_is_product_category()) {

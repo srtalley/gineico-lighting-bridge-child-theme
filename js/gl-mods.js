@@ -1,8 +1,11 @@
-// v1.9
+// v2.0.2
 jQuery(function($) {
 
     $('document').ready(function() {
 
+        // change my account links to open in a new window
+        setup_my_account_links();
+        
         // add target blank if the view your quote button is visible
         if($('.yith_ywraq_add_item_browse_message a').length) {
             $('.yith_ywraq_add_item_browse_message a').attr('target', '_blank');
@@ -59,6 +62,22 @@ jQuery(function($) {
         check_product_id_and_update_add_to_my_favourites_button(product_id);
     });
 
+    /**
+     * Open certain links on my account to open in a new window
+     */
+    function setup_my_account_links() {
+        if($('.woocommerce-MyAccount-navigation').length) {
+            if($('.woocommerce-MyAccount-navigation-link--favourites').length) {
+                $('.woocommerce-MyAccount-navigation-link--favourites a').attr('target', '_blank');
+            }
+            if($('.woocommerce-MyAccount-navigation-link--projects').length) {
+                $('.woocommerce-MyAccount-navigation-link--projects a').attr('target', '_blank');
+            }
+            if($('.woocommerce-MyAccount-navigation-link--quotation').length) {
+                $('.woocommerce-MyAccount-navigation-link--quotation a').attr('target', '_blank');
+            }
+        }
+    }
     /**
      * Check if a product ID is in the favourites list and 
      * update the add to my favourites button

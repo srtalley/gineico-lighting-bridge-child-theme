@@ -2,6 +2,18 @@
 
 Gineico Lighting Bridge child theme documented changes.
 
+## [2.0.5] - 2021-10-20
+* Updated version for live.
+* Added permalink to my-favourites.
+* Updated the my favourites and my projects views when logged out.
+
+## [2.0] - 2021-10-19
+* Major changes over the past month of development, adding support for the YITH WooCommerce Wishlist plugin.
+* Added a "My Favourites" feature.
+* Added "My Projects" feature.
+* Updated quote handling.
+* Various styling updates and fixes.
+
 ## [1.1.9] - 2021-09-05 
 * Updates to the header by adding the "SEARCH" text to the search icon.
 * Header layout spacing.

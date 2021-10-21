@@ -454,6 +454,7 @@ if ( ! function_exists( 'bridge_child_product_custom_taxonomies' ) ) {
 		ob_start();
 
 		if ( $product_taxonomies ) {
+
 			woocommerce_product_loop_start();
 
 			foreach ( $product_taxonomies as $taxonomy ) {
@@ -469,7 +470,9 @@ if ( ! function_exists( 'bridge_child_product_custom_taxonomies' ) ) {
 
 		return '<div class="woocommerce columns-' . $columns . '">' . ob_get_clean() . '</div>';
 	}
-	add_shortcode('product_custom_taxonomies', 'bridge_child_product_custom_taxonomies');
+	if ( class_exists( 'WooCommerce' ) ) {
+		add_shortcode('product_custom_taxonomies', 'bridge_child_product_custom_taxonomies');
+	}
 }
 
 // if(!function_exists('bridge_child_yith_wcwl_add_to_wishlist')) {
@@ -1014,15 +1017,17 @@ if ( ! function_exists( 'bridge_child_product_searchform' ) ) {
 if ( ! function_exists( 'bridge_child_wp_footer' ) ) {
 	function bridge_child_wp_footer() {
 		ob_start();
-	    wc_get_template_part('gineico-advanced-filter');
-	    $gineico_advanced_filter = ob_get_contents();
-	    ob_end_clean();
-	    echo '<div id="float-gineico-advanced-filter">';
-	    echo '<div class="float-gineico-advanced-filter-container">';
-	    echo '<span class="float-gineico-advanced-filter-close qode_icon_font_elegant icon_close"></span>';
-	    echo $gineico_advanced_filter;
-	    echo '</div>';
-	    echo '</div>';
+		if(function_exists('wc_get_template_part')) {
+			wc_get_template_part('gineico-advanced-filter');
+			$gineico_advanced_filter = ob_get_contents();
+			ob_end_clean();
+			echo '<div id="float-gineico-advanced-filter">';
+			echo '<div class="float-gineico-advanced-filter-container">';
+			echo '<span class="float-gineico-advanced-filter-close qode_icon_font_elegant icon_close"></span>';
+			echo $gineico_advanced_filter;
+			echo '</div>';
+			echo '</div>';
+		}
 	}
 	add_action( 'wp_footer', 'bridge_child_wp_footer' );
 }
