@@ -35,8 +35,6 @@ if ( !class_exists( 'GL_Customers_List' ) ) {
 
             add_action( 'admin_menu', array( $this, 'gl_customers_list_menu_link' ), 9999 );
 
-            add_action( 'admin_menu', array( $this, 
-            'gl_customers_xls_export_page' ) );
         }
 
         /**
@@ -83,26 +81,6 @@ if ( !class_exists( 'GL_Customers_List' ) ) {
            require_once( dirname(QODE_CHILD__FILE__) . '/admin/woocommerce-customers-list.php' );
         }
 
-        function gl_customers_xls_export_page() {
-
-            $hook = add_submenu_page(
-                'woocommerce',
-                'Export GL Customers to Excel Spreadsheet',
-                'Export GL Customers to Excel Spreadsheet',
-                'edit_products',
-                'gl-customers-excel-export',
-                function() {}
-                //'pwd_excel_spreadsheet_page'
-            );
-
-            add_action('load-' . $hook, function() {
-
-                // Load page template
-                require_once( dirname(QODE_CHILD__FILE__) . '/admin/woocommerce-customers-xls-export.php' );
-
-                exit;
-            });
-        }
 
     } // end class
 

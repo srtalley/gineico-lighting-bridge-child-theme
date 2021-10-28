@@ -222,31 +222,6 @@ if ( !class_exists( 'GL_Customers_Table' ) ) {
             // Send final sort direction to usort
             return ( $order === 'asc' ) ? $result : -$result;
         }
-        //  private function sort_data( $a, $b ) {
-        //      wl($_GET['orderby']);
-        //      wl($_GET['order']);
-        //      // Set defaults
-        //      $orderby = 'name';
-        //      $order = 'asc';
-
-        //      // If orderby is set, use this  gas the sort column
-        //      if( !empty( $_GET['orderby'] ) ) {
-        //          $orderby = $_GET['orderby'];
-        //      } else {
-        //          $orderby = 'username';
-        //      }
-
-        //      // If order is set use this as the order
-        //      if( !empty( $_GET['order'] ) ) {
-        //          $order = $_GET['order'];
-        //      } else {
-        //          $order = 'asc';
-        //      }
-
-        //      $result = strcmp( $a[$orderby], $b[$orderby] );
-
-        //      return $result;
-        //  }
 
          /**
           * Override table nav
