@@ -9,50 +9,130 @@ if( ! class_exists( 'WP_List_Table' ) ) {
     require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
-
 if ( !class_exists( 'GL_Customers_Table' ) ) {
 
     // class for functions related to ...
     class GL_Customers_Table extends WP_List_Table {
 
+        private $usersearch;
         // Override parent construtor
         function __construct() {
 
             parent::__construct( array(
-                'singular'  => __( 'gl_active_member', gl_TEXT_DOMAIN ),     //singular name of the listed records
-                'plural'    => __( 'gl_active_members', gl_TEXT_DOMAIN ),   //plural name of the listed records
+                'singular'  => __( 'gl_customer', 'gineicolighting' ),     //singular name of the listed records
+                'plural'    => __( 'gl_customers', 'gineicolighting' ),   //plural name of the listed records
                 'ajax'      => false // should this table support ajax?
             ) );
+        }
+
+        /**
+         * Get the customer data
+         */
+        public function get_customers() {
+
+            $args1 = array(
+                'role'   => 'customer',
+                'search' => $this->usersearch,
+                'fields' => array('ID', 'user_login', 'user_email', 'user_registered'),
+            );
+            $wp_user_query1 = new WP_User_Query($args1);
+
+            // do another user query if there's a search term to pull from meta
+            if($this->usersearch != '') {
+
+                $args2 = array(
+                    'role'   => 'customer',
+                    'fields' => array('ID', 'user_login', 'user_email', 'user_registered'),
+                    'meta_query' => array(
+                        'relation' => 'OR',
+                        array(
+                            'key' => 'user_login',
+                            'value' => $this->usersearch,
+                            'compare' => 'LIKE'
+                        ),
+                        array(
+                            'key' => 'first_name',
+                            'value' => $this->usersearch,
+                            'compare' => 'LIKE'
+                        ),
+                        array(
+                            'key' => 'last_name',
+                            'value' => $this->usersearch,
+                            'compare' => 'LIKE'
+                        ),
+                        array(
+                            'key' => 'company',
+                            'value' => $this->usersearch,
+                            'compare' => 'LIKE'
+                        )
+                    )
+                );
+                $wp_user_query2 = new WP_User_Query($args2);
+
+                $wp_user_search = new WP_User_Query();
+                $wp_user_search->results = array_unique( array_merge( $wp_user_query1->results, $wp_user_query2->results ), SORT_REGULAR );
+            } else {
+                $wp_user_search = $wp_user_query1;
+            }// end if usersearch
+
+            $wp_user_search->post_count = count( $wp_user_search->results );
+
+            // Query the user IDs for this page.
+            $users = $wp_user_search->get_results();
+
+            $user_data_table = array();
+            foreach ($users as $user) {
+
+                $first_name = get_user_meta( $user->ID, 'first_name', true );
+                $last_name = get_user_meta( $user->ID, 'last_name', true );
+                $company = get_user_meta( $user->ID, 'company', true );
+                $registered_date = date( 'd/m/Y', strtotime( $user->user_registered ) );
+                $user_data_table[] = array(
+                    'id' => $user->ID,
+                    'user_name' => $user->user_login,
+                    'email' => $user->user_email,
+                    'first_name' => $first_name,
+                    'last_name' => $last_name,
+                    'company' => $company,
+                    'registered_date' => strtotime( $user->user_registered )
+                );
+            }
+            return $user_data_table;
         }
 
         /**
          * Prepare the items for the table to process
          */
         public function prepare_items() {
-
-            $columns = $this->get_columns();
             $hidden = $this->get_hidden_columns();
-            $sortable = $this->get_sortable_columns();
-            $data = $this->table_data();
-
-            usort( $data, array( &$this, 'sort_data' ) );
-
-            $perPage = 30;
-            $currentPage = $this->get_pagenum();
-            $totalItems = count( $data );
-
-            $this->set_pagination_args(
-                array(
-                    'total_items' => $totalItems,
-                    'per_page'    => $perPage
-                )
-            );
-
-            $data = array_slice( $data, ( ( $currentPage - 1 ) * $perPage ), $perPage );
-
+            $usersearch = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
+            $this->usersearch = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
+            
+            if($this->usersearch == '') {
+                $sortable = $this->get_sortable_columns();
+            } else {
+                $sortable = array();
+            }
+            $columns = $this->get_columns();
             $this->_column_headers = array( $columns, $hidden, $sortable );
 
-            $this->items = $data;
+            $user_data = $this->get_customers();
+
+            $users_per_page = $this->get_items_per_page( 'customers_per_page', 20 );
+
+            $current_page = $this->get_pagenum();
+            $total_items = count( $user_data );
+
+            $this->set_pagination_args( [
+            'total_items' => $total_items, //WE have to calculate the total number of items
+            'per_page' => $users_per_page //WE have to determine how many items to show on a page
+            ] );
+
+            usort( $user_data, array( &$this, 'usort_reorder' ) );
+            $user_data = array_slice( $user_data, ( ( $current_page - 1 ) * $users_per_page ), $users_per_page );
+
+            $this->items = $user_data;
+
         }
 
         /**
@@ -60,16 +140,16 @@ if ( !class_exists( 'GL_Customers_Table' ) ) {
          */
         public function get_columns() {
             $columns = array(
-                'name' => 'Name',
-                'memberships' => 'Memberships',
-                'start_date' => 'Start Date',
-                'phone' => 'Phone',
+                'user_name' => 'Username',
                 'email' => 'Email',
-                'address' => 'Address'
+                'first_name' => 'First Name',
+                'last_name' => 'Last Name',
+                'company' => 'Company',
+                'registered_date' => 'Registered'
             );
             return $columns;
         }
-
+        
         /**
          * Define which columns are hidden
          */
@@ -83,8 +163,12 @@ if ( !class_exists( 'GL_Customers_Table' ) ) {
         public function get_sortable_columns() {
 
             $sortable_columns = array(
-                'name' => array( 'name', false ),
-                'start_date' => array( 'start_date', true )
+                'user_name' => array( 'user_name', false ),
+                'email' => array( 'email', false ),
+                'first_name' => array( 'first_name', false ),
+                'last_name' => array( 'last_name', false ),
+                'company' => array( 'company', false ),
+                'registered_date' => array( 'registered_date', true )
             );
 
             return $sortable_columns;
@@ -105,14 +189,15 @@ if ( !class_exists( 'GL_Customers_Table' ) ) {
           */
          public function column_default( $item, $column_name ) {
              switch( $column_name ) {
-                 case 'name':
-                 case 'company':
-                 case 'start_date':
-                 case 'phone':
+                 case 'user_name':
+                    return '<a href="' . admin_url() . '/user-edit.php?user_id=' . $item['id'] . '">' . $item[$column_name] . '</a>';
                  case 'email':
-                 case 'address':
-                     return $item[ $column_name ];
-
+                 case 'first_name':
+                 case 'last_name':
+                 case 'company':
+                    return $item[ $column_name ];
+                 case 'registered_date':
+                    return date( 'd/m/Y', $item[ $column_name ] );
                  default:
                      return print_r( $item, true ) ;
              }
@@ -121,25 +206,47 @@ if ( !class_exists( 'GL_Customers_Table' ) ) {
          /**
           * Allows you to sort the data by the variables set in the $_GET
           */
-         private function sort_data( $a, $b ) {
-             // Set defaults
-             $orderby = 'name';
-             $order = 'asc';
+        function usort_reorder( $a, $b ) {
+            // If no sort, default to title
+            $orderby = ( ! empty( $_GET['orderby'] ) ) ? $_GET['orderby'] : 'user_login';
+            // If no order, default to asc
+            $order = ( ! empty($_GET['order'] ) ) ? $_GET['order'] : 'asc';
 
-             // If orderby is set, use this as the sort column
-             if( !empty( $_GET['orderby'] ) ) {
-                 $orderby = $_GET['orderby'];
-             }
+            // Determine sort order
+            if($orderby == 'registered_date') {
+                $result = strcasecmp( $a[$orderby], $b[$orderby] );
 
-             // If order is set use this as the order
-             if( !empty( $_GET['order'] ) ) {
-                 $order = $_GET['order'];
-             }
+            } else {
+                $result = strcasecmp( $a[$orderby], $b[$orderby] );
+            }
+            // Send final sort direction to usort
+            return ( $order === 'asc' ) ? $result : -$result;
+        }
+        //  private function sort_data( $a, $b ) {
+        //      wl($_GET['orderby']);
+        //      wl($_GET['order']);
+        //      // Set defaults
+        //      $orderby = 'name';
+        //      $order = 'asc';
 
-             $result = strcmp( $a[$orderby], $b[$orderby] );
+        //      // If orderby is set, use this  gas the sort column
+        //      if( !empty( $_GET['orderby'] ) ) {
+        //          $orderby = $_GET['orderby'];
+        //      } else {
+        //          $orderby = 'username';
+        //      }
 
-             return $result;
-         }
+        //      // If order is set use this as the order
+        //      if( !empty( $_GET['order'] ) ) {
+        //          $order = $_GET['order'];
+        //      } else {
+        //          $order = 'asc';
+        //      }
+
+        //      $result = strcmp( $a[$orderby], $b[$orderby] );
+
+        //      return $result;
+        //  }
 
          /**
           * Override table nav
@@ -147,68 +254,16 @@ if ( !class_exists( 'GL_Customers_Table' ) ) {
          function extra_tablenav( $which ) {
              global $wpdb;
 
-             $membership_filter = (int) filter_input( INPUT_GET, 'product', FILTER_SANITIZE_NUMBER_INT );
-             $newsletter_filter = filter_input( INPUT_GET, 'newsletter_consent', FILTER_SANITIZE_STRING );
-
              if( $which == 'top' ) {
 
                  ?>
                  <div class="alignleft actions">
-                     <form action="<?php echo admin_url( 'admin.php?page=gl_active_members' ); ?>" method="get">
-                         <label for="filter-by-membership" style="float: left; line-height: 30px; font-weight: 600; padding-right: 5px; font-size: 14px;">Filter by Membership</label>
-                         <select name="product" id="filter-by-membership">
-                             <option value="0">All memberships</option>
-                             <?php
+                     <form action="<?php echo admin_url( 'admin.php?page=gl_customers' ); ?>" method="get">
+                        <style>p.search-box{float:none;display:inline-block;}</style>
+                         <input type="hidden" name="page" value="gl_customers">
+                         <?php $this->search_box('Search', 'search'); ?>
+                         <a href="<?php echo admin_url( 'admin.php?page=gl_customers' ); ?>" class="button">Reset</a>
 
-                              // get all membership products
-                              $params = array(
-                                 'post_type' => 'product',
-                                 //'post_status' => array( 'publish', 'pending', 'draft', 'auto-draft', 'future', 'private', 'inherit', 'trash' ),
-                                 'posts_per_page' => 9999,
-                                 'meta_query' => array(
-                                     array(
-                                         'key' => 'gl_allocation_number', //meta key name here
-                                         'value' => 0,
-                                         'compare' => '>',
-                                     )
-                                 )
-                             );
-                             $wc_query = new WP_Query( $params );
-
-                             if ( $wc_query->have_posts() ) {
-                                while ( $wc_query->have_posts() ) {
-
-                                    $wc_query->the_post();
-                                    $product_id = get_the_ID();
-                                    $product = wc_get_product( $product_id );
-
-                                    if( $membership_filter == $product_id ) {
-                                        $membership_selected = 'selected';
-                                    } else {
-                                        $membership_selected = '';
-                                    }
-
-                                    ?>
-                                    <option <?php echo $membership_selected; ?> value="<?php echo $product->get_id(); ?>"><?php echo $product->get_name(); ?></option>
-                                    <?php
-                                }
-                             }
-
-                             wp_reset_query();
-
-                             ?>
-                         </select>
-
-                         <label for="filter-by-newsletter" style="float: left; line-height: 30px; font-weight: 600; padding-right: 5px; padding-left:10px; font-size: 14px;">Filter by Email Consent</label>
-                         <select name="newsletter_consent" id="filter-by-newsletter">
-                             <option value="0">All</option>
-                             <option <?php echo ( $newsletter_filter == 'no' ) ? 'selected' : ''; ?> value="no">No emails.</option>
-                             <option <?php echo ( $newsletter_filter == 'yes' ) ? 'selected' : ''; ?> value="yes">Yes, please email me...</option>
-                         </select>
-
-                         <input type="hidden" name="page" value="gl_active_members">
-                         <input type="submit" name="filter_action" id="query-submit" class="button" value="Filter">
-                         <a href="<?php echo admin_url( 'admin.php?page=gl_active_members' ); ?>" class="button">Reset</a>
                      </form>
                  </div>
                  <?php

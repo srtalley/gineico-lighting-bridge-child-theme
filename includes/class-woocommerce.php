@@ -41,19 +41,20 @@ class GL_WooCommerce {
 
         add_action( 'woocommerce_after_my_account', array($this, 'gl_wc_after_my_account'), 10, 1);
 
-
         add_filter( 'woocommerce_get_endpoint_url', array($this, 'gl_change_myaccount_quotation_url'), 10, 2 );
 
         // Registration redirect
         add_filter( 'woocommerce_registration_redirect', array($this, 'gl_redirection_after_registration'), 10, 1 );
-
 
         // Customize new user email
         add_filter( 'woocommerce_email_heading_customer_new_account', array($this, 'gl_change_customer_new_account_email_heading'), 10, 2);
 
         // add_filter( 'gettext', array($this,'gl_change_customer_new_account_email_text_strings'), 20, 3 );
 
-    } // end function construct
+        // Send a new user email to the admins
+        add_action( 'woocommerce_created_customer', array($this, 'gl_woocommerce_created_customer_admin_notification'), 1000 );
+
+    }
 
     /**
      * Modify WooCommerce breadcrumb delimiters
@@ -490,7 +491,78 @@ class GL_WooCommerce {
         return '';
     }
 
+    /**
+     * Notify admin when a new customer account is created
+     */
+    public function gl_woocommerce_created_customer_admin_notification( $customer_id ) {
+        add_filter( 'wp_new_user_notification_email_admin', array($this, 'gl_wp_new_user_notification_email_admin'), 10, 3 );
 
+        wp_send_new_user_notifications( $customer_id, 'admin' );
+
+    } // end function construct
+
+    /**
+     * Customize the admin email that is sent
+     */
+    public function gl_wp_new_user_notification_email_admin($notification, $user, $blogname) {
+
+        $fields = $this->gl_get_customer_account_fields();
+        $notification['message'] = '<p>A new user has registered on GineicoLighting.com.au with the following details:' . '</p>';
+        $registered = $user->data->user_registered;
+
+        $notification['message'] .= '<p>Registered Date: ' . date( "d/m/Y", strtotime( $registered )) . "</p>";
+        $notification['message'] .= '<p>Email Address: ' . $user->data->user_email . "</p>";
+        foreach ( $fields as $key => $field_args ) { 
+ 
+            $current_value = get_user_meta($user->ID ,$key, true);
+
+            if($key == 'state') {
+                $state_choices = qode_get_select_field_choices('acf_user-additional-information', 'state');
+                foreach ($state_choices as $key => $value) {
+                    if($current_value == $key) {
+                        $current_value = $value;
+                    }
+                }
+            }
+            if($key == 'elect') {
+                $elect_choices = qode_get_select_field_choices('acf_user-additional-information', 'elect');
+                foreach ($elect_choices as $key => $value) {
+                    if($current_value == $key) {
+                        $current_value = $value;
+                    }
+                }
+            }
+            $notification['message'] .= '<p>' . $field_args['label'] . ': ' . $current_value . '</p>';
+        }
+        return $notification;
+    }
+
+    /**
+    * Get additional account fields.
+    * @return array
+    */
+    public function gl_get_customer_account_fields() {
+        return apply_filters( 'gl_customer_account_fields', array(
+            'first_name' => array(
+                'label'       => __( 'First Name', 'gineicolighting' )
+            ),
+            'last_name' => array(
+                'label'       => __( 'Last Name', 'gineicolighting' )
+            ),
+            'company' => array(
+                'label'       => __( 'Company', 'gineicolighting' )
+            ),
+            'elect' => array(
+                'label'       => __( 'Category', 'gineicolighting' )
+            ),
+            'phone_number' => array(
+                'label'       => __( 'Phone Number', 'gineicolighting' )
+            ),
+            'state' => array(
+                'label'       => __( 'State', 'gineicolighting' )
+            ),
+        ) );
+    }
 } // end class
 
 $gl_woocommerce = new GL_WooCommerce();

@@ -31,39 +31,66 @@ if ( !class_exists( 'GL_Customers_List' ) ) {
         }
 
         public function __construct() {
+            add_filter( 'set-screen-option', array( $this, 'set_screen' ), 10, 3 );
 
-            add_action( 'admin_menu', array( &$this, 'GL_Customers_list_menu_link' ), 9999 );
+            add_action( 'admin_menu', array( $this, 'gl_customers_list_menu_link' ), 9999 );
 
-            add_action( 'admin_menu', array( &$this, 
-            'GL_Customers_xls_export_page' ) );
+            add_action( 'admin_menu', array( $this, 
+            'gl_customers_xls_export_page' ) );
         }
 
-        function GL_Customers_list_menu_link() {
+        /**
+         * Add the menu link
+         */
+        public function gl_customers_list_menu_link() {
 
-           add_submenu_page(
+           $hook = add_submenu_page(
                'woocommerce',
-               'Active Members List & Export',
-               'Active Members',
+               'Customers List & Export',
+               'GL Customers',
                'edit_products',
-               'gl_active_members',
-               array( &$this, 'GL_Customers_list_page_callback' )
+               'gl_customers',
+               array( &$this, 'gl_customers_list_page_callback' )
            );
-        }
+           add_action( "load-$hook", [ $this, 'screen_option' ] );
 
-        function GL_Customers_list_page_callback() {
+        }
+        /**
+        * Screen options
+        */
+        public function screen_option() {
+
+            $option = 'per_page';
+            $args = [
+            'label' => 'Customers',
+            'default' => 10,
+            'option' => 'customers_per_page'
+            ];
+            
+            add_screen_option( $option, $args );
+            
+        }
+        /**
+         * Save the screen options
+         */
+        public static function set_screen( $status, $option, $value ) {
+            return $value;
+        }
+            
+        function gl_customers_list_page_callback() {
 
            // Load page template
-           require_once( dirname(QODE_CHILD__FILE__) . '/admin/woocommerce-active-members-list.php' );
+           require_once( dirname(QODE_CHILD__FILE__) . '/admin/woocommerce-customers-list.php' );
         }
 
-        function GL_Customers_xls_export_page() {
+        function gl_customers_xls_export_page() {
 
             $hook = add_submenu_page(
-                'admin.php',
-                'Export gl Members to Excel Spreadsheet',
-                'Export gl Members to Excel Spreadsheet',
+                'woocommerce',
+                'Export GL Customers to Excel Spreadsheet',
+                'Export GL Customers to Excel Spreadsheet',
                 'edit_products',
-                'gl-members-excel-export',
+                'gl-customers-excel-export',
                 function() {}
                 //'pwd_excel_spreadsheet_page'
             );
@@ -71,69 +98,10 @@ if ( !class_exists( 'GL_Customers_List' ) ) {
             add_action('load-' . $hook, function() {
 
                 // Load page template
-                require_once( dirname(QODE_CHILD__FILE__) . '/admin/woocommerce-active-members-xls-export.php' );
+                require_once( dirname(QODE_CHILD__FILE__) . '/admin/woocommerce-customers-xls-export.php' );
 
                 exit;
             });
-        }
-
-        public static function gl_get_members_data( $membership_filter = null, $newsletter_filter = null ) {
-
-            if( ! $membership_filter ) {
-                $membership_filter = (int) filter_input( INPUT_GET, 'product', FILTER_SANITIZE_NUMBER_INT );
-            }
-
-            if( ! $newsletter_filter ) {
-                $newsletter_filter = filter_input( INPUT_GET, 'newsletter_consent', FILTER_SANITIZE_STRING );
-            }
-
-            global  $woocommerce;
-            $currency_symbol = get_woocommerce_currency_symbol();
-
-            $data = array();
-
-            // get all users (with customer role)
-            $args = array(
-                'role' => 'customer',
-                'orderby' => 'user_nicename',
-                'order' => 'ASC'
-            );
-
-            $all_customers = get_users( $args );
-
-            foreach( $all_customers as $customer ) {
-
-                $display_data_membership_filter = false;
-                $display_data_newsletter_filter = false;
-
-                $customer_id = $customer->ID;
-
-
-                $phone = get_user_meta( $customer_id, 'billing_phone', true );
-                $company = get_user_meta( $customer_id, 'company', true );
-                $address = array(
-                    'address_1' => get_user_meta( $customer_id, 'billing_address_1', true ),
-                    'address_2' => get_user_meta( $customer_id, 'billing_address_2', true ),
-                    'city' => get_user_meta( $customer_id, 'billing_city', true ),
-                    'state' => get_user_meta( $customer_id, 'billing_state', true ),
-                    'postcode' => get_user_meta( $customer_id, 'billing_postcode', true ),
-                    'country' => get_user_meta( $customer_id, 'billing_country', true )
-                );
-
-          
-
-                    $data[] = array(
-                        'name' => $customer->display_name,
-                        'company' => $company,
-
-                        'phone' => $phone,
-                        'email' => $customer->user_email,
-                        'address' => implode( ', ', array_filter( $address ) )
-                    );
-                // }
-            }
-
-            return $data;
         }
 
     } // end class

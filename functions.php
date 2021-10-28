@@ -3,9 +3,9 @@
 // custom child theme includes
 include_once('includes/qode-breadcrumbs.php');
 include_once('includes/class-woocommerce.php');
-include_once('includes/class-woocommerce-customers.php');
-// include_once('includes/class-woocommerce-customers-list.php');
-// include_once('includes/class-woocommerce-customers-table.php');
+// include_once('includes/class-woocommerce-customers.php');
+include_once('includes/class-woocommerce-customers-list.php');
+include_once('includes/class-woocommerce-customers-table.php');
 
 include_once('includes/class-yith-woocommerce-quotes.php');
 include_once('includes/class-yith-woocommerce-wishlist.php');
@@ -34,6 +34,10 @@ function bridge_child_wp_enqueue_scripts() {
         'ajaxurl'   => admin_url( 'admin-ajax.php' ),
         'ajaxnonce' => wp_create_nonce( 'gl_mods_init_nonce' )
     ) );
+
+	if(is_page('login')) {
+		wp_enqueue_script('gl-login', QODE_CHILD_ROOT . '/js/gl-login.js',array('jquery'),wp_get_theme()->get('Version'),true);
+	}
 
 	$current_post_posttype = get_post_type();
 	if( $current_post_posttype== 'portfolio_page') {

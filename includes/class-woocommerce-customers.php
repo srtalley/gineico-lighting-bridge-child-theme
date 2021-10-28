@@ -1,6 +1,7 @@
 <?php 
 /**
  * v1.1.9.4
+ * No longer being used.
  */
 namespace GineicoLighting\WooCommerce;
 
@@ -14,7 +15,7 @@ class Customers {
         add_action('admin_head', array($this, 'qode_edit_customer_custom_js'));
         add_action('admin_head', array($this, 'qode_after_add_customer_custom_js'));
         add_filter( 'views_users', array($this, 'qode_fix_users_counts_in_users_php') );
-        add_action( 'admin_menu', array($this, 'qode_admin_custom_menu' ));
+        // add_action( 'admin_menu', array($this, 'qode_admin_custom_menu' ));
 
         add_action( 'admin_init', array($this, 'gl_populate_user_columns') );
         add_action('manage_users_columns', array($this, 'modify_customer_user_columns'));
@@ -148,62 +149,62 @@ class Customers {
         }
     }
 
-    public function qode_fix_users_counts_in_users_php( $views ) {
-        if(isset($_GET['role']) and $_GET['role'] == 'customer') {
-            $new_views = array();
-            $new_views['customer'] = $views['customer'];
-            $views = $new_views;
-        } else {
-            $customers = wp_strip_all_tags($views['customer']);
-            $customers = str_replace('Customer', '', $customers);
-            $customers = str_replace('(', '', $customers);
-            $customers = str_replace(')', '', $customers);
-            $customers = intval($customers);
-            $all = wp_strip_all_tags($views['all']);
-            $all = str_replace('All', '', $all);
-            $all = str_replace('(', '', $all);
-            $all = str_replace(')', '', $all);
-            $all = intval($all);
-            $new_all = $all - $customers;
-            unset($views['customer']);
-            $views['all'] = str_replace($all, $new_all, $views['all']);
-        }
-        return $views;
-    }
+    // public function qode_fix_users_counts_in_users_php( $views ) {
+    //     if(isset($_GET['role']) and $_GET['role'] == 'customer') {
+    //         $new_views = array();
+    //         $new_views['customer'] = $views['customer'];
+    //         $views = $new_views;
+    //     } else {
+    //         $customers = wp_strip_all_tags($views['customer']);
+    //         $customers = str_replace('Customer', '', $customers);
+    //         $customers = str_replace('(', '', $customers);
+    //         $customers = str_replace(')', '', $customers);
+    //         $customers = intval($customers);
+    //         $all = wp_strip_all_tags($views['all']);
+    //         $all = str_replace('All', '', $all);
+    //         $all = str_replace('(', '', $all);
+    //         $all = str_replace(')', '', $all);
+    //         $all = intval($all);
+    //         $new_all = $all - $customers;
+    //         unset($views['customer']);
+    //         $views['all'] = str_replace($all, $new_all, $views['all']);
+    //     }
+    //     return $views;
+    // }
 
-    public function qode_admin_custom_menu() {
-        global $menu, $submenu, $pagenow, $parent_file, $submenu_file;
+    // public function qode_admin_custom_menu() {
+    //     global $menu, $submenu, $pagenow, $parent_file, $submenu_file;
 
-        $user = wp_get_current_user();
-        $role = (array)$user->roles;
-        if(count($role) == 1) {
-            $role = $role[0];
-            if($role == 'sales_admin') {
-                foreach ($menu as $key => $menu_array) {
-                        $found = array_search('menu-posts', $menu_array);
-                        if($found) {
-                            unset($menu[$key]);
-                            break;
-                        }
-                } 
-                foreach ($menu as $key => $menu_array) {
-                        $found = array_search('menu-posts-portfolio_page', $menu_array);
-                        if($found) {
-                            unset($menu[$key]);
-                            break;
-                        }
-                } 
-                unset($submenu['edit.php']);
-                unset($submenu['edit.php?post_type=portfolio_page']);
-            }
-        }
-        $parent_menu = 'woocommerce';
-        $menu_name = 'GL Customers';
-        $capability = 'manage_woocommerce';
-        $url = 'users.php?role=customer';
+    //     $user = wp_get_current_user();
+    //     $role = (array)$user->roles;
+    //     if(count($role) == 1) {
+    //         $role = $role[0];
+    //         if($role == 'sales_admin') {
+    //             foreach ($menu as $key => $menu_array) {
+    //                     $found = array_search('menu-posts', $menu_array);
+    //                     if($found) {
+    //                         unset($menu[$key]);
+    //                         break;
+    //                     }
+    //             } 
+    //             foreach ($menu as $key => $menu_array) {
+    //                     $found = array_search('menu-posts-portfolio_page', $menu_array);
+    //                     if($found) {
+    //                         unset($menu[$key]);
+    //                         break;
+    //                     }
+    //             } 
+    //             unset($submenu['edit.php']);
+    //             unset($submenu['edit.php?post_type=portfolio_page']);
+    //         }
+    //     }
+    //     $parent_menu = 'woocommerce';
+    //     $menu_name = 'GL Customers';
+    //     $capability = 'manage_woocommerce';
+    //     $url = 'users.php?role=customer';
 
-        $submenu[$parent_menu][] = array( $menu_name, $capability, $url );
-    }
+    //     $submenu[$parent_menu][] = array( $menu_name, $capability, $url );
+    // }
 
     /**
      * Change the columns shown in the customer view
@@ -296,6 +297,10 @@ class Customers {
         $this->customer_columns[] = array(
             'field' => 'company',
             'label' => 'Company'
+        );
+        $this->customer_columns[] = array(
+            'field' => 'registration_date',
+            'label' => 'Registered'
         );
     }
 } // end class

@@ -167,7 +167,12 @@ class GL_YITH_WooCommerce_Wishlist {
      * Add the rewrite tag for my-favourites
      */
     public function gl_my_favourites_rewrite_rule( $vars ) {
-        $regex_simple = '(([^/]+/)*my-favourites)(/(.*))?/?$';
+
+        $favorites_page_slug = 'my-favourites';
+        
+        $regex_paged = '(([^/]+/)*' . $favorites_page_slug . ')(/(.*))?/page/([0-9]{1,})/?$';
+        $regex_simple = '(([^/]+/)*' . $favorites_page_slug . ')(/(.*))?/?$';
+
         add_rewrite_rule( $regex_simple, 'index.php?pagename=my-projects', 'top' );
 
         $rewrite_rules = get_option( 'rewrite_rules' );
@@ -392,7 +397,7 @@ class GL_YITH_WooCommerce_Wishlist {
         echo '<h3>Add to My Project</h3>';
         echo '<p>To use our projects feature you need to log in or create an account:</p>';
         echo '</div> <!-- .gl-projects-message-logged-out-message -->';
-        echo '<div class="login-button-wrapper"><a href="' . site_url('/login') . '" class="gl-login button">Login</a>&nbsp;<a href="' . site_url('/login') . '" class="gl-register button">Create an Account</a></div>';     
+        echo '<div class="login-button-wrapper"><a href="' . site_url('/login?action=login') . '" class="gl-login button">Login</a>&nbsp;<a href="' . site_url('/login?action=register') . '" class="gl-register button">Create an Account</a></div>';     
         echo '</div> <!-- .gl-projects-message-logged-out-message -->';
         echo '</div> <!-- #gl-projects-message-logged-out -->';
     }
@@ -569,35 +574,40 @@ class GL_YITH_WooCommerce_Wishlist {
     public function gl_yith_wcwl_before_wishlist_title($wishlist) {
         $default_wishlist_id = $this->gl_get_default_wishlist_id();
         echo '<style>.shop_table.wishlist_table tr[data-wishlist-id="' . $default_wishlist_id . '"], li[data-wishlist-id="' . $default_wishlist_id . '"] { display: none; }</style>';
+
+        $hide_additional_links = false;
         // hide project links on the default list; prevent renaming list
         if(is_object($wishlist)) {
             global $wp;
             $current_url = home_url( $wp->request );
             // get the slug
             if($wishlist->get_id() == $default_wishlist_id) {
-                echo "<script> jQuery(function($) { $('document').ready(function() { $(document).off('click', '.wishlist-title-with-form h2'); $(document).off('click', '.show-title-form'); }); });</script>";
-                echo '<style>.btn.button.show-title-form, .back-to-all-wishlists, .wishlist-page-links { display: none; } .wishlist-title.wishlist-title-with-form h2:hover {background:inherit;cursor:inherit;}</style>';
+
+                $hide_additional_links = true;
             }
+        } else {
+            $hide_additional_links = true;
+        }
+
+        if($hide_additional_links){
+            echo "<script> jQuery(function($) { $('document').ready(function() { $(document).off('click', '.wishlist-title-with-form h2'); $(document).off('click', '.show-title-form'); }); });</script>";
+            echo '<style>.btn.button.show-title-form, .back-to-all-wishlists, .wishlist-page-links { display: none; } .wishlist-title.wishlist-title-with-form h2:hover {background:inherit;cursor:inherit;}</style>';
         }
 
     }
     public function gl_yith_wcwl_before_wishlist($wishlist) {
 
         if(!is_user_logged_in()) {
-            $default_wishlist_id = $this->gl_get_default_wishlist_id();
+
             global $wp;
             // get the slug
             $current_url = home_url( $wp->request );
-            if($wishlist->get_id() == $default_wishlist_id) {
-                if($current_url != home_url( '/my-favourites')) {
-                   
-                    echo '<style>.shop_table.wishlist_table, .gl-wishlist-download-wrapper, .yith_wcwl_wishlist_footer { display: none; } .gl-my-projects-logged-out-message { margin: 30px 0 40px; } .gl-my-projects-logged-out-message p { font-size: 20px; } .gl-my-projects-logged-out-message p a { font-weight: 600; }</style>';
-                    echo '<div class="gl-my-projects-logged-out-message"><p>To create SCHEDULES/PROJECTS please <a href="' . site_url('/login/') . '">log in</a> or <a href="' . site_url('/login/') . '">create an account</a>.</p></div>';
-                }
+            if($current_url != home_url( '/my-favourites')) {
+                
+                echo '<style>.shop_table.wishlist_table, .gl-wishlist-download-wrapper, .yith_wcwl_wishlist_footer { display: none; } .gl-my-projects-logged-out-message { margin: 30px 0 40px; } .gl-my-projects-logged-out-message p { font-size: 20px; } .gl-my-projects-logged-out-message p a { font-weight: 600; }</style>';
+                echo '<div class="gl-my-projects-logged-out-message"><p>To create SCHEDULES/PROJECTS please <a href="' . site_url('/login?action=login') . '">log in</a> or <a href="' . site_url('/login?action=register') . '">create an account</a>.</p></div>';
             }
         }
-      
-        
     }
 
     /**

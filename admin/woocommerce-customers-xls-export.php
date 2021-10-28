@@ -13,23 +13,16 @@ use PhpOffice\PhpSpreadsheet\Cell\AdvancedValueBinder;
 
 global $wpdb;
 
-// Get Filters
-$membership_filter = (int) filter_input( INPUT_GET, 'product', FILTER_SANITIZE_NUMBER_INT );
-$newsletter_filter = filter_input( INPUT_GET, 'product', FILTER_SANITIZE_STRING );
 // Get Website Title
 $blog_title = get_bloginfo( 'name' );
 $blog_title_formatted = str_replace( ' ', '-', strtolower( $blog_title ) );
-// Get membership product Title
-$title_info = '';
-if( $membership_filter ) {
-    $product = wc_get_product( $membership_filter );
-    $title_info = ' (' . $product->get_title() . ')';
-}
+
 // Today's DateTime
 $datetime_now = date( 'Y-m-d_H-i-s' );
 
 // get data
-$members_data = GL_Customers_List::hfpsp_get_members_data( $membership_filter, $newsletter_filter );
+$gl_customers_table = new GL_Customers_Table;
+$customer_data = $gl_customers_table->get_customers();
 
 // BUILD SPREADSHEET
 // Create new Spreadsheet object
@@ -50,66 +43,47 @@ $spreadsheet->setActiveSheetIndex(0);
 $active_sheet = $spreadsheet->getActiveSheet();
 
 // Add Headings
-$active_sheet->setCellValue('A1', 'Name');
-$active_sheet->setCellValue('B1', 'Memberships');
-$active_sheet->setCellValue('C1', 'Count');
-$active_sheet->setCellValue('D1', 'Start Date');
-$active_sheet->setCellValue('E1', 'Phone');
-$active_sheet->setCellValue('F1', 'Email');
-$active_sheet->setCellValue('G1', 'Address');
-
-// PWD TEST BEGIN
-//$active_sheet->setCellValue('I1', urldecode($_SERVER['REQUEST_URI']));
-// PWD TEST END
+$active_sheet->setCellValue('A1', 'Username');
+$active_sheet->setCellValue('B1', 'Email');
+$active_sheet->setCellValue('C1', 'First Name');
+$active_sheet->setCellValue('D1', 'Last Name');
+$active_sheet->setCellValue('E1', 'Company');
+$active_sheet->setCellValue('F1', 'Registered');
 
 // Add Data
 // set starting row
 $sheet_row = 2;
 
-foreach( $members_data as $member ) {
+foreach( $customer_data as $customer ) {
 
     // Add Data
     // set value binder
     \PhpOffice\PhpSpreadsheet\Cell\Cell::setValueBinder( new \PhpOffice\PhpSpreadsheet\Cell\AdvancedValueBinder() );
 
-    // Customer Name
-    $active_sheet->setCellValue( 'A' . $sheet_row, html_entity_decode( $member['name'] ) );
+    $active_sheet->setCellValue( 'A' . $sheet_row, html_entity_decode( $customer['user_name'] ) );
 
-    // Memberships
-    $active_sheet->setCellValue( 'B'. $sheet_row, html_entity_decode( $member['memberships'] ) );
+    $active_sheet->setCellValue( 'B'. $sheet_row, html_entity_decode( $customer['email'] ) );
 
-    //Count
-    $active_sheet->setCellValue( 'C' . $sheet_row, $member['count'] );
+    $active_sheet->setCellValue( 'C' . $sheet_row, $customer['first_name'] );
+    $active_sheet->setCellValue( 'D' . $sheet_row, $customer['last_name'] );
+    $active_sheet->setCellValue( 'E' . $sheet_row, $customer['company'] );
 
-    // Start Date
-    $active_sheet->setCellValue( 'D' . $sheet_row, $member['start_date'] );
+    $active_sheet->setCellValue( 'D' . $sheet_row, $customer['registered_date'] );
     // format date
-    $active_sheet->getStyle( 'D' . $sheet_row )
+    $active_sheet->getStyle( 'F' . $sheet_row )
         ->getNumberFormat()
         ->setFormatCode( \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY );
 
-    // Customer Phone
-    // Set cell with a numeric value, but tell PhpSpreadsheet it should be treated as a string
-    $active_sheet->setCellValueExplicit(
-        'E' . $sheet_row,
-        $member['phone'],
-        \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING
-    );
 
-    // Customer Email
-    $active_sheet->setCellValue( 'F' . $sheet_row, $member['email'] );
-
-    // Customer Address
-    $active_sheet->setCellValue( 'G' . $sheet_row, $member['address'] );
 
     // increment sheet row
     $sheet_row++;
 }
 
 // Set Vertical Alignment to Top
-$active_sheet->getStyle( 'A1:G' . $sheet_row )->getAlignment()->setVertical( \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP );
+$active_sheet->getStyle( 'A1:F' . $sheet_row )->getAlignment()->setVertical( \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP );
 // set top row to bold
-$active_sheet->getStyle( 'A1:G1' )->getFont()->setBold( true );
+$active_sheet->getStyle( 'A1:F1' )->getFont()->setBold( true );
 // Set Column Widths
 $active_sheet->getColumnDimension('A')->setAutoSize(true);
 $active_sheet->getColumnDimension('B')->setAutoSize(true);
@@ -117,10 +91,9 @@ $active_sheet->getColumnDimension('C')->setAutoSize(true);
 $active_sheet->getColumnDimension('D')->setAutoSize(true);
 $active_sheet->getColumnDimension('E')->setAutoSize(true);
 $active_sheet->getColumnDimension('F')->setAutoSize(true);
-$active_sheet->getColumnDimension('G')->setAutoSize(true);
 
 // Rename worksheet
-$active_sheet->setTitle('Members ');
+$active_sheet->setTitle('Customers ');
 
 // Set active sheet index to the first sheet, so Excel opens this as the first sheet
 $spreadsheet->setActiveSheetIndex(0);

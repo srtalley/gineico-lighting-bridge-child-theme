@@ -4,8 +4,8 @@ Theme URI: http://demo.qodeinteractive.com/bridge/
 Description: A child theme of Bridge Theme
 Author: Qode Interactive
 Author URI: http://www.qodethemes.com/
-Version: 2.0.5
-Date: 2021-10-19
+Version: 2.0.6c
+Date: 2021-10-20
 Template: bridge
 */
 @import url("../bridge/style.css");
@@ -79,6 +79,11 @@ header .search_button:after {
     text-transform: uppercase;
     vertical-align: text-bottom;
     padding-left: 5px;
+}
+/****/
+/** LOGIN PAGE **/
+.mobile-login-register-tabs {
+    display: none;
 }
 
 /****/
@@ -2538,6 +2543,48 @@ form.products-per-page select {
     }
 }
 @media only screen and (max-width: 768px) {
+
+
+    /** LOGIN PAGE **/
+    .mobile-login-register-tabs {
+        display: block;
+        margin: 0;
+    }
+    .mobile-login-register-tabs .full_section_inner {
+        display: flex;
+        flex-direction: row; 
+        flex-wrap: nowrap;
+    }
+    .mobile-login-register-tabs .full_section_inner .vc_column-inner{
+        padding: 0;
+    }
+    .login-button, .registration-button {
+        box-sizing: border-box !important;
+        width: 100%;
+        text-align: center;
+        background: #fcfcfc;
+        color: #000;
+        font-size: 20px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        border: none !important;
+        border-bottom: 5px solid #fcfcfc !important;
+    }
+    .login-button.active, .registration-button.active {
+        background: #fff;
+        color: #000;
+        border-bottom: 5px solid #000 !important;
+    }
+    .login-registration-wrapper .login-section,
+    .login-registration-wrapper .registration-section {
+        display: none !important;
+    }
+    .login-registration-wrapper .login-section.active,
+    .login-registration-wrapper .registration-section.active {
+        display: block !important;
+    }
+
+
     #yith-ywraq-form #yith-ywrq-table-list td.product-thumbnail {
         display: table-cell !important;
     }
@@ -2550,6 +2597,7 @@ form.products-per-page select {
     .wishlist-page-links {
         margin-top: 20px;
     }
+
 
 }
 @media only screen and (max-width: 767px) {

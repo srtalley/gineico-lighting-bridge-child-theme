@@ -1,6 +1,9 @@
 # Changelog
 
 Gineico Lighting Bridge child theme documented changes.
+## [2.0.6] - 2021-10-27
+* Added a new user registration email.
+* Added a new table and filter and search for the GL Customers report.
 
 ## [2.0.5] - 2021-10-20
 * Updated version for live.
