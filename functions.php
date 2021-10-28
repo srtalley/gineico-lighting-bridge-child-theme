@@ -6,10 +6,11 @@ include_once('includes/class-woocommerce.php');
 // include_once('includes/class-woocommerce-customers.php');
 include_once('includes/class-woocommerce-customers-list.php');
 include_once('includes/class-woocommerce-customers-table.php');
+include_once('includes/class-woocommerce-customers-wishlist-table.php');
 
 include_once('includes/class-yith-woocommerce-quotes.php');
 include_once('includes/class-yith-woocommerce-wishlist.php');
-include_once('includes/class-yith-woocommerce-wishlist-admin.php');
+// include_once('includes/class-yith-woocommerce-wishlist-admin.php');
 include_once('includes/class-yith-woocommerce-wishlist-page-template.php');
 
 define('QODE_CHILD_ROOT', get_stylesheet_directory_uri());

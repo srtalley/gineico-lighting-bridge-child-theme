@@ -1,6 +1,9 @@
 # Changelog
 
 Gineico Lighting Bridge child theme documented changes.
+## [2.0.7] - 2021-10-28
+* Added a new Wishlist (My Projects / My Favourites) report with the ability to search on email, name and company.
+
 ## [2.0.6] - 2021-10-27
 * Added a new user registration email.
 * Added a new table and filter and search for the GL Customers report.

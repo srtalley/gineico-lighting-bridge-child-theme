@@ -1,6 +1,6 @@
 <?php
 /**
- * WooCommerce gl Active Members List & Export Template
+ * WooCommerce GL Customers Template
  */
 
 $gl_customers_table = new GL_Customers_Table;
@@ -11,7 +11,7 @@ $membership_filter = (int) filter_input( INPUT_GET, 'product', FILTER_SANITIZE_N
 ?>
 
 <div class="wrap">
-    <h2>Active Members List</h2>
+    <h2>Gineico Lighting Customers</h2>
 
     <div class="gl-customers-table-outer">
         <?php $gl_customers_table->display(); ?>

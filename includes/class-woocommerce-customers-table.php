@@ -208,7 +208,7 @@ if ( !class_exists( 'GL_Customers_Table' ) ) {
           */
         function usort_reorder( $a, $b ) {
             // If no sort, default to title
-            $orderby = ( ! empty( $_GET['orderby'] ) ) ? $_GET['orderby'] : 'user_login';
+            $orderby = ( ! empty( $_GET['orderby'] ) ) ? $_GET['orderby'] : 'user_name';
             // If no order, default to asc
             $order = ( ! empty($_GET['order'] ) ) ? $_GET['order'] : 'asc';
 
