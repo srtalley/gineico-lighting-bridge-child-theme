@@ -1,6 +1,11 @@
 # Changelog
 
 Gineico Lighting Bridge child theme documented changes.
+## [2.0.8] - 2021-11-01
+* Fixed the registration form to properly validate items.
+* Updated the quote form to pull the company name and phone number.
+* Updated the new user registration email.
+
 ## [2.0.7] - 2021-10-28
 * Added a new Wishlist (My Projects / My Favourites) report with the ability to search on email, name and company.
 

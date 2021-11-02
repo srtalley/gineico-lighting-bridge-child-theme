@@ -566,26 +566,37 @@ if(!function_exists('qode_clean_body_classes')) {
 	add_filter('body_class','qode_clean_body_classes',20);
 }
 
+/**
+ * Save user info
+ */
 if(function_exists('update_field')) {
 	if(!function_exists('qode_save_user_custom_fields')) {
-		function qode_save_user_custom_fields( $user_id ) { 
+		function qode_save_user_custom_fields( $user_id ) {
 		    if(isset($_POST['account_elect'])) {
-		    	update_field('elect', esc_attr($_POST['account_elect']), 'user_' . $user_id);
+		    	update_field('elect', sanitize_text_field($_POST['account_elect']), 'user_' . $user_id);
 		    }
 		    if(isset($_POST['account_first_name'])) {
-		    	update_field('first_name', esc_attr($_POST['account_first_name']), 'user_' . $user_id);
+		    	update_field('first_name', sanitize_text_field($_POST['account_first_name']), 'user_' . $user_id);
 		    }
 		    if(isset($_POST['account_last_name'])) {
-		    	update_field('last_name', esc_attr($_POST['account_last_name']), 'user_' . $user_id);
+		    	update_field('last_name', sanitize_text_field($_POST['account_last_name']), 'user_' . $user_id);
 		    }
 		    if(isset($_POST['account_company'])) {
-		    	update_field('company', esc_attr($_POST['account_company']), 'user_' . $user_id);
+		    	update_field('company', sanitize_text_field($_POST['account_company']), 'user_' . $user_id);
+				update_user_meta( $user_id, 'billing_company', sanitize_text_field($_POST['account_company']) );
 		    }
 		    if(isset($_POST['account_phone_number'])) {
-		    	update_field('phone_number', esc_attr($_POST['account_phone_number']), 'user_' . $user_id);
+		    	update_field('phone_number', sanitize_text_field($_POST['account_phone_number']), 'user_' . $user_id);
+				update_user_meta( $user_id, 'billing_phone', sanitize_text_field($_POST['account_phone_number']));
 		    }
 		    if(isset($_POST['account_state'])) {
-		    	update_field('state', esc_attr($_POST['account_state']), 'user_' . $user_id);
+		    	update_field('state', sanitize_text_field($_POST['account_state']), 'user_' . $user_id);
+
+				$state_choices = qode_get_select_field_choices('acf_user-additional-information', 'state');
+				foreach ($state_choices as $key => $value) {
+					if($_POST['account_state'] == $key)
+					update_user_meta( $user_id, 'billing_state', $value );
+				}
 		    }
 		}
 	}
@@ -717,22 +728,32 @@ if(!function_exists('qode_ywraq_get_default_form_field_last_name')) {
 	add_filter( 'ywraq_get_default_form_field_last_name', 'qode_ywraq_get_default_form_field_last_name' );
 }
 
-if(!function_exists('qode_ywraq_get_default_form_field_Company_Name')) {
-	function qode_ywraq_get_default_form_field_Company_Name( $value ) {
+if(!function_exists('qode_ywraq_get_default_form_field_company_name')) {
+	function qode_ywraq_get_default_form_field_company_name( $value ) {
 		$user_id = get_current_user_id();
-	    $value = get_user_meta( $user_id, 'company', true );
+		// get the woocommerce fields first
+		$value       = get_user_meta( $user_id, 'billing_company', true );
+		// get from the ACF account fields if the above are empty
+		if($value == '') {
+			$value       = get_user_meta( $user_id, 'company', true );
+		}
 	    return $value;
 	}
-	add_filter( 'ywraq_get_default_form_field_Company_Name', 'qode_ywraq_get_default_form_field_Company_Name' );
+	add_filter( 'ywraq_get_default_form_field_company_name', 'qode_ywraq_get_default_form_field_company_name' );
 }
 
-if(!function_exists('qode_ywraq_get_default_form_field_Phone_Number')) {
-	function qode_ywraq_get_default_form_field_Phone_Number( $value ) {
+if(!function_exists('qode_ywraq_get_default_form_field_phone_number')) {
+	function qode_ywraq_get_default_form_field_phone_number( $value ) {
 		$user_id = get_current_user_id();
-	    $value = get_user_meta( $user_id, 'phone_number', true );
+		// get the woocommerce fields first
+		$value  = get_user_meta( $user_id, 'billing_phone', true );
+		// get from the ACF account fields if the above are empty
+		if($value == '') {
+			$value  = get_user_meta( $user_id, 'phone_number', true );
+		}
 	    return $value;
 	}
-	add_filter( 'ywraq_get_default_form_field_Phone_Number', 'qode_ywraq_get_default_form_field_Phone_Number' );
+	add_filter( 'ywraq_get_default_form_field_phone_number', 'qode_ywraq_get_default_form_field_phone_number' );
 }
 
 if(!function_exists('qode_ywraq_get_default_form_field_email')) {

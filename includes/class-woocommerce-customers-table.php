@@ -1,4 +1,8 @@
 <?php
+/**
+ * No longer being used 10/28/2021
+ *
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
@@ -208,9 +212,9 @@ if ( !class_exists( 'GL_Customers_Table' ) ) {
           */
         function usort_reorder( $a, $b ) {
             // If no sort, default to title
-            $orderby = ( ! empty( $_GET['orderby'] ) ) ? $_GET['orderby'] : 'user_name';
+            $orderby = ( ! empty( $_GET['orderby'] ) ) ? $_GET['orderby'] : 'registered_date';
             // If no order, default to asc
-            $order = ( ! empty($_GET['order'] ) ) ? $_GET['order'] : 'asc';
+            $order = ( ! empty($_GET['order'] ) ) ? $_GET['order'] : 'desc';
 
             // Determine sort order
             if($orderby == 'registered_date') {

@@ -24,7 +24,6 @@ class Customers {
         add_filter('manage_users_sortable_columns', array($this, 'manage_gl_sortable_user_column'));
         add_filter('pre_get_users', array($this, 'gl_user_sortable_columns'));
 
-
     }
 
 

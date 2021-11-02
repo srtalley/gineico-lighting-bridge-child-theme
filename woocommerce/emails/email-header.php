@@ -140,4 +140,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 													<tr>
 														<td valign="top">
 															<div id="body_content_inner" class="franks">
-																<h2 style="font-family: Arial, sans-serif; font-size: 22px; text-align: left; font-weight: bold; color: <?php echo $body; ?>;"><?php echo $email_heading; ?></h2>
+																<h2 style="font-family: Arial, sans-serif; font-size: 22px; text-align: left; font-weight: bold;"><?php echo $email_heading; ?></h2>

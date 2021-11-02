@@ -63,8 +63,22 @@ do_action( 'woocommerce_before_edit_account_form' ); ?>
 
 	<?php
 		if(function_exists('get_field')) {
-			$company       = get_user_meta( $user->ID, 'company', true );
-			$phone_number  = get_user_meta( $user->ID, 'phone_number', true );
+
+			// get the woocommerce fields first
+			$company       = get_user_meta( $user->ID, 'billing_company', true );
+			$phone_number  = get_user_meta( $user->ID, 'billing_phone', true );
+			$state_value   =  get_user_meta( $user->ID, 'billing_state', true );
+
+			// get from the ACF account fields if the above are empty
+			if($company == '') {
+				$company       = get_user_meta( $user->ID, 'company', true );
+			}
+			if($phone_number == '') {
+				$phone_number  = get_user_meta( $user->ID, 'phone_number', true );
+			}
+			if($state_value == '') {
+				$state_value   =  get_user_meta( $user->ID, 'state', true );
+			}
 			?>
 			<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
 				<label for="account_company"><?php esc_html_e( 'Company', 'woocommerce' ); ?> <span class="required">*</span></label>
@@ -91,7 +105,6 @@ do_action( 'woocommerce_before_edit_account_form' ); ?>
 				<select class="woocommerce-Input woocommerce-Input--select input-select" name="account_state" id="account_state">
 					<option value=""></option>
 					<?php
-						$state_value   =  get_user_meta( $user->ID, 'state', true );
 						$state_choices = qode_get_select_field_choices('acf_user-additional-information', 'state');
 						foreach ($state_choices as $key => $value) {
 							echo '<option value="' . $key . '"' . selected($state_value, $key) . '>' . $value . '</option>';

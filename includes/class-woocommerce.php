@@ -20,8 +20,12 @@ class GL_WooCommerce {
 
         add_shortcode( 'gl_wc_login_reg_messages', array($this, 'gl_wc_login_reg_messages_function') );
 
+        // login and registration shortcodes
         add_shortcode( 'gl_wc_login_form', array($this, 'gl_wc_login_form_function') );
         add_shortcode( 'gl_wc_registration_form', array($this, 'gl_wc_registration_form_function') );
+
+        // validate the required registration fields
+        add_filter( 'woocommerce_registration_errors', array($this,'gl_wc_validate_user_frontend_fields'), 10, 3 );
 
         // add a redirect that will go to the my account page
         add_filter( 'woocommerce_login_redirect', array($this, 'gl_my_account_login_redirect'), 10, 1);
@@ -53,7 +57,6 @@ class GL_WooCommerce {
 
         // Send a new user email to the admins
         add_action( 'woocommerce_created_customer', array($this, 'gl_woocommerce_created_customer_admin_notification'), 1000 );
-
     }
 
     /**
@@ -265,6 +268,11 @@ class GL_WooCommerce {
                 }
             ?>
 
+
+            <?php
+            // Add a hidden field signifying our custom registration shortcode form
+            echo '<input type="hidden" class="input-hidden" name="gl_wc_registration_form" id="gl_wc_registration_form" value="true">';
+            ?>
             <?php do_action( 'woocommerce_register_form' ); ?>
 
             <p class="woocommerce-form-row form-row">
@@ -279,7 +287,64 @@ class GL_WooCommerce {
         <?php
             
         return ob_get_clean();
+        
     }
+    /**
+    * Validate WooCommerce registration fields from the shortcode
+    */
+    public function gl_wc_validate_user_frontend_fields( $errors, $email, $username) {
+
+        // see if the submitted form was our custom shortcode form
+        $gl_wc_registration_form = sanitize_text_field(isset( $_POST[ 'gl_wc_registration_form' ] ) ? $_POST[ 'gl_wc_registration_form' ] : '');
+
+        if($gl_wc_registration_form == 'true') {
+            $required_fields = array(
+                array(
+                    'name' => 'account_first_name', 
+                    'label' => 'First name'
+                ),
+                array(
+                    'name' => 'account_last_name', 
+                    'label' => 'Last name'
+                ),
+                array(
+                    'name' => 'account_company', 
+                    'label' => 'Company'
+                ),
+                array(
+                    'name' => 'account_elect',
+                    'label' => 'Category'
+                ),
+                array(
+                    'name' => 'account_phone_number', 
+                    'label' => 'Phone number'
+                ),
+                array(
+                    'name' => 'email', 
+                    'label' => 'Email'
+                ),
+                array(
+                    'name' => 'account_state', 
+                    'label' => 'State'
+                )
+            );
+            // error messages
+            $error_messages = '';
+            foreach ( $required_fields as $field ) {
+                if ( empty( $_POST[ $field['name'] ] ) ) {
+                    $error_messages .= sprintf( __( '<li>%s is a required field.</li>', 'gineico' ), '<strong>' . $field['label'] . '</strong>' );
+                }
+            }
+
+            if($error_messages != '') {
+                $errors->add( 'validation_errors', '<ul class="gl_login_registration_errors">' . $error_messages . '</ul>');
+            }
+
+        } // end if gl_wc_registration_form
+        return $errors;
+    }
+
+    
     /**
      * add a redirect that will go back to the my account page if they
      * log in from there
@@ -506,12 +571,15 @@ class GL_WooCommerce {
      */
     public function gl_wp_new_user_notification_email_admin($notification, $user, $blogname) {
 
+        $notification['subject'] = 'New Account User Registration';
+        $notification['to'] = 'admin@gineicolighting.com.au, showroom@gineico.com';
+
         $fields = $this->gl_get_customer_account_fields();
-        $notification['message'] = '<p>A new user has registered on GineicoLighting.com.au with the following details:' . '</p>';
+        $notification['message'] = 'A new user has registered on https://www.gineicolighting.com.au/login/ to create a New Account to use My Account full Features ( Favourites/Projects):' . "\n\n";
         $registered = $user->data->user_registered;
 
-        $notification['message'] .= '<p>Registered Date: ' . date( "d/m/Y", strtotime( $registered )) . "</p>";
-        $notification['message'] .= '<p>Email Address: ' . $user->data->user_email . "</p>";
+        $notification['message'] .= 'Registered Date: ' . date( "d/m/Y", strtotime( $registered )) . "\n\n";
+        $notification['message'] .= 'Email Address: ' . $user->data->user_email . "\n\n";
         foreach ( $fields as $key => $field_args ) { 
  
             $current_value = get_user_meta($user->ID ,$key, true);
@@ -532,7 +600,7 @@ class GL_WooCommerce {
                     }
                 }
             }
-            $notification['message'] .= '<p>' . $field_args['label'] . ': ' . $current_value . '</p>';
+            $notification['message'] .= $field_args['label'] . ': ' . $current_value . "\n\n";
         }
         return $notification;
     }

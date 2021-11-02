@@ -7,8 +7,8 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 	exit;
 } // Exit if accessed directly
 
-if( ! class_exists( 'YITH_WCWL_Admin_Table' ) ) {
-    require_once(  YITH_WCWL_INC . 'tables/class.yith-wcwl-admin-table.php');
+if( ! class_exists( 'YITH_WCWL_Admin_Table' ) && defined( 'YITH_WCWL' ) ) {
+    require_once(  YITH_WCWL_INC . 'tables/class-yith-wcwl-admin-table.php');
 }
 
 if ( !class_exists( 'GL_Customers_Wishlist_Table' ) ) {

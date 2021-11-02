@@ -21,6 +21,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 do_action( 'woocommerce_before_customer_login_form' ); 
 
-wp_redirect( site_url('/login') );
+echo("<script>location.href = '" . site_url('/login') . "'</script>");
 
 do_action( 'woocommerce_after_customer_login_form' ); ?>

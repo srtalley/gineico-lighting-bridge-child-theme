@@ -63,14 +63,14 @@ $j(document).ready(function() {
 		});
     }
 
-    $j('.woocommerce-account .woocommerce-MyAccount-content .woocommerce-Button[name="save_account_details"], .woocommerce-account .woocommerce form.register .woocommerce-Button[name="register"]').click(function(event) {
-    	if($j('#account_first_name').val().length <= 0 ||
-    		$j('#account_last_name').val().length <= 0 ||
-    		$j('#account_company').val().length <= 0) {
-	    	alert('Please fill all the required fields.');
-	    	return false;
-    	}
-    });
+    // $j('.woocommerce-account .woocommerce-MyAccount-content .woocommerce-Button[name="save_account_details"], .woocommerce-account .woocommerce form.register .woocommerce-Button[name="register"]').click(function(event) {
+    // 	if($j('#account_first_name').val().length <= 0 ||
+    // 		$j('#account_last_name').val().length <= 0 ||
+    // 		$j('#account_company').val().length <= 0) {
+	//     	alert('Please fill all the required fields.');
+	//     	return false;
+    // 	}
+    // });
 
     setTimeout(function(){
     	$j('.woocommerce .product .images a.mz-thumb').prepend('<span class="light-box light-box icon_plus_alt2"></span>');
