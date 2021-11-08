@@ -37,24 +37,13 @@ class GL_YITH_WooCommerce_Quotes {
         // change the my account quote title
         add_filter('ywraq_my_account_my_quotes_title', array($this, 'gl_change_ywraq_my_account_my_quotes_title'), 10, 1);
 
-        //Remove all quote statuses except for new from showing for the my account area
+        // remove all quote statuses except for new from showing for the my account area
         add_filter('ywraq_my_account_my_quotes_query', array($this, 'gl_change_ywraq_my_account_my_quotes_query'), 10, 1);
 
+        // update the phone and company fields when quote submitted
         add_action('ywraq_checkout_update_customer', array($this, 'gl_ywraq_checkout_update_customer'), 10, 2);
     }
 
-    public function gl_ywraq_checkout_update_customer($customer, $filled_form_fields){
-        wl($customer);
-        wl($filled_form_fields);
-        foreach ( $filled_form_fields as $key => $value ) {
-            if($key == 'company_name') {
-                $customer->update_meta_data('company', $value['value']);
-            }
-            if($key == 'phone_number') {
-                $customer->update_meta_data('phone_number', $value['value']);
-            }
-        }
-    }
     /** 
      * Add a random string to the end of the URL to break the cache so that the 
      * proper PDF downloads.
@@ -169,6 +158,20 @@ class GL_YITH_WooCommerce_Quotes {
             }
         }
         return $options;
+    }
+    /**
+     * Update the additional company and phone fields when a quote 
+     * is submitted.
+     */
+    public function gl_ywraq_checkout_update_customer($customer, $filled_form_fields){
+        foreach ( $filled_form_fields as $key => $value ) {
+            if($key == 'company_name') {
+                $customer->update_meta_data('company', $value['value']);
+            }
+            if($key == 'phone_number') {
+                $customer->update_meta_data('phone_number', $value['value']);
+            }
+        }
     }
 } // end class
 

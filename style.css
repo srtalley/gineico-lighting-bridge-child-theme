@@ -4,7 +4,7 @@ Theme URI: http://demo.qodeinteractive.com/bridge/
 Description: A child theme of Bridge Theme
 Author: Qode Interactive
 Author URI: http://www.qodethemes.com/
-Version: 2.0.9
+Version: 2.0.9a
 Date: 2021-11-07
 Template: bridge
 */
@@ -394,7 +394,7 @@ ul.products li.product .yith-wcwl-add-button.gl-wcwl-add-to-my-favourites.in_my_
 }
 
 .single-product .title-holder.ui-accordion-header {
-    margin-bottom: 10px;
+    /* margin-bottom: 10px;
     width: 100%;
     text-align: center;
     background-color: #fff !important;
@@ -405,7 +405,22 @@ ul.products li.product .yith-wcwl-add-button.gl-wcwl-add-to-my-favourites.in_my_
     padding: 0 !important;
     border-width: 0px;
     padding-left: 33px;
-    padding-right: 33px;
+    padding-right: 33px; */
+    padding: 0 !important;
+    background-color: inherit !important;
+    color: #e2ae68;
+    line-height: 1em;
+    height: auto !important;
+    min-height: auto !important;
+    text-align: left !important;
+    font-size: 16px;
+    margin: 0 !important;
+}
+.single-product .title-holder.ui-accordion-header + div.accordion_content {
+    padding-left: 0;
+    margin-left: -7px;
+    /* margin-top: -10px; */
+    font-size: 16px;
 }
 .woocommerce.single-product div.product.product-type-simple .cart,
 .woocommerce.single-product div.product .cart.variations_form {
@@ -425,9 +440,9 @@ ul.products li.product .yith-wcwl-add-button.gl-wcwl-add-to-my-favourites.in_my_
     margin-bottom: 5px;
 }
 .single-product .title-holder.ui-accordion-header:hover {
-    color: #fff !important;
-    background-color: #000 !important;
-    border-color: #000 !important;
+    /* color: #fff !important; */
+    /* background-color: #000 !important; */
+    /* border-color: #000 !important; */
 }
 .single-product .title-holder.ui-accordion-header span.tab-title {
     font-family: 'Raleway', sans-serif;
@@ -445,7 +460,7 @@ ul.products li.product .yith-wcwl-add-button.gl-wcwl-add-to-my-favourites.in_my_
     background-repeat: no-repeat;
     background-position: center;
     right: -30px;
-    top: -7px;
+    top: -5px;
     width: 28px;
     height: 28px;
     transition: transform .3s ease-in-out, background-image .3s ease-in-out
@@ -455,7 +470,8 @@ ul.products li.product .yith-wcwl-add-button.gl-wcwl-add-to-my-favourites.in_my_
 }
 
 .single-product .title-holder.ui-accordion-header.description_tab:hover span.tab-title:after {
-    background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='960px' height='560px' viewBox='0 0 960 560' enable-background='new 0 0 960 560' xml:space='preserve'%3E%3Cg id='Rounded_Rectangle_33_copy_4_1_'%3E%3Cpath fill='%23fff' d='M480,344.181L268.869,131.889c-15.756-15.859-41.3-15.859-57.054,0c-15.754,15.857-15.754,41.57,0,57.431l237.632,238.937 c8.395,8.451,19.562,12.254,30.553,11.698c10.993,0.556,22.159-3.247,30.555-11.698l237.631-238.937 c15.756-15.86,15.756-41.571,0-57.431s-41.299-15.859-57.051,0L480,344.181z'/%3E%3C/g%3E%3C/svg%3E%0A");
+    /* background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='960px' height='560px' viewBox='0 0 960 560' enable-background='new 0 0 960 560' xml:space='preserve'%3E%3Cg id='Rounded_Rectangle_33_copy_4_1_'%3E%3Cpath fill='%23fff' d='M480,344.181L268.869,131.889c-15.756-15.859-41.3-15.859-57.054,0c-15.754,15.857-15.754,41.57,0,57.431l237.632,238.937 c8.395,8.451,19.562,12.254,30.553,11.698c10.993,0.556,22.159-3.247,30.555-11.698l237.631-238.937 c15.756-15.86,15.756-41.571,0-57.431s-41.299-15.859-57.051,0L480,344.181z'/%3E%3C/g%3E%3C/svg%3E%0A"); */
+    background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='960px' height='560px' viewBox='0 0 960 560' enable-background='new 0 0 960 560' xml:space='preserve'%3E%3Cg id='Rounded_Rectangle_33_copy_4_1_'%3E%3Cpath fill='%23000' d='M480,344.181L268.869,131.889c-15.756-15.859-41.3-15.859-57.054,0c-15.754,15.857-15.754,41.57,0,57.431l237.632,238.937 c8.395,8.451,19.562,12.254,30.553,11.698c10.993,0.556,22.159-3.247,30.555-11.698l237.631-238.937 c15.756-15.86,15.756-41.571,0-57.431s-41.299-15.859-57.051,0L480,344.181z'/%3E%3C/g%3E%3C/svg%3E%0A");
 
 }
 .single-product .woocommerce-accordion .additional-information {

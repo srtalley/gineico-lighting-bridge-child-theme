@@ -412,7 +412,9 @@ class GL_WooCommerce {
         //     // add_action( 'woocommerce_after_add_to_cart_button', array( $this, 'add_button_single_page' ), 15 );
         //     add_action('woocommerce_after_add_to_cart_button', 'woocommerce_output_product_data_tabs', 10);
         // }
-        add_action( 'woocommerce_single_product_summary', 'woocommerce_output_product_data_tabs', 38 );
+        // add_action( 'woocommerce_single_product_summary', 'woocommerce_output_product_data_tabs', 38 );
+
+        add_action( 'woocommerce_single_product_summary', 'woocommerce_output_product_data_tabs', 20 );
 
         // remove the additional information tab
         add_filter('woocommerce_product_tabs', array($this, 'gl_woocommerce_product_tabs'), 10);

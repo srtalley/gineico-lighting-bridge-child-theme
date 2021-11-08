@@ -11,10 +11,18 @@
 /**
  * Form to Request a quote
  *
- * @package Yithemes
+ * @package YITH
  * @since   2.0.0
- * @author  Yithemes
+ * @version 2.2.7
+ * @author  YITH
+ *
+ * @var array  $fields
+ * @var string $registration_is_enabled
+ * @var string $force_registration
+ * @var array  $account_fields
+ * @var string $form_title
  */
+//do_action( 'ywraq_before_default_form' );
 
 ?>
 <div class="yith-ywraq-mail-form-wrapper">
