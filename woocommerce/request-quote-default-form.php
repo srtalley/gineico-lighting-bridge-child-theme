@@ -33,19 +33,37 @@
             $count = 0;
             $current_is_second_column = false;
             echo '<div class="request-quote-column">';
+            // foreach ( $fields as $key => $field ) {
+            //     if($count > 0 and $count % $column_items_count == 0 and !$current_is_second_column) {
+            //         echo '</div>';
+            //         echo '<div class="request-quote-column">';
+            //         $current_is_second_column = true;
+            //     }
+            //     if ( isset( $field['enabled'] ) && $field['enabled'] ) {
+            //         woocommerce_form_field( $key, $field, YITH_YWRAQ_Default_Form()->get_value( $key, $field ) );
+            //         $count++;
+            //     }
+            // }
             foreach ( $fields as $key => $field ) {
-                if($count > 0 and $count % $column_items_count == 0 and !$current_is_second_column) {
-                    echo '</div>';
-                    echo '<div class="request-quote-column">';
-                    $current_is_second_column = true;
-                }
-                if ( isset( $field['enabled'] ) && $field['enabled'] ) {
-                    woocommerce_form_field( $key, $field, YITH_YWRAQ_Default_Form()->get_value( $key, $field ) );
+                if ( isset( $field['enabled'] ) && in_array( $field['enabled'], array( 1, 'yes' ) ) ) { //phpcs:ignore
+                    $default = isset( $field['default'] ) ? $field['default'] : ''; //phpcs:ignore
+    
+                    $field['class'] = isset( $field['class'] ) ? (array) $field['class'] : array();
+                    isset( $field['position'] ) && array_push( $field['class'], $field['position'] );
+    
+                    $field['required'] = isset( $field['required'] ) ? wc_string_to_bool( $field['required'] ) : false;
+                    if($count > 0 and $count % $column_items_count == 0 and !$current_is_second_column) {
+                        echo '</div>';
+                        echo '<div class="request-quote-column">';
+                        $current_is_second_column = true;
+                    }
+                    woocommerce_form_field( $key, $field, YITH_YWRAQ_Default_Form()->get_value( $key, $field, $default ) );
                     $count++;
                 }
             }
             echo '</div>';
             echo '<div class="request-quote-clear"></div>';
+
 	    ?>
 
         <p class="form-row form-row-wide">

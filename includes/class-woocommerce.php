@@ -571,7 +571,7 @@ class GL_WooCommerce {
      */
     public function gl_wp_new_user_notification_email_admin($notification, $user, $blogname) {
 
-        $notification['subject'] = 'New Account User Registration';
+        $notification['subject'] = 'Gineico Lighting New Account User Registration';
         $notification['to'] = 'admin@gineicolighting.com.au, showroom@gineico.com';
 
         $fields = $this->gl_get_customer_account_fields();

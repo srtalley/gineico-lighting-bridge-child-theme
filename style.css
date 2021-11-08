@@ -4,8 +4,8 @@ Theme URI: http://demo.qodeinteractive.com/bridge/
 Description: A child theme of Bridge Theme
 Author: Qode Interactive
 Author URI: http://www.qodethemes.com/
-Version: 2.0.8
-Date: 2021-11-01
+Version: 2.0.9
+Date: 2021-11-07
 Template: bridge
 */
 @import url("../bridge/style.css");
@@ -1541,10 +1541,14 @@ body.woocommerce-js .yith_ywraq_add_item_browse_message a:hover,
     flex-wrap: wrap;
     margin: 0 -10px;
 }
-.yith-request-a-quote-page .request-quote-column .form-row {
+.yith-request-a-quote-page #yith-ywraq-default-form .request-quote-column .form-row,
+.yith-request-a-quote-page #yith-ywraq-default-form .request-quote-column .form-row.form-row-wide {
     flex: 1 1 40%;
     min-width: 300px;
     padding: 0 10px;
+}
+.yith-request-a-quote-page #yith-ywraq-default-form .request-quote-column .form-row .optional {
+    display: none;
 }
 .yith-request-a-quote-page .request-quote-column .form-row input,
 .yith-request-a-quote-page .request-quote-column .form-row textarea {
@@ -2126,10 +2130,24 @@ body.admin-bar.float-gineico-advanced-filter-opened {
     line-height: 24px;
 }
 .product-attached-pdf-files p a {
-    color: #1c1c1c;
-    font-weight: 300;
+    color: #e2ae68;
+    font-weight: 500;
     font-size: 14px;
-    border-bottom: dotted 1px #888;
+    border-bottom: dotted 1px #e2ae68;
+    position: relative;
+}
+.product-attached-pdf-files p a:after {
+    content: '';
+    position: absolute;
+    background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='960px' height='560px' fill='%23e2ae68 ' viewBox='0 0 960 560' enable-background='new 0 0 960 560' xml:space='preserve'%3E%3Cg id='Rounded_Rectangle_33_copy_4_1_'%3E%3Cpath d='M480,344.181L268.869,131.889c-15.756-15.859-41.3-15.859-57.054,0c-15.754,15.857-15.754,41.57,0,57.431l237.632,238.937 c8.395,8.451,19.562,12.254,30.553,11.698c10.993,0.556,22.159-3.247,30.555-11.698l237.631-238.937 c15.756-15.86,15.756-41.571,0-57.431s-41.299-15.859-57.051,0L480,344.181z'/%3E%3C/g%3E%3C/svg%3E%0A");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    right: -23px;
+    top: -2px;
+    width: 20px;
+    height: 20px;
+    transition: transform .3s ease-in-out, background-image .3s ease-in-out;
 }
 .product_meta_container .product_meta .social_share_list_holder {
     margin-top: -1px;
