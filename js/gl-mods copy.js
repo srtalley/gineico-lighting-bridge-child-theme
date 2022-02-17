@@ -1,8 +1,6 @@
 // v2.0.2
 jQuery(function($) {
 
-    var ajax_add_to_quote_success = false;
-
     $('document').ready(function() {
 
         // change my account links to open in a new window
@@ -521,91 +519,29 @@ jQuery(function($) {
      * Add all items to quote from a wish list page
      */
     function add_all_to_quote() {
-        var message = '';
         if($('.wishlist_table').length) {
-            $('.gl-add-all-to-quotation').on('click', function(e) {
+            $(document).on('click', '.gl-add-all-to-quotation', function(e) {
                 e.preventDefault();
-                
+
                 var products_needing_options = $('.yith-ywraq-add-to-quote.disabled');
                 if($(products_needing_options).length) {
-                    message = '<div style="text-align: center"><h1 style="font-size: 24px; margin-bottom:30px;">Please select additional options</h1><p>Some of the items in your list have options that need to be selected before adding to a quote.</p> <p>Please add these options before trying again.</p>';
-
-                    // highlight each row
-                    var add_product_options = $('.gl-wcwl-quote-select-options-wrapper');
-                    $(add_product_options).addClass('highlight_button');
-
-                } else {
-                    var add_to_quote_buttons = $('.yith-ywraq-add-button:not(.hide) .add-request-quote-button');
-
-                    var promises = [];
-                    for(let i = 0; i < add_to_quote_buttons.length; i++) {
-                        // ajax_add_to_quote(add_to_quote_buttons[i]));
-                        promises.push
-                        console.log($(add_to_quote_buttons[i]));
-                        // $.when(ajax_add_to_quote(add_to_quote_buttons[i])).done(function(results){
-                        console.log('results');
-                        console.log(results);
-                    // });
-                    }
-                    // const add_to_quote_buttons = $('.yith-ywraq-add-button:not(.hide) .add-request-quote-button');
-                    console.log(add_to_quote_buttons);
-                    $(add_to_quote_buttons).each(function() {
-                        
-                        console.log('about to start');
-                        // ajax_add_to_quote(this).then(function(data) {
-                        //     console.log('done function');
-                        //     console.log(data);
-                        // });
-                        // var pause_timeout = setTimeout(function(){}, 99999999999);
-                        // $.when(ajax_add_to_quote(this)).done(function(results){
-                        //     console.log('results');
-                        //     console.log(results);
-                        //     clearTimeout(pause_timeout);
-                        // });
-                        // add it to the list but then wait
-                        // Promise.all([ajax_add_to_quote(this)]).then(() => {
-                        //     // all requests finished successfully
-                        //     console.log('Successfully added to quote.');
-                        //     // check if the action was successful and if not break out of here
-                        //     // if(!ajax_add_to_quote_success) {
-                        //     //     return false;
-                        //     // }
-                        //   }).catch(() => {
-                        //     // all requests finished but one or more failed
-                        //     console.log('Ran into an error adding to quote.');
-                        //     ajax_add_to_quote_success = false;
-                        //     return false;
-                        //   })
-                    });
-                    ajax_add_to_quote_success = true;
-                    if(ajax_add_to_quote_success) {
-                        message = '<div style="text-align: center"><h1 style="font-size: 24px; margin-bottom:30px;">Successfully added to Quote</h1><p>Please click to <a href="/request-quote/" class="button">View Your Quote</a></p>';
-                    } else {
-                        message = '<div style="text-align: center"><h1 style="font-size: 24px; margin-bottom:30px;">An error occurred</h1><p>Please try adding your items you the quote again. You may need to refresh the page.</p>';
-                    }
+                    // not everything has an option. Show a popup.
                 }
 
+                var add_to_quote_buttons = $('.yith-ywraq-add-button:not(.hide) .add-request-quote-button');
+                $(add_to_quote_buttons).each(function() {
 
-            }).prettyPhoto(
-                        {
-            
-                            social_tools          : false,
-                            social_tools          : false,
-                            theme                 : 'pp_woocommerce gl-wcwl-quote-info-only',
-                            horizontal_padding    : 20,
-                            opacity               : 0.8,
-                            deeplinking           : false,
-                            overlay_gallery       : false,
-                            default_width         : 500,
-                            default_height        : 100,
-                            allow_resize          : true,
-                            changepicturecallback: function(){
-                                $(document).trigger( 'yith_wcwl_popup_opened', [ this ] );
+                    // add it to the list but then wait
+                    Promise.all([ajax_add_to_quote(this)]).then(() => {
+                        // all requests finished successfully
+                        console.log('Successfully added to quote.');
 
-                                $('#pp_full_res').find('.pp_inline').html(message);
-                               
-                            }
-                        });
+                      }).catch(() => {
+                        // all requests finished but one or more failed
+                        console.log('Ran into an error adding to quote.');
+                      })
+                });
+            });
             // get all the add to quote buttons
         }
     }
@@ -660,48 +596,43 @@ jQuery(function($) {
 
         $(document).trigger('yith_ywraq_action_before');
 
-        // let promise = new Promise(function(resolve, reject) {
-
-        return  xhr = $.ajax({
-                type: 'POST',
-                url: ywraq_frontend.ajaxurl.toString().replace('%%endpoint%%', 'yith_ywraq_action'),
-                dataType: 'json',
-                data: add_to_cart_info,
-                contentType: false,
-                processData: false,
-                beforeSend: function () {
-                $t.after(' <img src="' + ajax_loader + '" class="ywraq-loader" >');
-                },
-                complete: function () {
-                $t.next().remove();
-                },
-        
-                success: function (response) {
-                if (response.result == 'true' || response.result == 'exists') {
-        
-                    if (ywraq_frontend.go_to_the_list == 'yes') {
-                    window.location.href = response.rqa_url;
-                    } else {
-                    $('.yith_ywraq_add_item_response-' + prod_id).hide().addClass('hide').html('');
-                    $('.yith_ywraq_add_item_product-response-' + prod_id).show().removeClass('hide').html(response.message);
-                    $('.yith_ywraq_add_item_browse-list-' + prod_id).show().removeClass('hide');
-                    $t.parent().hide().removeClass('show').addClass('addedd');
-                    $('.add-to-quote-' + prod_id).attr('data-variation', response.variations);
-                    }
-                    console.log('Successfully added to quote.');
-                    $(document).trigger('yith_wwraq_added_successfully', [response, prod_id]);
-        
-                } else if (response.result == 'false') {
-                    $('.yith_ywraq_add_item_response-' + prod_id).show().removeClass('hide').html(response.message);
-                    console.log('Error adding to quote.');
-                    $(document).trigger('yith_wwraq_error_while_adding');
+        xhr = $.ajax({
+            type: 'POST',
+            url: ywraq_frontend.ajaxurl.toString().replace('%%endpoint%%', 'yith_ywraq_action'),
+            dataType: 'json',
+            data: add_to_cart_info,
+            contentType: false,
+            processData: false,
+            beforeSend: function () {
+              $t.after(' <img src="' + ajax_loader + '" class="ywraq-loader" >');
+            },
+            complete: function () {
+              $t.next().remove();
+            },
+      
+            success: function (response) {
+              if (response.result == 'true' || response.result == 'exists') {
+      
+                if (ywraq_frontend.go_to_the_list == 'yes') {
+                  window.location.href = response.rqa_url;
+                } else {
+                  $('.yith_ywraq_add_item_response-' + prod_id).hide().addClass('hide').html('');
+                  $('.yith_ywraq_add_item_product-response-' + prod_id).show().removeClass('hide').html(response.message);
+                  $('.yith_ywraq_add_item_browse-list-' + prod_id).show().removeClass('hide');
+                  $t.parent().hide().removeClass('show').addClass('addedd');
+                  $('.add-to-quote-' + prod_id).attr('data-variation', response.variations);
                 }
-                xhr = false;
-                }
-            });
-
-        // });
-        // return promise;
+      
+                $(document).trigger('yith_wwraq_added_successfully', [response, prod_id]);
+      
+              } else if (response.result == 'false') {
+                $('.yith_ywraq_add_item_response-' + prod_id).show().removeClass('hide').html(response.message);
+      
+                $(document).trigger('yith_wwraq_error_while_adding');
+              }
+              xhr = false;
+            }
+        });
     }
 
 });

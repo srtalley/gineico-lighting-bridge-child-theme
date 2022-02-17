@@ -2,7 +2,11 @@
 
 // custom child theme includes
 include_once('includes/qode-breadcrumbs.php');
+include_once('includes/class-portfolio.php');
+
 include_once('includes/class-woocommerce.php');
+include_once('includes/class-woocommerce-admin.php');
+
 // include_once('includes/class-woocommerce-customers.php');
 include_once('includes/class-woocommerce-customers-list.php');
 include_once('includes/class-woocommerce-customers-table.php');

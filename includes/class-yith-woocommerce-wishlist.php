@@ -548,12 +548,15 @@ class GL_YITH_WooCommerce_Wishlist {
      */
     public function gl_change_yith_wcwl_wishlist_title($title) {
         global $wp;
+
         $current_url = home_url( $wp->request );
         // get the slug
         if($current_url == home_url( '/my-favourites')) {
             return $title;
-        } else {
+        } else if($title == '<h2>Your Projects</h2>') {
             return '<h2>My Projects</h2>';
+        } else {
+            return $title;
         }
         // if(!is_user_logged_in()) {
         //     if(isset($_GET['q']) && sanitize_text_field($_GET['q']) == 'my-favourites') {
@@ -657,7 +660,6 @@ class GL_YITH_WooCommerce_Wishlist {
      * Change the Yith PDF file name
      */
     public function gl_ywcwl_pdf_file_name($pdf_file_name) {
-
         $current_date = date('d-m-Y', time());
         $pdf_file_name = 'Gineico Lighting - Project ' . $pdf_file_name . ' - ' . $current_date ;
         return $pdf_file_name;
@@ -1058,7 +1060,10 @@ class GL_YITH_WooCommerce_Wishlist {
      */
     public function gl_add_wishlist_download_link($wishlist) {
         if($wishlist['wishlist_id'] != '' && is_object($wishlist['wishlist'])) {
-            echo '<div class="gl-wishlist-download-wrapper"><a class="wishlist-download" href="' . esc_url( $wishlist['wishlist']->get_download_url() ) . '">Download &nbsp;<i class="fa fa-download"></i></a></div>';
+            // echo '<div class="gl-wishlist-download-wrapper"><a class="wishlist-download" href="' . esc_url( $wishlist['wishlist']->get_download_url() ) . '">Download Project Schedule&nbsp;<i class="fa fa-download"></i></a><br><a class="gl-add-all-to-quotation" href="#">Request all for Quotation &nbsp;<i class="fa fa-file-text" aria-hidden="true"></i></a></div>';
+            echo '<div class="gl-wishlist-download-wrapper"><a class="wishlist-download" href="' . esc_url( $wishlist['wishlist']->get_download_url() ) . '">Download Project Schedule&nbsp;<i class="fa fa-download"></i></a></div>';
+
+            // echo '<div class="gl-wishlist-add-to-quote-wrapper"><a class="gl-add-all-to-quotation" href="#">Request all for Quotation &nbsp;<i class="fa fa-file-text" aria-hidden="true"></i></a></div>';
         }
     }
 } // end class

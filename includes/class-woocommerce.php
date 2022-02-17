@@ -562,6 +562,7 @@ class GL_WooCommerce {
      * Notify admin when a new customer account is created
      */
     public function gl_woocommerce_created_customer_admin_notification( $customer_id ) {
+
         add_filter( 'wp_new_user_notification_email_admin', array($this, 'gl_wp_new_user_notification_email_admin'), 10, 3 );
 
         wp_send_new_user_notifications( $customer_id, 'admin' );
@@ -577,32 +578,58 @@ class GL_WooCommerce {
         $notification['to'] = 'admin@gineicolighting.com.au, showroom@gineico.com';
 
         $fields = $this->gl_get_customer_account_fields();
-        $notification['message'] = 'A new user has registered on https://www.gineicolighting.com.au/login/ to create a New Account to use My Account full Features ( Favourites/Projects):' . "\n\n";
+        // see if this is a user created by YITH Request a Quote. If so we will need to 
+        // grab the additional fields from the POST array.
+        $is_yith_wraq = isset($_POST['yith-ywraq-default-form-sent']) && $_POST['yith-ywraq-default-form-sent'] == 1 ? true : false;
+
+        if($is_yith_wraq) {
+            $notification['message'] = 'A new user was created on https://www.gineicolighting.com.au because the customer filled out a quote request form:' . "\n\n";
+        } else {
+            $notification['message'] = 'A new user has registered on https://www.gineicolighting.com.au/login/ to create a New Account to use My Account full Features ( Favourites/Projects):' . "\n\n";
+        }
+
         $registered = $user->data->user_registered;
 
         $notification['message'] .= 'Registered Date: ' . date( "d/m/Y", strtotime( $registered )) . "\n\n";
         $notification['message'] .= 'Email Address: ' . $user->data->user_email . "\n\n";
-        foreach ( $fields as $key => $field_args ) { 
- 
-            $current_value = get_user_meta($user->ID ,$key, true);
 
-            if($key == 'state') {
-                $state_choices = qode_get_select_field_choices('acf_user-additional-information', 'state');
-                foreach ($state_choices as $key => $value) {
-                    if($current_value == $key) {
-                        $current_value = $value;
+
+        foreach ( $fields as $key => $field_args ) { 
+
+            if($is_yith_wraq) {
+                // handle the email fields if this user was created
+                // from a quote
+                if($key == 'elect' || $key == 'state') {
+                    continue;
+                } 
+
+                if($key == 'company') $key = 'company_name';
+
+                $current_value = sanitize_text_field($_POST[$key]);
+
+            } else {
+                // handle the fields if the user was registered
+                // on the register page
+                $current_value = get_user_meta($user->ID ,$key, true);
+                if($key == 'state') {
+                    $state_choices = qode_get_select_field_choices('acf_user-additional-information', 'state');
+                    foreach ($state_choices as $key => $value) {
+                        if($current_value == $key) {
+                            $current_value = $value;
+                        }
                     }
                 }
-            }
-            if($key == 'elect') {
-                $elect_choices = qode_get_select_field_choices('acf_user-additional-information', 'elect');
-                foreach ($elect_choices as $key => $value) {
-                    if($current_value == $key) {
-                        $current_value = $value;
+                if($key == 'elect') {
+                    $elect_choices = qode_get_select_field_choices('acf_user-additional-information', 'elect');
+                    foreach ($elect_choices as $key => $value) {
+                        if($current_value == $key) {
+                            $current_value = $value;
+                        }
                     }
                 }
             }
             $notification['message'] .= $field_args['label'] . ': ' . $current_value . "\n\n";
+            
         }
         return $notification;
     }

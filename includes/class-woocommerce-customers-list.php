@@ -75,7 +75,7 @@ if ( !class_exists( 'GL_Customers_List' ) ) {
             $option = 'per_page';
             $args = [
             'label' => 'Customers',
-            'default' => 10,
+            'default' => 20,
             'option' => 'customers_per_page'
             ];
             

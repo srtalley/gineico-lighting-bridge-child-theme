@@ -4,8 +4,8 @@ Theme URI: http://demo.qodeinteractive.com/bridge/
 Description: A child theme of Bridge Theme
 Author: Qode Interactive
 Author URI: http://www.qodethemes.com/
-Version: 2.0.9a
-Date: 2021-11-07
+Version: 2.0.13
+Date: 2022-02-17
 Template: bridge
 */
 @import url("../bridge/style.css");
@@ -418,9 +418,10 @@ ul.products li.product .yith-wcwl-add-button.gl-wcwl-add-to-my-favourites.in_my_
 }
 .single-product .title-holder.ui-accordion-header + div.accordion_content {
     padding-left: 0;
-    margin-left: -7px;
-    /* margin-top: -10px; */
     font-size: 16px;
+}
+.single-product .title-holder.ui-accordion-header + div.accordion_content table {
+    margin-left: -7px;
 }
 .woocommerce.single-product div.product.product-type-simple .cart,
 .woocommerce.single-product div.product .cart.variations_form {
@@ -428,7 +429,8 @@ ul.products li.product .yith-wcwl-add-button.gl-wcwl-add-to-my-favourites.in_my_
 }
 /** Handle the YITH Request a quote spacing when it's a single
     product with no quantity **/
-    .woocommerce.single-product .woocommerce-product-details__short-description + .yith-ywraq-add-to-quote {
+    .woocommerce.single-product .woocommerce-product-details__short-description + .yith-ywraq-add-to-quote,
+    .woocommerce.single-product .woocommerce-accordion + .yith-ywraq-add-to-quote {
         margin-bottom: 10px;
     }
 .remove-buttons+.variations_form .q_accordion_holder, .remove-buttons+.cart .q_accordion_holder {
@@ -727,6 +729,15 @@ ul.products li.product  {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+/* .woocommerce-wishlist .pp_pic_holder.pp_default,
+.pp_pic_holder.pp_woocommerce, */
+.pp_pic_holder.pp_woocommerce.gl-wcwl-quote-info-only,
+.pp_pic_holder.pp_woocommerce.gl-wcwl-quote-info-only .pp_content_container {
+    width: 520px !important;
+}
+.pp_pic_holder.pp_woocommerce.gl-wcwl-quote-info-only .pp_content {
+    width: 460px !important;
 }
 /* .pp_pic_holder.pp_default .pp_content,  */
 .woocommerce-wishlist .pp_pic_holder.pp_default .pp_content,
@@ -2295,6 +2306,32 @@ form.products-per-page select {
     max-width: 100%;
 }
 
+/** PROJECTS PAGES **/
+.gl-used-products {
+    float: left;
+    width: 100%;
+    margin-top: 50px;
+}
+.gl-used-products-title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.gl-used-products ul.products {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.gl-used-products ul.products li.product {
+    margin: 10px !important;
+}
+.single-portfolio_page .portfolio_navigation {
+    margin-top: -50px;
+    margin-bottom: 0;
+}
+.single-portfolio_page .qode_portfolio_related h4 {
+    padding: 30px 10px;
+}
 @media only screen and (max-width: 1400px) {
     .woocommerce div.product .summary table.variations,
     .woocommerce.single-product .product-attached-pdf-buttons {
@@ -2394,9 +2431,24 @@ form.products-per-page select {
 		column-count: 2;
 	}
 }
+@media only screen and (min-width: 1200px) and (max-width: 1399px) {
+	.col-3-3-6 .second .inner > ul {
+		min-width: 910px;
+	}
+	.col-3-3-6 ul > li:nth-child(1),
+	.col-3-3-6 ul > li:nth-child(2) {
+		width: 220px !important;
+	}
+	.col-3-3-6 ul > li:nth-child(3) {
+		width: 400px !important;
+	}
+	.col-count-2 > ul {
+		column-count: 2;
+	}
+}
 @media only screen and (max-width: 1400px) {
 	nav.main_menu > ul > li > a {
-	    /*padding: 0 12px;*/
+	    padding: 0 20px;
 	}
 	.header_inner_right {
 	    /*padding-left: 0;*/
@@ -2412,16 +2464,25 @@ form.products-per-page select {
 }
 @media only screen and (max-width: 1300px) {
     nav.main_menu > ul > li > a {
-        padding: 0 1.3vw;
+        padding: 0 1.2vw;
     }
 
 }
-@media only screen and (max-width: 1260px) {
-
+@media only screen and (min-width: 1000px) and (max-width: 1199px) {
+    .header_bottom {
+        padding: 0 10px;
+    }
+    nav.main_menu > ul > li > a {
+        padding: 0 0.9vw;
+        font-size: 14px;
+    }
+    header .search_button:after {
+        display: none;
+    }
 }
 @media only screen and (max-width: 1100px) {
     nav.main_menu > ul > li > a {
-        padding: 0 0.9vw;
+        /* padding: 0 0.9vw; */
     }
     .woocommerce div.product .summary table.variations .reset_variations {
         right: 10px;
@@ -2955,6 +3016,18 @@ form.products-per-page select {
     }
 }
 @media only screen and (max-width: 480px) {
+    .container_inner {
+        width: 90%;
+    }
+    div.grid_section .section_inner {
+        width: calc(90% - 11px);
+    }
+    .page-template-full_width div.grid_section .section_inner {
+        width: calc(90% - 30px);
+    }
+    .single-post div.grid_section .section_inner {
+        width: 90%;
+    }
     .woocommerce input[type=text]:not(.qode_search_field), .woocommerce input[type=password], .woocommerce input[type=email], .woocommerce textarea, .woocommerce-page input[type=tel], .woocommerce-page input[type=text]:not(.qode_search_field), .woocommerce-page input[type=password], .woocommerce-page input[type=email], .woocommerce-page textarea, .woocommerce-page select {
         font-size: 16px;
     }

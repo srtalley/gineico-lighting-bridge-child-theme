@@ -1,6 +1,15 @@
 # Changelog
 
 Gineico Lighting Bridge child theme documented changes.
+## [2.0.13] - 2022-02-17
+* In progress modifications to add all to quote from project page.
+* Modifications to the portfolio pages to show related products.
+
+## [2.0.9] - 2021-11-08
+* Changed the More Info button on the product page.
+* Added code to set the company name and phone number when filling out a quote.
+* Fixing the new user email that is sent when adding a quote that didn't have all of the user info fields.
+
 ## [2.0.8] - 2021-11-01
 * Fixed the registration form to properly validate items.
 * Updated the quote form to pull the company name and phone number.

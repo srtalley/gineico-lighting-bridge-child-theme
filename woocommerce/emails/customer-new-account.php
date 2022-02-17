@@ -12,7 +12,7 @@
  *
  * @see https://docs.woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
- * @version 3.7.0
+ * @version 6.0.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -24,9 +24,10 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 <!-- <p><?php //printf( esc_html__( 'Hi %s,', 'woocommerce' ), esc_html( $user_login ) ); ?></p> -->
 <?php /* translators: %1$s: Site title, %2$s: Username, %3$s: My account link */ ?>
 <!-- <p><?php //printf( esc_html__( 'Thanks for creating an account on %1$s. Your username is %2$s. You can access your account area to view orders, change your password, and more at: %3$s', 'woocommerce' ), esc_html( $blogname ), '<strong>' . esc_html( $user_login ) . '</strong>', make_clickable( esc_url( wc_get_page_permalink( 'myaccount' ) ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p> -->
-<?php //if ( 'yes' === get_option( 'woocommerce_registration_generate_password' ) && $password_generated ) : ?>
-	<?php /* translators: %s: Auto generated password */ ?>
-	<!-- <p><?php //printf( esc_html__( 'Your password has been automatically generated: %s', 'woocommerce' ), '<strong>' . esc_html( $user_pass ) . '</strong>' ); ?></p> -->
+<?php //if ( 'yes' === get_option( 'woocommerce_registration_generate_password' ) && $password_generated && $set_password_url ) : ?>
+	<?php // If the password has not been set by the user during the sign up process, send them a link to set a new password 
+	?>
+	<!--<p><a href="<?php echo esc_attr( $set_password_url ); ?>">--><?php //printf( esc_html__( 'Click here to set your new password.', 'woocommerce' ) ); ?><!--</a></p>-->
 <?php //endif; ?>
 
 <p><strong>Welcome to Gineico Lighting's online projects schedule and quoting system where you will be able to select products from our website and add them to your <a href="<?php echo esc_url( site_url('/my-favourites/')  ); ?>" target="_blank">MY FAVOURITES</a> list, your <a href="<?php echo esc_url( site_url('/my-projects/manage/')  ); ?>" target="_blank">MY PROJECTS</a> jobs lists or add them directly to your <a href="<?php echo esc_url( site_url('/request-quote/')  ); ?>" target="_blank">MY QUOTES</a> for pricing.</strong></p>

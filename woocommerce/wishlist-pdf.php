@@ -115,7 +115,7 @@ $show_dateadded = false;
         }
 		.small-title .title {
 			font-size: 16px;
-			font-weight: 600;
+			font-weight: bold;
 		}
 		table.wishlist_table th {
 			/* border-top: 1px solid #818181 */
@@ -184,6 +184,7 @@ $show_dateadded = false;
 			margin: 0 6px 0 0;
 		}
 
+		/* This style footer appears on every page*/
         .gl-ywcwl-footer  {
 			/* page-break-after: always; */
 			font-size: 14px;
@@ -193,7 +194,14 @@ $show_dateadded = false;
             bottom: .25in;
             margin-top: 0px;
         }
-
+		/* This style footer appears only on the last page*/
+		.gl-last-page-footer  {
+			font-size: 14px;
+            width: 100%;
+            text-align: center;
+			position: absolute;
+			bottom: -.25in;
+		}
       
     </style>
 </head>
@@ -201,9 +209,9 @@ $show_dateadded = false;
 <body>
 <!-- <div class="heading">
 	<div id="logo">
-		<h1><?php echo esc_html( get_option( 'blogname' ) ); ?></h1>
+		<h1><?php //echo esc_html( get_option( 'blogname' ) ); ?></h1>
 	</div>
-	<div id="tagline"><?php echo esc_html( get_option( 'blogdescription' ) ); ?></div>
+	<div id="tagline"><?php //echo esc_html( get_option( 'blogdescription' ) ); ?></div>
 </div> -->
 
 
@@ -218,22 +226,29 @@ $show_dateadded = false;
 			<p class="title">Gineico Lighting</p>
 			<p><a href="https://www.gineicolighting.com.au" target="_blank">www.gineicolighting.com.au</a></p>
 			<p><a href="mailto:showroom@gineico.com" target="_blank">showroom@gineico.com</a></p>
+			<p><a href="tel:+61-417-950-455">+61 417 950 455</a></p>
 		</div>
 	</div>
 </div>
 <div class="clear"></div>
-<div class="gl-ywcwl-footer">
+<!-- <div class="gl-ywcwl-footer">
 	<p>Contact Us <a href="tel:+61-417-950-455">+61 417 950 455</a> © Gineico Lighting | <a href="https://www.gineicolighting.com.au" target="_blank">www.gineicolighting.com.au</a></p>
-</div>
+</div> -->
 
 <!-- TITLE -->
 <?php
 do_action( 'yith_wcwl_pdf_before_wishlist_title', $wishlist );
-
 if ( ! empty( $page_title ) ) :
 	?>
 	<div class="wishlist-title">
-		<?php echo apply_filters( 'yith_wcwl_wishlist_title', '<h2>PROJECT: ' . esc_html( $page_title ) . '</h2>' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<?php 
+		if($page_title == 'My Favourites') {
+			echo '<h2>My Favourites</h2>';
+		} else {
+			echo '<h2>My Project &#8211; ' . $page_title . '</h2>';
+		}
+		?>
+		<?php //echo apply_filters( 'yith_wcwl_wishlist_title', '<h2>PROJECT: ' . esc_html( $page_title ) . '</h2>' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	</div>
 <?php
 endif;
@@ -411,5 +426,8 @@ do_action( 'yith_wcwl_pdf_before_wishlist', $wishlist );
 </table>
 
 <?php do_action( 'yith_wcwl_pdf_after_wishlist', $wishlist ); ?>
+<div class="gl-last-page-footer">
+	<p>Contact Us <a href="tel:+61-417-950-455">+61 417 950 455</a> © Gineico Lighting | <a href="https://www.gineicolighting.com.au" target="_blank">www.gineicolighting.com.au</a></p>
+</div>
 </body>
 </html>
