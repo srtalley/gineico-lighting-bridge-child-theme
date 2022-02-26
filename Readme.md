@@ -1,6 +1,9 @@
 # Changelog
 
 Gineico Lighting Bridge child theme documented changes.
+## [2.0.14] - 2022-02-25
+* Updates to quoting system, adding shipping options and options to quote PDFs.
+
 ## [2.0.13] - 2022-02-17
 * In progress modifications to add all to quote from project page.
 * Modifications to the portfolio pages to show related products.

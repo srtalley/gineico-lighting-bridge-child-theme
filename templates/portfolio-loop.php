@@ -457,19 +457,24 @@ if(isset($bridge_qode_options['disable_portfolio_single_title_label']) && $bridg
 						</div>
 					</div>
 				</div>
-				<div class="gl-used-products">
-					<div class="gl-used-products-title">
-						<h3>Products Used in This Project</h3>
-					</div>
-					<div class="gl-used-products-items">
-					<?php 
-						$used_products = get_field( 'portfolio_used_products' );
-						wl($used_products);
-						echo do_shortcode('[products ids="' . implode(',', $used_products) . '"]');
-					?>
+				<?php 
+				$used_products = get_field( 'portfolio_used_products' );
+				if($used_products != '' && !empty($used_products)) :
+				?>
+					<div class="gl-used-products">
+						<div class="gl-used-products-title">
+							<h3>Products Used in This Project</h3>
+						</div>
+						<div class="gl-used-products-items">
+						<?php 
+							echo do_shortcode('[products ids="' . implode(',', $used_products) . '" orderby=title]');
+						?>
 
+						</div>
 					</div>
-				</div>
+				<?php
+				endif;
+				?>
 			</div>
             <?php get_template_part('templates/portfolio','navigation'); ?>
 

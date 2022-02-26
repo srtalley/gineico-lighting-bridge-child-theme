@@ -43,6 +43,10 @@ class GL_YITH_WooCommerce_Quotes {
         // update the phone and company fields when quote submitted
         add_action('ywraq_checkout_update_customer', array($this, 'gl_ywraq_checkout_update_customer'), 10, 2);
 
+        // add meta keys to quotes
+        // add_filter( 'ywraq_cart_to_order_args', array($this, 'gl_ywraq_cart_to_order_args'), 10, 4 );
+    
+
         // Add a meta key to the request a quote items
         add_action( 'ywraq_from_cart_to_order_item', array($this, 'gl_ywraq_from_cart_to_order_item'), 10, 4 );
 
@@ -50,11 +54,16 @@ class GL_YITH_WooCommerce_Quotes {
         add_filter( 'woocommerce_order_item_display_meta_key', array($this, 'gl_filter_wc_order_item_display_meta_key'), 20, 3 );
 
         // Add the missing columns
+        // add_action( 'woocommerce_before_order_item_line_item_html', array($this, 'gl_woocommerce_before_order_item_line_item_html'), 10, 3 );
+        // add_action('woocommerce_before_order_itemmeta', array($this, 'gl_woocommerce_before_order_itemmeta'), 9999, 3 );
+        // add_filter('woocommerce_order_item_get_formatted_meta_data', array($this, 'gl_woocommerce_order_item_get_formatted_meta_data'), 10, 2);
         add_action( 'woocommerce_after_order_item_object_save', array($this, 'gl_woocommerce_after_order_item_object_save'), 10, 2 );
         
         add_action( 'current_screen', array($this,'gl_woocommerce_order_admin'), 10, 1 );
 
-        add_action( 'add_meta_boxes', array($this, 'gl_shop_order_add_meta_boxes'), 40 );
+        add_filter( 'woocommerce_display_item_meta', array($this, 'gl_woocommerce_display_item_meta'), 10, 3 );
+
+
 
     }
 
@@ -187,11 +196,21 @@ class GL_YITH_WooCommerce_Quotes {
             }
         }
     }
-
-
-    /** 
-     * Add custom keys to each submitted ywraq quote order
+    /**
+     * add meta keys to quotes
      */
+    public function gl_ywraq_cart_to_order_args( $args, $cart_item_key, $values, $new_cart ) {
+
+        // $values['gl_custom_meta_key'] = 'elise';
+        $args['gl_custom_meta_key'] = array(
+            'phose' => 'elise'
+        );
+        // WC()->cart->cart_contents[$cart_item_key] = $values;
+
+        return $args;
+
+    }
+
     public function gl_ywraq_from_cart_to_order_item( $values, $cart_item_key, $item_id, $order ) {
         $item = $order->get_item($item_id);
         // The WC_Product object
@@ -201,11 +220,11 @@ class GL_YITH_WooCommerce_Quotes {
             $sku = ' ';
         }
 
-        $key = '_gl_quote_type'; 
+        $key = 'gl_quote_type'; 
         $value = ' '; 
         wc_update_order_item_meta($item_id, $key, $value);
 
-        $key = '_gl_quote_part_number'; 
+        $key = 'gl_quote_part_number'; 
         $value = $sku; 
         wc_update_order_item_meta($item_id, $key, $value);
     }
@@ -215,33 +234,91 @@ class GL_YITH_WooCommerce_Quotes {
      */
     public function gl_filter_wc_order_item_display_meta_key( $display_key, $meta, $item ) {
         // Change displayed label for specific order item meta key
-        if( is_admin() && $item->get_type() === 'line_item' && $meta->key === '_gl_quote_type' ) {
+        if( is_admin() && $item->get_type() === 'line_item' && $meta->key === 'gl_quote_type' ) {
             $display_key = __("Quote Type", "woocommerce" );
         }
-        if( is_admin() && $item->get_type() === 'line_item' && $meta->key === '_gl_quote_part_number' ) {
+        if( is_admin() && $item->get_type() === 'line_item' && $meta->key === 'gl_quote_part_number' ) {
             $display_key = __("Part Number", "woocommerce" );
         }
         return $display_key;
     }
- 
+    public function gl_woocommerce_before_order_item_line_item_html($item_id, $item, $order) {
+        // check if this is a quote
+
+
+        // check if this has the special meta keys
+        $gl_quote_type_key = wc_get_order_item_meta( $item_id, 'gl_quote_type', true );
+
+        if($gl_quote_type_key == '') {
+            wc_update_order_item_meta($item_id, 'gl_quote_type', ' ');
+
+        }
+
+
+        // return $item;
+    }
+    public function gl_woocommerce_before_order_itemmeta($item_id, $item, $product) {
+        // check if this has the special meta keys
+        $gl_quote_type_key = wc_get_order_item_meta( $item_id, 'gl_quote_typetest334', true );
+
+        if($gl_quote_type_key == '') {
+            wc_update_order_item_meta($item_id, 'gl_quote_typetest334', 'asdfasdfasd');
+
+        }
+    }
+    public function gl_woocommerce_order_item_get_formatted_meta_data($formatted_meta, $item) {
+
+        $meta_key = 'gl_quote_type4098';
+        $item_id = $item->get_id();
+        $gl_quote_type_key = wc_get_order_item_meta( $item_id, $meta_key, true );
+
+
+        if($gl_quote_type_key == '') {
+            wc_update_order_item_meta($item_id, $meta_key, ' ');
+            // now get the key again since we added it
+            // $item_meta_data = $item->get_meta_data();
+
+            // now get item
+
+            foreach($item_meta_data as $key => $meta) {
+                // create an object
+                if($meta->key == $meta_key) {
+                    $formatted_meta[$meta->id] = (object) array(
+                        'key'           => $meta->key,
+                        'value'         => $meta->value,
+                        'display_key'   => 'Type',
+                        'display_value' => wpautop( ' ' ),
+                    );
+                }
+               
+            }
+            $formatted_meta[23892302] = (object) array(
+                'key'           =>  $meta_key,
+                'value'         => 'pasdf',
+                'display_key'   => 'Type',
+                'display_value' => wpautop( 'sadfsa' ),
+            );
+        }
+
+        // get the meta again
+        return $formatted_meta;
+    }
+
     /**
      * Checks and adds meta key items on order or item save
      */
     public function gl_woocommerce_after_order_item_object_save($item, $data_store) {
 
-        if(is_a($item, 'WC_Order_Item_Product')) {
-            $item_id = $item->get_id();
-            // The WC_Product object
-            $product = $item->get_product(); 
-            $sku = $product->get_sku();
-            if($sku == '') {
-                $sku = ' ';
-            }
-    
-            $this->update_wc_order_item_meta_key($item_id, '_gl_quote_type');
-            $this->update_wc_order_item_meta_key($item_id, '_gl_quote_part_number', $sku);
+        $item_id = $item->get_id();
+        // The WC_Product object
+        $product = $item->get_product(); 
+        $sku = $product->get_sku();
+        if($sku == '') {
+            $sku = ' ';
         }
 
+        $this->update_wc_order_item_meta_key($item_id, 'gl_quote_type');
+        $this->update_wc_order_item_meta_key($item_id, 'gl_quote_part_number', $sku);
     }
 
     /**
@@ -263,17 +340,21 @@ class GL_YITH_WooCommerce_Quotes {
         if ( is_admin() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) ) {
             if($current_screen->id == 'shop_order') {
 
-                // add the CSS & JS
-                add_action('admin_head', array($this, 'gl_shop_order_quote_css_js'), 1000);
+                // // prevent loading user custom order
+                // add_filter( 'get_user_option_meta-box-order_product', '__return_empty_string' );
 
-                // move the metaboxes
-                add_action( 'add_meta_boxes', array($this, 'gl_change_order_metaboxes'), 99 );
+                // // change the order
+                // add_action( 'add_meta_boxes', array($this, 'gl_change_product_metaboxes'), 99 );
+
+                // // add theCSS
+                add_action('admin_head', array($this, 'gl_shop_order_quote_css_js'), 1000);
 
             }
         } // end if 
     }
 
     public function gl_shop_order_quote_css_js() {
+
         ?>
 
         <script type="text/javascript">
@@ -293,84 +374,21 @@ class GL_YITH_WooCommerce_Quotes {
                         }, 2000);
                         setTimeout(() => {
                             setupCustomMeta();
-                            // shipping_observer();
                         }, 5000);
                         setTimeout(() => {
                             setupCustomMeta();
                         }, 20000);
                     });
                    
-                    setupCustomShipping();
                 });
 
                 function setupCustomMeta() {
 
-                    $('input[value="_gl_quote_type"]').addClass('gl-hide-label');
-                    $('input[value="_gl_quote_type"]').parent().parent().addClass('gl-quote-type');
+                    $('input[value="gl_quote_type"]').addClass('gl-hide-label');
+                    $('input[value="gl_quote_type"]').parent().parent().addClass('gl-quote-type');
 
-                    $('input[value="_gl_quote_part_number"]').addClass('gl-hide-label');
-                    $('input[value="_gl_quote_part_number"]').parent().parent().addClass('gl-quote-part-number');
-                }
-
-                function setupCustomShipping() {
-                    $('#gl_add_shipping').on('click', function(e) {
-                        e.preventDefault();
-
-                        var method = $("#gl_shipping_option option:selected").text();
-                        var amount = $("#gl_shipping_cost").val();
-
-                        shipping_observer(method, amount);
-
-                        console.log('clicked');
-                        // shipping items
-                        // $('#order_shipping_line_items');
-                        $('.button.add-order-shipping').click();
-                        // get the added item
-                        setTimeout(() => {
-                            console.log($('#order_shipping_line_items tr:last-child'));
-                        }, 4000);
-                    });
-                    console.log('check');
-                    console.log($('#order_shipping_line_items'));
-                    // shipping_observer();
-
-                }
-
-                function shipping_observer(method, amount) {
-
-                    // Create an observer instance
-                    var observer = new MutationObserver(function( mutations ) {
-                        mutations.forEach(function( mutation ) {		
-                            var newNodes = mutation.addedNodes; 
-                            // If there are new nodes added
-                            if( newNodes !== null ) { 
-                                var $nodes = $( newNodes ); 
-                                $nodes.each(function() {
-                                    var $node = $( this );
-                                    console.log($node);
-                                    // check if new node added with class 'shipping'
-                                    if( $node.hasClass("shipping")){			
-                                        // get the id
-                                        order_item_id = $node.data('order_item_id');
-                                        console.log(order_item_id);
-                                        console.log($('input[name="shipping_method_title[' + order_item_id + ']"]'));
-                                        $('input[name="shipping_method_title[' + order_item_id + ']"]').val(method);
-                                        $('input[name="shipping_cost[' + order_item_id + ']"]').val(amount);
-                                        $('.button.save-action').click();
-                                    }
-                                });
-                            }
-                        });    
-                    });
-                    // Configuration of the observer:
-                    var config = { 
-                        childList: true,
-                        attributes: true,
-                        subtree: true,
-                        characterData: true
-                    }; 
-                    var targetNode = $('#order_shipping_line_items')[0];
-                    observer.observe(targetNode, config);  
+                    $('input[value="gl_quote_part_number"]').addClass('gl-hide-label');
+                    $('input[value="gl_quote_part_number"]').parent().parent().addClass('gl-quote-part-number');
                 }
             });
         </script>
@@ -398,69 +416,12 @@ class GL_YITH_WooCommerce_Quotes {
             .gl-quote-part-number > td:first-child::before {
                 content: 'Part Number:';
             }
-            #gl-order-custom div {
-                margin-bottom: 10px;
-            }
-            #gl-order-custom label {
-                font-weight: 600;
-            }
         </style>
 
         <?php
     }
-
-    public function gl_shop_order_add_meta_boxes() {
-        add_meta_box( 
-            'gl-order-custom', 
-            __( 'Shipping Options' ), 
-            array($this, 'gl_shop_order_custom_metabox_callback'), 
-            'shop_order', 
-            'normal', 
-            'high'
-        );
-    }
-    public function gl_shop_order_custom_metabox_callback() {
-        ?>
-        <!-- <p><strong>Shipping</strong></p> -->
-        <div>
-            <label for="gl_shipping_option">Shipping Method</label>
-        </div>
-        <div>
-            <select id="gl_shipping_option" name="gl_shipping_option">
-                <option value="freight">Freight - Delivery From Gineico QLD Warehouse To Client To Be Confirmed</option>
-                <option value="local_freight">Local Freight - Delivery From Gineico QLD Warehouse</option>
-                <option value="internation_freight">International Freight - From Manufacturer Warehouse</option>
-            </select>
-        </div>
-        <div>
-            <label for="gl_shipping_cost">Amount</label>
-            <input type="number" id="gl_shipping_cost" name="gl_shipping_cost" min="0" step="0.01" style="max-width: 100px;">
-        </div>
-        <div>
-            <button class="button button-primary" id="gl_add_shipping">Add Shipping</button>
-        </div>
-
-        <?php
-    }
-
-    /**
-     * Move the position of the order metaboxes
-     */
-    public function gl_change_order_metaboxes() {
-        global $wp_meta_boxes;
-        // Set up the 'normal' location with 'high' priority.
-        if ( empty( $wp_meta_boxes['shop_order']['normal'] ) ) {
-            $wp_meta_boxes['shop_order']['normal'] = [];
-        }
-        if ( empty( $wp_meta_boxes['shop_order']['normal']['high'] ) ) {
-            $wp_meta_boxes['shop_order']['normal']['high'] = [];
-        }
-
-        $yith_ywraq_metabox_order = $wp_meta_boxes['shop_order']['normal']['high']['yith-ywraq-metabox-order'];
-        unset($wp_meta_boxes['shop_order']['normal']['high']['yith-ywraq-metabox-order']);
-
-
-        $wp_meta_boxes['shop_order']['normal']['high']['yith-ywraq-metabox-order'] = $yith_ywraq_metabox_order;
+    public function gl_woocommerce_display_item_meta( $html, $item, $args ) {
+        return $html;
     }
 } // end class
 

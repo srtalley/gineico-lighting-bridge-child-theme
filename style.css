@@ -4,8 +4,8 @@ Theme URI: http://demo.qodeinteractive.com/bridge/
 Description: A child theme of Bridge Theme
 Author: Qode Interactive
 Author URI: http://www.qodethemes.com/
-Version: 2.0.13
-Date: 2022-02-17
+Version: 2.0.14
+Date: 2022-02-25
 Template: bridge
 */
 @import url("../bridge/style.css");
@@ -2331,6 +2331,8 @@ form.products-per-page select {
 }
 .single-portfolio_page .qode_portfolio_related h4 {
     padding: 30px 10px;
+    font-weight: 500;
+    font-size: 20px;
 }
 @media only screen and (max-width: 1400px) {
     .woocommerce div.product .summary table.variations,

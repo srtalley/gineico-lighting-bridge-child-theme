@@ -68,8 +68,6 @@ class GL_WooCommerceAdmin {
             $wp_meta_boxes['product']['normal']['high'][$key] = $metabox;
         }
 
-
-
         // Move the product tags
         $sidebar_tags_metabox = $wp_meta_boxes['product']['side']['core']['tagsdiv-product_tag'];
         unset($wp_meta_boxes['product']['side']['core']['tagsdiv-product_tag']);

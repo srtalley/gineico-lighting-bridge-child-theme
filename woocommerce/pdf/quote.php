@@ -85,11 +85,29 @@ $pdf_font = apply_filters('pdf_font_family', '"dejavu sans"');
             font-size: 18px;
             border-bottom: 0;
         }
+        .quote-table .type-col {
+            width: 1in;
+        }
+        .quote-table .qty-col {
+            width: 0.3in;
+        }
+        .quote-table .part-num-col {
+            width: 1in;
+        }
+        .quote-table .image-col {
+            width: 0.7in;
+        }
+        .quote-table .unit-col {
+            width: 1in;
+        }
+        .quote-table .subtotal-col {
+            width: 1.1in;
+        }
         .quote-table small{
             font-size: 13px;
         }
         .quote-table .last-col{
-            padding-right: 45px;
+            padding-right: .1in;
         }
         .quote-table .last-col.tot{
             font-weight: 600;
@@ -111,6 +129,9 @@ $pdf_font = apply_filters('pdf_font_family', '"dejavu sans"');
 			display: inline-block;
 			margin: 0 !important;
 		}
+        .shipping-col .shipped_via {
+            display: none;
+        }
         .footer {
             position: fixed;
             bottom: 0;

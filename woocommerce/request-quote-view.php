@@ -47,11 +47,20 @@ else: ?>
 			foreach ( $raq_content as $key => $raq ):
 				$product_id = ( isset( $raq['variation_id'] ) && $raq['variation_id'] != '' ) ? $raq['variation_id'] : $raq['product_id'];
 				$_product = wc_get_product( $product_id );
+				
 
 				if ( ! $_product ) {
 					continue;
 				}
 
+				// When variable products are added from the wishlist,
+				// they don't have the variation attributes filled in.
+				if($_product->get_type() == 'variation' && empty( $raq['variation_id'])) {
+					// fill out the variations
+					$raq['variation_id'] = $raq['product_id'];
+					$raq['product_id'] = $_product->get_parent_id();
+					$raq['variations'] = $_product->get_variation_attributes();
+				}
 				$show_price = true;
 
 				do_action( 'ywraq_before_request_quote_view_item', $raq_content, $key );

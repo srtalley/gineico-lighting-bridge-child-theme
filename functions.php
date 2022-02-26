@@ -1108,12 +1108,13 @@ if ( ! function_exists( 'bridge_child_woocommerce_quote_email_pdf_footer' ) ) {
 				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Terms of sale: 50% deposit with written order. Balance in full prior to consignment.</li>
 				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Balance of payment and collection of goods, to take place within 7 calendar days from date when goods become available from our warehouse.</li>
 				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Failure to pay and collect goods by the stated time may incur storage costs or the forfeit of the deposit and goods.</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Payments made by cheque require clearance of funds prior to goods being released.</li>
+				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Payments made by cheque, credit card or telegraphic transfer will be subject to clearance of funds in our account, prior to goods being released.</li>
 				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">This offer is valid for 30 calendar days from date of issue.</li>
 				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Quantities indicated above are to be checked by purchaser prior to ordering. Reduction of the indicated quantities will be cause for revision of quoted prices.</li>
 				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Restocking fee of 50% applies to all items returned. Items can only be returned with prior written consent by gineico QLD Pty Ltd. Goods to be returned in "as new condition" at client's expense.</li>
 				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Custom or non standard / stock hardware cannot be returned.</li>
 				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Clients should take care to download the product specific data sheets, or to request technical information in writing, to ensure all items ordered are in every way compatible for each specific intended application.</li>
+				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Clients should take care to check all goods when they are delivered. Any claims for damaged goods or missing items must be lodged in writing within 7 days of arrival on site.</li>
 			</ol>
 		</div>
 		<?php
@@ -1148,12 +1149,13 @@ if ( ! function_exists( 'bridge_child_woocommerce_email_footer_quote_conditions_
 				echo sprintf( __( '8. Terms of sale: 50% deposit with written order. Balance in full prior to consignment.', 'woocommerce' ) ) . "\n";
 				echo sprintf( __( '9. Balance of payment and collection of goods, to take place within 7 calendar days from date when goods become available from our warehouse.', 'woocommerce' ) ) . "\n";
 				echo sprintf( __( '10. Failure to pay and collect goods by the stated time may incur storage costs or the forfeit of the deposit and goods.', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '11. Payments made by cheque require clearance of funds prior to goods being released.', 'woocommerce' ) ) . "\n";
+				echo sprintf( __( '11. Payments made by cheque, credit card or telegraphic transfer will be subject to clearance of funds in our account, prior to goods being released.', 'woocommerce' ) ) . "\n";
 				echo sprintf( __( '12. This offer is valid for 30 calendar days from date of issue.', 'woocommerce' ) ) . "\n";
 				echo sprintf( __( '13. Quantities indicated above are to be checked by purchaser prior to ordering. Reduction of the indicated quantities will be cause for revision of quoted prices.', 'woocommerce' ) ) . "\n";
 				echo sprintf( __( '14. Restocking fee of 50% applies to all items returned. Items can only be returned with prior written consent by gineico QLD Pty Ltd. Goods to be returned in "as new condition" at client\'s expense.', 'woocommerce' ) ) . "\n";
 				echo sprintf( __( '15. Custom or non standard / stock hardware cannot be returned.', 'woocommerce' ) ) . "\n";
 				echo sprintf( __( '16. Clients should take care to download the product specific data sheets, or to request technical information in writing, to ensure all items ordered are in every way compatible for each specific intended application.', 'woocommerce' ) ) . "\n\n";
+				echo sprintf( __( '17. Clients should take care to check all goods when they are delivered. Any claims for damaged goods or missing items must be lodged in writing within 7 days of arrival on site.', 'woocommerce' ) ) . "\n\n";
 				break;
 		}
 

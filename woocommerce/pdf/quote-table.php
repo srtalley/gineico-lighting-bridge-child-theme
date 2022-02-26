@@ -35,19 +35,21 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
         <thead>
         <tr>
             <?php if( get_option('ywraq_show_preview') == 'yes'): ?>
-                <th scope="col" style="text-align:left; border: 1px solid #777;"><?php _e( 'Preview', 'yith-woocommerce-request-a-quote' ); ?></th>
+                <th scope="col" style="text-align:left; border: 1px solid #777;" class="image-col"><?php _e( 'Image', 'yith-woocommerce-request-a-quote' ); ?></th>
             <?php endif ?>
-            <th scope="col" style="text-align:left; border: 1px solid #777;"><?php _e( 'Product', 'yith-woocommerce-request-a-quote' ); ?></th>
-            <th scope="col" style="text-align:left; border: 1px solid #777;"><?php _e( 'Unit Price', 'yith-woocommerce-request-a-quote' ); ?></th>
-            <th scope="col" style="text-align:left; border: 1px solid #777;"><?php _e( 'Quantity', 'yith-woocommerce-request-a-quote' ); ?></th>
-            <th scope="col" style="text-align:left; border: 1px solid #777;"><?php _e( 'Subtotal', 'yith-woocommerce-request-a-quote' ); ?></th>
+            <th scope="col" style="text-align:left; border: 1px solid #777;" class="type-col"><?php _e( 'Type', 'yith-woocommerce-request-a-quote' ); ?></th>
+            <th scope="col" style="text-align:left; border: 1px solid #777;" class="qty-col"><?php _e( 'QTY', 'yith-woocommerce-request-a-quote' ); ?></th>
+            <th scope="col" style="text-align:left; border: 1px solid #777;" class="part-num-col"><?php _e( 'Part No', 'yith-woocommerce-request-a-quote' ); ?></th>
+            <th scope="col" style="text-align:left; border: 1px solid #777;" class="product-col"><?php _e( 'Product', 'yith-woocommerce-request-a-quote' ); ?></th>
+            <th scope="col" style="text-align:left; border: 1px solid #777;" class="unit-col"><?php _e( 'Unit Price', 'yith-woocommerce-request-a-quote' ); ?></th>
+            <th scope="col" style="text-align:left; border: 1px solid #777;" class="subtotal-col"><?php _e( 'Subtotal', 'yith-woocommerce-request-a-quote' ); ?></th>
         </tr>
         </thead>
         <tbody>
         <?php
         $items = $order->get_items();
         $currency = method_exists( $order,  'get_currency') ? $order->get_currency() :  $order->get_order_currency();
-        $colspan = 3;
+        $colspan = 5;
         if( ! empty( $items ) ):
 
             foreach( $items as $item ):
@@ -92,7 +94,7 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
                             }
                             $thumbnail = sprintf( '<img src="%s" style="max-width:100px; max-height:87px;"/>', $thumbnail_url );
 
-                            $colspan = 4;
+                            $colspan = 6;
                             if ( ! $_product->is_visible() ) {
 	                            echo $thumbnail;
                             } else {
@@ -101,6 +103,14 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
                             ?>
                         </td>
                     <?php endif ?>
+                    <!-- BEGIN GL CUSTOM -->
+                    <td scope="col" style="text-align:center; border-left: 1px solid #777; border-color: #777;" class="type-col"><?php echo wc_get_order_item_meta( $item->get_id(), '_gl_quote_type', true );?></td>
+
+                    <td scope="col" style="text-align:center; border-left: 1px solid #777; border-color: #777;" class="qty-col"><?php echo $item['qty'] ?></td>
+
+                    <td scope="col" style="text-align:center; border-left: 1px solid #777; border-color: #777;" class="part-no-col"><?php echo wc_get_order_item_meta( $item->get_id(), '_gl_quote_part_number', true );?></td>
+                    <!-- EHD GL CUSTOM -->
+
                     <td scope="col" style="text-align:left; border-left: 1px solid #777; border-color: #777;">
                     <?php //echo $title
                     //BEGIN GL CUSTOM
@@ -137,29 +147,54 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
 						   if ( $im ) {
 		                       $im->display();
 	                       } else {
-                            wc_display_item_meta( $item );
+                                wc_display_item_meta( $item );
 	                       }
 	                       ?></small>
                            
                            
                            </td>
                     <td scope="col" style="text-align:center; border-left: 1px solid #777; border-color: #777;"><?php echo $unit_price ?></td>
-                    <td scope="col" style="text-align:center; border-left: 1px solid #777; border-color: #777;"><?php echo $item['qty'] ?></td>
-
                     <td scope="col" class="last-col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo apply_filters('ywraq_quote_subtotal_item', ywraq_formatted_line_total( $order, $item ), $item['line_total'], $_product); ?></td>
                 </tr>
 
             <?php
-            endforeach; ?>
+            endforeach; ?> 
 
             <?php
+            $bottom_table_array = array();
+
             foreach ( $order->get_order_item_totals() as $key => $total ) {
-                ?>
+                
+                ob_start();
+                if($key == 'shipping') {
+                    ?>
+                    <tr>
+                        <th scope="col" colspan="3"></th>
+                        <td scope="col" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><strong>Freight</strong></td>
+                        <td scope="col" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo $order->get_shipping_method(); ?></td>
+                        <!-- <td scope="col" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php //echo $total['label']; ?></td> -->
+                        <td scope="col" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"></td>
+                        <td scope="col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;" class="shipping-col"><?php echo $order->get_shipping_to_display(); ?></td>
+                        <!-- <td scope="col" class="last-col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php //echo $total['value']; ?></td> -->
+                    </tr>
+                    <?php 
+                    
+                } else {
+                    ?>
                     <tr>
                         <th scope="col" colspan="<?php echo $colspan ?>" style="text-align:right;"><?php echo $total['label']; ?></th>
                         <td scope="col" class="last-col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo $total['value']; ?></td>
                     </tr>
-                <?php    } ?>
+                    <?php 
+                }
+              
+                $bottom_table_array[$key] = ob_get_clean();
+            } 
+            echo $bottom_table_array['shipping'];
+            echo $bottom_table_array['cart_subtotal'];
+            echo $bottom_table_array['order_total'];
+
+            ?>
         <?php endif; ?>
 
 

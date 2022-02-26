@@ -1060,8 +1060,8 @@ class GL_YITH_WooCommerce_Wishlist {
      */
     public function gl_add_wishlist_download_link($wishlist) {
         if($wishlist['wishlist_id'] != '' && is_object($wishlist['wishlist'])) {
-            // echo '<div class="gl-wishlist-download-wrapper"><a class="wishlist-download" href="' . esc_url( $wishlist['wishlist']->get_download_url() ) . '">Download Project Schedule&nbsp;<i class="fa fa-download"></i></a><br><a class="gl-add-all-to-quotation" href="#">Request all for Quotation &nbsp;<i class="fa fa-file-text" aria-hidden="true"></i></a></div>';
-            echo '<div class="gl-wishlist-download-wrapper"><a class="wishlist-download" href="' . esc_url( $wishlist['wishlist']->get_download_url() ) . '">Download Project Schedule&nbsp;<i class="fa fa-download"></i></a></div>';
+            echo '<div class="gl-wishlist-download-wrapper"><a class="wishlist-download" href="' . esc_url( $wishlist['wishlist']->get_download_url() ) . '">Download Project Schedule&nbsp;<i class="fa fa-download"></i></a><br><a class="gl-add-all-to-quotation" href="#">Request all for Quotation &nbsp;<i class="fa fa-file-text" aria-hidden="true"></i></a></div>';
+            // echo '<div class="gl-wishlist-download-wrapper"><a class="wishlist-download" href="' . esc_url( $wishlist['wishlist']->get_download_url() ) . '">Download Project Schedule&nbsp;<i class="fa fa-download"></i></a></div>';
 
             // echo '<div class="gl-wishlist-add-to-quote-wrapper"><a class="gl-add-all-to-quotation" href="#">Request all for Quotation &nbsp;<i class="fa fa-file-text" aria-hidden="true"></i></a></div>';
         }
