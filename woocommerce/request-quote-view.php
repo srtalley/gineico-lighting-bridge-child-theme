@@ -92,6 +92,17 @@ else: ?>
 						?>
 						<a href="<?php echo $_product->get_permalink() ?>"><?php echo $title ?></a>
 						<?php
+
+						if($_product->is_type('variable') || $_product->is_type('variation')) {
+							$parent_product = wc_get_product($_product->get_parent_id());
+							$product_short_description = $parent_product->get_short_description();
+						} else {
+							$product_short_description = $_product->get_short_description();
+						}
+						if($product_short_description != '') {
+							echo '<div class="quote-product-short-description">' . strip_tags( substr($product_short_description, 0 , 200)) . '&hellip; <a style="text-decoration: none; color: #e2ad68;" target="_blank" href="' . esc_url( $_product->get_permalink() ) . '">Read More</a></div>';
+						}
+
 						// Meta data
 
 						$item_data = array();

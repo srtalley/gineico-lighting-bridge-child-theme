@@ -287,22 +287,30 @@ class GL_YITH_WooCommerce_Quotes {
                     // via ajax and run it a few times in case there's 
                     // a delay in them being added
                     $(document).on('items_saved', function() {
-
-                        setTimeout(() => {
-                            setupCustomMeta();
-                        }, 2000);
-                        setTimeout(() => {
-                            setupCustomMeta();
-                            // shipping_observer();
-                        }, 5000);
-                        setTimeout(() => {
-                            setupCustomMeta();
-                        }, 20000);
+                        setupCustomMetaSupport();
                     });
-                   
+                    $( '#woocommerce-order-items' ).on( 'click', '.cancel-action', function() {
+                        setupCustomMetaSupport();
+                    } );
+                    
                     setupCustomShipping();
                 });
 
+                function setupCustomMetaSupport() {
+                    setTimeout(() => {
+                        setupCustomMeta();
+                    }, 500);
+                    setTimeout(() => {
+                        setupCustomMeta();
+                    }, 2000);
+                    setTimeout(() => {
+                        setupCustomMeta();
+                        // shipping_observer();
+                    }, 5000);
+                    setTimeout(() => {
+                        setupCustomMeta();
+                    }, 20000);
+                }
                 function setupCustomMeta() {
 
                     $('input[value="_gl_quote_type"]').addClass('gl-hide-label');
@@ -313,27 +321,42 @@ class GL_YITH_WooCommerce_Quotes {
                 }
 
                 function setupCustomShipping() {
+
+                    // hide the other field
+                    $('.gl-other-shipping-method').css('display', 'none').removeClass('hide');
+
+                    // hide any shown errors if something is typed in the other field
+                    $("#gl_other_shipping_name").on('change', function() {
+                        if($(this).val() != '') {
+                            $('#gl_shipping_error').text('');
+                        }
+                    });
+                    $('#gl_shipping_option').on('change', function(e) {
+                        if($("#gl_shipping_option option:selected").val() == 'other') {
+                            $('.gl-other-shipping-method').slideDown();
+                            $('#gl_other_shipping_name').focus();
+                        } else {
+                            $('.gl-other-shipping-method').slideUp();
+                        }
+                    });
                     $('#gl_add_shipping').on('click', function(e) {
                         e.preventDefault();
 
-                        var method = $("#gl_shipping_option option:selected").text();
+                        var method_text = $("#gl_shipping_option option:selected").text();
+                        var method_option = $("#gl_shipping_option option:selected").val();
+
+                        if(method_option == 'other') {
+                            var method_text = $("#gl_other_shipping_name").val();
+                        }
+
                         var amount = $("#gl_shipping_cost").val();
-
-                        shipping_observer(method, amount);
-
-                        console.log('clicked');
-                        // shipping items
-                        // $('#order_shipping_line_items');
-                        $('.button.add-order-shipping').click();
-                        // get the added item
-                        setTimeout(() => {
-                            console.log($('#order_shipping_line_items tr:last-child'));
-                        }, 4000);
+                        if(method_text != '') {
+                            shipping_observer(method_text, amount);
+                            $('.button.add-order-shipping').click();    
+                        } else if(method_text == '') {
+                                $('#gl_shipping_error').text('Please enter a custom shipping name.');
+                        } 
                     });
-                    console.log('check');
-                    console.log($('#order_shipping_line_items'));
-                    // shipping_observer();
-
                 }
 
                 function shipping_observer(method, amount) {
@@ -347,13 +370,11 @@ class GL_YITH_WooCommerce_Quotes {
                                 var $nodes = $( newNodes ); 
                                 $nodes.each(function() {
                                     var $node = $( this );
-                                    console.log($node);
                                     // check if new node added with class 'shipping'
                                     if( $node.hasClass("shipping")){			
                                         // get the id
                                         order_item_id = $node.data('order_item_id');
-                                        console.log(order_item_id);
-                                        console.log($('input[name="shipping_method_title[' + order_item_id + ']"]'));
+
                                         $('input[name="shipping_method_title[' + order_item_id + ']"]').val(method);
                                         $('input[name="shipping_cost[' + order_item_id + ']"]').val(amount);
                                         $('.button.save-action').click();
@@ -404,6 +425,25 @@ class GL_YITH_WooCommerce_Quotes {
             #gl-order-custom label {
                 font-weight: 600;
             }
+            .gl-other-shipping-method.hide {
+                display: none;
+            }
+            .gl-options-row {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .gl-options-row-left {
+                flex: 0 0 200px;
+            }
+            .gl-options-row-right {
+                flex: 1 1 50%;
+            }
+            #gl_shipping_error {
+                color: #e60000;
+                font-weight: bold;
+                font-size: 15px;
+            }
         </style>
 
         <?php
@@ -422,22 +462,42 @@ class GL_YITH_WooCommerce_Quotes {
     public function gl_shop_order_custom_metabox_callback() {
         ?>
         <!-- <p><strong>Shipping</strong></p> -->
-        <div>
-            <label for="gl_shipping_option">Shipping Method</label>
+        <div class="gl-options-row">
+            <div class="gl-options-row-left">
+                <label for="gl_shipping_option">Shipping Method</label>
+            </div>
+            <div class="gl-options-row-right">
+                <select id="gl_shipping_option" name="gl_shipping_option">
+                    <option value="freight">Freight - Delivery From Gineico QLD Warehouse To Client To Be Confirmed</option>
+                    <option value="local_freight">Local Freight - Delivery From Gineico QLD Warehouse</option>
+                    <option value="internation_freight">International Freight - From Manufacturer Warehouse</option>
+                    <option value="other">Other - Enter Custom Shipping Name</option>
+                </select>
+            </div>
         </div>
-        <div>
-            <select id="gl_shipping_option" name="gl_shipping_option">
-                <option value="freight">Freight - Delivery From Gineico QLD Warehouse To Client To Be Confirmed</option>
-                <option value="local_freight">Local Freight - Delivery From Gineico QLD Warehouse</option>
-                <option value="internation_freight">International Freight - From Manufacturer Warehouse</option>
-            </select>
+        <div class="gl-other-shipping-method hide gl-options-row">
+            <div class="gl-options-row-left">
+                <label for="gl_other_shipping_name">Other Shipping Method</label>
+            </div>
+            <div class="gl-options-row-right">
+                <input type="text" id="gl_other_shipping_name" name="gl_other_shipping_name" style="width: 100%; max-width: 516px;">
+            </div>
         </div>
-        <div>
-            <label for="gl_shipping_cost">Amount</label>
-            <input type="number" id="gl_shipping_cost" name="gl_shipping_cost" min="0" step="0.01" style="max-width: 100px;">
+        <div class="gl-options-row">
+            <div class="gl-options-row-left">
+                <label for="gl_shipping_cost">Amount</label>
+            </div>
+            <div class="gl-options-row-right">
+                <input type="number" id="gl_shipping_cost" name="gl_shipping_cost"  step="0.01" value="0" min="0" style="max-width: 100px; text-align: right;">
+            </div>
         </div>
-        <div>
-            <button class="button button-primary" id="gl_add_shipping">Add Shipping</button>
+        <div class="gl-options-row">
+            <div class="gl-options-row-left">
+            </div>
+            <div class="gl-options-row-right">
+                <div id="gl_shipping_error"></div>
+                <button class="button button-primary" id="gl_add_shipping">Add Shipping</button>
+            </div>
         </div>
 
         <?php

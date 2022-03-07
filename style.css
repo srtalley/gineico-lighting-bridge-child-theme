@@ -4,8 +4,8 @@ Theme URI: http://demo.qodeinteractive.com/bridge/
 Description: A child theme of Bridge Theme
 Author: Qode Interactive
 Author URI: http://www.qodethemes.com/
-Version: 2.0.14
-Date: 2022-02-25
+Version: 2.0.15
+Date: 2022-03-06
 Template: bridge
 */
 @import url("../bridge/style.css");
@@ -1584,6 +1584,12 @@ body.woocommerce-js .yith_ywraq_add_item_browse_message a:hover,
 }
 .request-quote-column p.form-row {
 	position: relative;
+}
+.yith-request-a-quote-page .product-name > a {
+    font-weight: 600;
+}
+.yith-request-a-quote-page .product-name .quote-product-short-description {
+    font-size: 16px;
 }
 /* .request-quote-column {
     width: 50%;

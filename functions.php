@@ -62,8 +62,13 @@ function remove_css_js_version( $src ) {
 }
 add_filter( 'style_loader_src', 'remove_css_js_version', 9999 );
 add_filter( 'script_loader_src', 'remove_css_js_version', 9999 );
-
-
+/**
+ * Set caching headers
+ */
+// function caching_headers() {
+// 	header("Cache-Control: max-age=86400");
+// }
+// add_action('init', 'caching_headers');
 /* Social Share shortcode */
 if (!function_exists('social_share_list')) {
     function social_share_list($atts, $content = null) {
