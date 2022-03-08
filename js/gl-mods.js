@@ -629,8 +629,6 @@ jQuery(function($) {
         add_to_cart_info.append('yith-add-to-cart', $t.data('product_id'));
 
         var quantity = $row_wrap.find('.gl-wishlist-qty input').val();
-        console.log( $row_wrap.find('.gl-wishlist-qty input'));
-        console.log(quantity);
 
         if (quantity > 0) {
             add_to_cart_info.append('quantity', quantity);

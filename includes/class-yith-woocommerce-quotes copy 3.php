@@ -356,10 +356,23 @@ class GL_YITH_WooCommerce_Quotes {
                         });
                         $('.gl-shipping-amount').each(function() {
                             $(this).val('0');
-                            $(this).hide();
                         });
                     });
 
+                    // hide any shown errors if something is typed in the other field
+                    // $("#gl_other_shipping_name").on('change', function() {
+                    //     if($(this).val() != '') {
+                    //         $('#gl_shipping_error').text('');
+                    //     }
+                    // });
+                    // $('#gl_shipping_option').on('change', function(e) {
+                    //     if($("#gl_shipping_option option:selected").val() == 'other') {
+                    //         $('.gl-other-shipping-method').slideDown();
+                    //         $('#gl_other_shipping_name').focus();
+                    //     } else {
+                    //         $('.gl-other-shipping-method').slideUp();
+                    //     }
+                    // });
                     // show amounts with checkboxes 
                     $('.gl-shipping-checkbox').on('click', function(e) {
                         if( $(this).is(':checked') ) {
@@ -379,6 +392,7 @@ class GL_YITH_WooCommerce_Quotes {
                                 // get the id and then split to component parts
                                 var checkbox_id = $(current_checkbox).attr('id');
                                 var shipping_id = checkbox_id.split("[")[0];
+                                // var item_id = checkbox_id.split("[")[1].replace(']', '');
 
                                 // see if there's an amount set
                                 var shipping_amount = $('#' + shipping_id + '\\[amount\\]').val();
@@ -389,8 +403,9 @@ class GL_YITH_WooCommerce_Quotes {
                                     $('#' + shipping_id + '\\[error\\]').hide();
                                     // see if custom name is being used
                                     var use_custom_name = $('#' + shipping_id + '\\[use_custom_name\\]').val();
-                                    if(use_custom_name === 'true' || shipping_id == 'other') {
+                                    if(use_custom_name === 'true') {
                                         // get the custom name
+                                        console.log('use a custom name');
                                         var shipping_name = $('#' + shipping_id + '\\[custom_name\\]').val();
                                     } else {
                                         var shipping_name = $(current_checkbox).val();
@@ -401,64 +416,65 @@ class GL_YITH_WooCommerce_Quotes {
                                         'method' : shipping_name,
                                         'amount' : shipping_amount
                                     };
-                                    // add to the array
                                     shipping_options.push(this_shipping_option);
+                                    // (async function checkboxes() {
+                                    //     $('.button.add-order-shipping').click(); 
+
+                                    //     await shipping_observer(shipping_name, shipping_amount);
+                                    // })();
+
 
                                 }
 
                             }
+                            // console.log(item_id);
 
                         });
-                        // see if no items have been checked and show error
-                        if (shipping_options.length === 0) {
-                            // show error
-                            $('#gl-shipping-error').show();
-                            setTimeout(function() {
-                                $('#gl-shipping-error').hide();
-                            }, 10000);
-                            return false;
-                        }
-                        /**
-                         * Async function to click the add shipping button
-                         * and add options
-                         */
-                        async function loop_shipping_options () {
+                        console.log(shipping_options);
+                        (async function loop () {
                             for(var i=0;i<shipping_options.length;i++){
+                                console.log(shipping_options.length);
+                                console.log(i);
+                                console.log('loop iterate');
                                 const result = await shipping_observer(shipping_options[i].method, shipping_options[i].amount);
-                            }
-                            return;
-                        };
+                                console.log('loop bliterate');
 
-                        /**
-                         * Waits for the loop to finish and then clicks the
-                         * save button to save the shipping options
-                         */
-                        async function save_shipping_options(){
-                            
-                            $('html, body').animate({
-                                scrollTop: ($('#order_shipping_line_items').first().offset().top - 150)
-                            }, 500);
-                            await loop_shipping_options();
-                            var result = $('.button.save-action').click();
-                            
-                        };
-                        save_shipping_options();
-                      
+                                if(result.result == 'true') {
+                                    ajax_add_to_quote_success = true;
+                                } else {
+                                    // return false;
+                                }
+                            }
+
+                        })();
+                        // var method_text = $("#gl_shipping_option option:selected").text();
+                        // var method_option = $("#gl_shipping_option option:selected").val();
+
+                        // if(method_option == 'other') {
+                        //     var method_text = $("#gl_other_shipping_name").val();
+                        // }
+
+                        // var amount = $("#gl_shipping_cost").val();
+                        // if(method_text != '') {
+                        //     shipping_observer(method_text, amount);
+                        //     $('.button.add-order-shipping').click();    
+                        // } else if(method_text == '') {
+                        //         $('#gl_shipping_error').text('Please enter a custom shipping name.');
+                        // } 
                     });
                 }
 
-                /**
-                 * function that returns a promise, which clicks
-                 * the add shipping button and enters the info
-                 */
                 function shipping_observer(method, amount, rejectTime = 50) {
+                    console.log('new shipping observer');
+                    console.log(amount);
 
                     return new Promise((resolve,reject) => {
-
-                        // click the button
                         $('.button.add-order-shipping').click(); 
 
-                        // let hasChanged = false;
+                        let hasChanged = false;
+
+                        // console.log('clicked me');
+                        // $('.button.add-order-shipping').click(); 
 
                         // Create an observer instance
                         var observer = new MutationObserver(function( mutations ) {
@@ -476,13 +492,27 @@ class GL_YITH_WooCommerce_Quotes {
 
                                             $('input[name="shipping_method_title[' + order_item_id + ']"]').val(method);
                                             $('input[name="shipping_cost[' + order_item_id + ']"]').val(amount);
-
-                                            // hasChanged = true;
+                                            var result = $('.button.save-action').click();
+                                            // var disconnect = observer.disconnect();
+                                            // resolve(disconnect);
+                                            hasChanged = true;
                                             observer.disconnect();
+                                            console.log('promising');
 
                                             resolve(method);
 
                                         }
+
+                                        // if (rejectTime > 0) {
+                                        //     window.setTimeout(()=>{
+                                        //         if (!hasChanged) {
+                                        //             console.log('rejecting');
+                                        //             reject(method);
+                                        //         }
+                                        //     },rejectTime * 100);
+                                        // }
+                                        
+
                                     });
                                 }
                             });    
@@ -584,13 +614,6 @@ class GL_YITH_WooCommerce_Quotes {
                 color: #e60000;
                 font-weight: bold;
                 font-size: 15px;
-                padding-left: 20px;
-            }
-            #gl-shipping-error {
-                display: none;
-                color: #e60000;
-                font-weight: bold;
-                font-size: 18px;
             }
         </style>
 
@@ -703,7 +726,7 @@ class GL_YITH_WooCommerce_Quotes {
                         <input type="checkbox" class="gl-shipping-checkbox" name="other[name]" id="other[name]">
                     </div>
                     <div class="gl-label-col">
-                        <input type="text" class="gl-custom-shipping-name" id="other[custom_name]" placeholder="Other - Enter Custom Shipping Name">
+                        <input type="text" id="other[custom_name]" placeholder="Other - Enter Custom Shipping Name">
                         <input type="hidden" class="gl-use-custom-name-hidden" id="other[use_custom_name]" value="false">
                     </div>
                     </div>
@@ -730,11 +753,6 @@ class GL_YITH_WooCommerce_Quotes {
                 <div class="gl-options-row-right">
                     <div id="gl_shipping_error"></div>
                     <button class="button button-primary" id="gl_add_shipping">Add Shipping</button>
-                </div>
-            </div>
-            <div class="gl-options-row">
-                <div id="gl-shipping-error">
-                    Please choose some shipping options before clicking "Add Shipping."
                 </div>
             </div>
         </form>
