@@ -4,6 +4,8 @@ Gineico Lighting Bridge child theme documented changes.
 ## [2.0.15] - 2022-03-07
 * Updated the shipping options panel on the admin screen.
 * Added short description to the request a quote page for each product.
+* Updates to PDF view to include separate shipping line items.
+* Update to Create PDF button to change the random URL string via JS after it is clicked.
 
 ## [2.0.14] - 2022-02-25
 * Updates to quoting system, adding shipping options and options to quote PDFs.

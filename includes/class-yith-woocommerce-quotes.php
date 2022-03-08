@@ -294,6 +294,8 @@ class GL_YITH_WooCommerce_Quotes {
                     } );
                     
                     setupCustomShipping();
+
+                    addCustomVersionStringToPDFurl();
                 });
 
                 function setupCustomMetaSupport() {
@@ -382,7 +384,7 @@ class GL_YITH_WooCommerce_Quotes {
 
                                 // see if there's an amount set
                                 var shipping_amount = $('#' + shipping_id + '\\[amount\\]').val();
-                                if(shipping_amount <= 0) {
+                                if(shipping_amount < 0) {
                                     // show error
                                     $('#' + shipping_id + '\\[error\\]').show();
                                 } else{
@@ -440,6 +442,7 @@ class GL_YITH_WooCommerce_Quotes {
                             }, 500);
                             await loop_shipping_options();
                             var result = $('.button.save-action').click();
+                            $('#gl_reset_form').click();
                             
                         };
                         save_shipping_options();
@@ -499,6 +502,32 @@ class GL_YITH_WooCommerce_Quotes {
                         observer.observe(targetNode, config);  
                     });
                 }
+
+                /**
+                 * Update the custom version string on the create PDF
+                 * link if it has been clicked.
+                 */
+                function addCustomVersionStringToPDFurl() {
+                    $(document).on('click', '#ywraq_pdf_button', function() {
+                        var currentUrl = $(this).data('pdf');
+                        var url = new URL(currentUrl);
+                        url.searchParams.set("ver", makeid(6)); // setting your param
+                        $(this).data('pdf', url.href);
+                    });
+                }
+                /**
+                 * Random string generator
+                 */
+                function makeid(length) {
+                    var result           = '';
+                    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                    var charactersLength = characters.length;
+                    for ( var i = 0; i < length; i++ ) {
+                        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+                    }
+                    return result;
+                }
+
             });
         </script>
 
@@ -528,8 +557,28 @@ class GL_YITH_WooCommerce_Quotes {
             #gl-order-custom div {
                 margin-bottom: 10px;
             }
-            .gl-options-row.header label {
-                font-weight: 600;
+            .gl-options-row.header {
+                margin-bottom: 40px !important;
+                padding: 0 40px;
+                position: relative;
+            }
+            .gl-options-row.header:after {
+                content: '';
+                display: block;
+                border-bottom: 1px solid #c5c5c5;
+                position: absolute;
+                bottom: -15px;
+                left:  0;
+                width: 100%;
+            }
+            .gl-options-row.header p {
+                font-size: 18px;
+                margin-bottom: 0;
+                margin-top: 0;
+                width: 100%;
+            }
+            .gl-options-row.header h4 {
+                margin: 0;
             }
             .gl-other-shipping-method.hide {
                 /* display: none; */
@@ -559,7 +608,9 @@ class GL_YITH_WooCommerce_Quotes {
                 font-weight: bold;
                 font-size: 15px;
             }
-            .gl-edit-shipping-label {
+            .gl-edit-shipping-label,
+            .gl-hide-shipping-label {
+                display: block;
                 font-size: 12px;
                 text-decoration: none;
             }
@@ -600,7 +651,7 @@ class GL_YITH_WooCommerce_Quotes {
     public function gl_shop_order_add_meta_boxes() {
         add_meta_box( 
             'gl-order-custom', 
-            __( 'Shipping Options' ), 
+            __( 'Add Shipping Methods' ), 
             array($this, 'gl_shop_order_custom_metabox_callback'), 
             'shop_order', 
             'normal', 
@@ -618,12 +669,18 @@ class GL_YITH_WooCommerce_Quotes {
         ?>
         <!-- <p><strong>Shipping</strong></p> -->
         <form id="gl-shipping-options">
+
+            <div class="gl-options-row header">
+                <p>Check the shipping options below you wish to add to the quote, and the amount field will appear.</p>
+                <p>When done, click the Add Shipping button to add the chosen methods to the quote.</p>
+                <hr>
+            </div>
             <div class="gl-options-row header">
                 <div class="gl-options-row-left">
-                    <label>Shipping Method</label>
+                    <h4>Shipping Method</h4>
                 </div>
                 <div class="gl-options-row-right">
-                    <label>Amount</label>
+                    <h4 style="padding-left: 60px;">Amount</h4>
                 </div>
             </div>
             <div class="gl-options-row">

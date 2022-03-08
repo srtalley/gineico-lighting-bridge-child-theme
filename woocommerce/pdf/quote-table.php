@@ -167,16 +167,43 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
                 
                 ob_start();
                 if($key == 'shipping') {
+                    $selected_shipping_methods = array();
+                    foreach( $order->get_shipping_methods() as $shipping_method ) {
+                        if($shipping_method->get_total() == 0) {
+                            $amount = '&#8211;';
+                        } else {
+                            $amount = wc_price( $shipping_method->get_total(), get_woocommerce_currency_symbol() );
+                        }
+                        $selected_shipping_methods[] = array(
+                            'name' => $shipping_method->get_name(),
+                            'amount' => $amount
+                        );
+                    }
+                    $shipping_method_count = count($selected_shipping_methods);
                     ?>
-                    <tr>
-                        <th scope="col" colspan="3"></th>
-                        <td scope="col" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><strong>Freight</strong></td>
-                        <td scope="col" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo $order->get_shipping_method(); ?></td>
-                        <!-- <td scope="col" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php //echo $total['label']; ?></td> -->
-                        <td scope="col" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"></td>
-                        <td scope="col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;" class="shipping-col"><?php echo $order->get_shipping_to_display(); ?></td>
-                        <!-- <td scope="col" class="last-col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php //echo $total['value']; ?></td> -->
-                    </tr>
+                   
+
+                        <?php
+                        $i = 0;
+                        foreach($selected_shipping_methods as $this_shipping_method) {
+                            ?>
+                            <tr>
+                            <?php
+                            if($i == 0) {
+                                ?>
+                                <th scope="col" colspan="3" rowspan="<?php echo $shipping_method_count; ?>"></th>
+                                <td scope="col"  rowspan="<?php echo $shipping_method_count; ?>" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><strong>Freight</strong></td>
+                            <?php
+                                } // end if
+                        ?>
+                            <td scope="col" colspan="2" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo $this_shipping_method['name']; ?></td>
+                            <td scope="col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;" class="shipping-col"><?php echo  $this_shipping_method['amount']; ?></td>
+                            </tr>
+                        <?php
+                            $i++;
+                            } // end foreach
+                        ?>
+
                     <?php 
                     
                 } else {
