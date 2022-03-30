@@ -102,7 +102,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 												<table border="0" cellpadding="0" cellspacing="0" width="auto" class="top_nav" style="font-family: Arial, sans-serif; line-height: 1.3em; color: #232323;">
 													<tbody>
 														<tr style="font-family: Arial, sans-serif; line-height: 1.3em;">
-															<td class="nav-spacer-block" style="font-family: Arial, sans-serif; line-height: 1.3em; height: 38px;font-size: 14px; padding: 8px 6px;">&nbsp;
+															<td class="nav-spacer-block" style="font-family: Arial, sans-serif; line-height: 1.3em; height: 38px;font-size: 14px; padding: 8px 12px;">&nbsp;
 															</td>
 															<td class="nav-text-block " style="font-family: Arial, sans-serif; line-height: 1.3em; height: 38px; font-size: 14px; padding: 8px 12px;">
 																<a href="https://www.gineicolighting.com.au/products/" style="color: #232323; font-style: none; text-decoration: none;"> Products </a>
@@ -112,13 +112,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 															<td class="nav-text-block " style="font-family: Arial, sans-serif; line-height: 1.3em; height: 38px; font-size: 14px; padding: 8px 12px;">
 																<a href="https://www.gineicolighting.com.au/contact/" style="color: #232323; font-style: none; text-decoration: none;"> Contact Us </a> 
 															</td>
-															<td class="nav-image-block" style="font-family: Arial, sans-serif; line-height: 1.3em; height: 38px; font-size: 14px; padding: 8px 6px;">
-																<a href="https://www.facebook.com/gineicolighting/" style="color: #232323; font-style: none; text-decoration: none;"> <img src="https://www.gineicolighting.com.au/wp-content/uploads/2018/08/facebook-3-16.png"> </a> 
+
+															<td class="nav-image-block" style="text-align: center; padding: 8px 12px;">
+																<a href="https://www.facebook.com/gineicolighting/" style="font-style: none; text-decoration: none;" target="_blank"> <img width="20" height="20" style="margin-right: 0;" src="<?php echo site_url(); ?>/wp-content/themes/bridge-child/img/social-thumb-facebook.png" title="Facebook"> </a> 
 															</td>
-															<td class="nav-image-block" style="font-family: Arial, sans-serif; line-height: 1.3em; height: 38px; font-size: 14px; padding: 8px 6px;">
-																<a href="https://www.instagram.com/gineico_lighting/" style="color: #232323; font-style: none; text-decoration: none;"> <img src="https://www.gineicolighting.com.au/wp-content/uploads/2018/08/instagram-16.png"> </a>
+															<td class="nav-image-block" style="text-align: center; padding: 8px 12px;">
+																<a href="https://www.instagram.com/gineico_lighting/" style="font-style: none; text-decoration: none;" target="_blank"> <img width="20" height="20" style="margin-right: 0;" src="<?php echo site_url(); ?>/wp-content/themes/bridge-child/img/social-thumb-instagram.png" title="Instagram"> </a> 
 															</td>
-															<td class="nav-spacer-block" style="font-family: Arial, sans-serif; line-height: 1.3em; height: 38px; font-size: 14px; padding: 8px 6px;">&nbsp;
+															<td class="nav-image-block" style="text-align: center; padding: 8px 12px;">
+																<a href="https://www.pinterest.com.au/gineico/" style="font-style: none; text-decoration: none;" target="_blank"> <img width="20" height="20" style="margin-right: 0;" src="<?php echo site_url(); ?>/wp-content/themes/bridge-child/img/social-thumb-pinterest.png" title="Pinterest"> </a> 
+															</td>
+															<td class="nav-image-block" style="text-align: center; padding: 8px 12px;">
+																<a href="https://www.youtube.com/channel/UCq0UibuePH4HKWp3PjwSjGg/" style="font-style: none; text-decoration: none;" target="_blank"> <img width="20" height="20" style="margin-right: 0;" src="<?php echo site_url(); ?>/wp-content/themes/bridge-child/img/social-thumb-youtube.png" title="YouTube"> </a> 
+															</td>
+															<td class="nav-image-block" style="text-align: center; padding: 8px 12px;">
+																<a href="https://www.linkedin.com/company/gineico-lighting/" style="font-style: none; text-decoration: none;" target="_blank"> <img width="20" height="20" style="margin-right: 0;" src="<?php echo site_url(); ?>/wp-content/themes/bridge-child/img/social-thumb-linkedin.png" title="LinkedIn"> </a> 
+															</td>
+															<td class="nav-image-block" style="text-align: center; padding: 8px 12px;">
+																<a href="https://twitter.com/Gineicolighting/" style="font-style: none; text-decoration: none;" target="_blank"> <img width="20" height="20" style="margin-right: 0;" src="<?php echo site_url(); ?>/wp-content/themes/bridge-child/img/social-thumb-twitter.png" title="Twitter"> </a> 
+															</td>
+															<td class="nav-spacer-block" style="font-family: Arial, sans-serif; line-height: 1.3em; height: 38px; font-size: 14px; padding: 8px 12px;">&nbsp;
 															</td>
 														</tr>
 													</tbody>

@@ -20,9 +20,14 @@ $pdf_font = apply_filters('pdf_font_family', '"dejavu sans"');
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <style type="text/css">
+
+        @page { margin: 0.45in 0.45in 0.35in 0.35in; }
+
         body {
             color: #000;
             font-family: <?php echo $pdf_font ?>;
+            margin: 0;
+            padding: 0;
         }
         .logo{
             width: 100%;
@@ -67,7 +72,7 @@ $pdf_font = apply_filters('pdf_font_family', '"dejavu sans"');
         .small-info p{
             border-left: 2px solid #a8c6e4;
             padding: 0 0 5px 5px;
-            margin-bottom: 20px;
+            margin: 0; 
         }
         .quote-table td{
             border: 0;
@@ -134,21 +139,28 @@ $pdf_font = apply_filters('pdf_font_family', '"dejavu sans"');
         }
         .footer {
             position: fixed;
-            bottom: 0;
+            bottom: .05in;
             text-align: center;
-            font-size: 70%
-        }
-
-        .footer {
+            font-size: 70%;
             width: 100%;
-            text-align: center;
-            position: fixed;
-            bottom: 0;
             margin-top: 0px;
         }
-
+		.gl-last-page-footer {
+			font-size: 13px;
+            width: 100%;
+            text-align: center;
+			position: absolute;
+			bottom: -.25in;
+		}
         .pagenum:before {
             content: counter(page);
+        }
+        .part-no-col {
+            font-size: 12px;
+        }
+        .gineico-pdf-footer {
+            margin-top: 25px !important;
+            font-size: 13px !important;
         }
     </style>
 	<?php
@@ -170,6 +182,9 @@ do_action( 'yith_ywraq_quote_template_header', $order_id );
 	do_action( 'yith_ywraq_quote_template_content', $order_id );
     do_action( 'yith_ywraq_quote_template_after_content', $order_id );
 	?>
+</div>
+<div class="gl-last-page-footer">
+    <p>Thank you for the opportunity to quote on your lighting selections. Contact Us <a href="tel:+61-417-950-455" style="text-decoration: none; color: #e2ae68; font-weight: bold;">+61 417 950 455</a> © Gineico Lighting | <a href="https://www.gineicolighting.com.au" target="_blank"style="text-decoration: none; color: #e2ae68; font-weight: bold;">www.gineicolighting.com.au</a></p>
 </div>
 </body>
 </html>

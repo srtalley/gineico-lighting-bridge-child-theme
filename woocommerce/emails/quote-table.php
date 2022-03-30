@@ -127,14 +127,94 @@ $currency = $order->get_currency();
 		?>
 
 		<?php
-		foreach ( $order->get_order_item_totals() as $key => $total ) {
+		$item_totals = $order->get_order_item_totals();
+		if ( $item_totals ) {
+
+			$bottom_table_array = array();
+			foreach ( $item_totals as $key => $total ) {
+				
+				ob_start();
+				if($key == 'shipping') {
+					$selected_shipping_methods = array();
+					foreach( $order->get_shipping_methods() as $shipping_method ) {
+						if($shipping_method->get_total() == 0) {
+							$amount = '&#8211;';
+						} else {
+							$amount = wc_price( $shipping_method->get_total(), get_woocommerce_currency_symbol() );
+						}
+						$selected_shipping_methods[] = array(
+							'name' => $shipping_method->get_name(),
+							'amount' => $amount
+						);
+					}
+					$shipping_method_count = count($selected_shipping_methods);
+
+						$j = 1;
+						foreach($selected_shipping_methods as $this_shipping_method) {
+							?>
+							
+							<?php
+							if($j == 1) {
+								?>
+								<tr>
+									<th class="td" scope="col" colspan="4" style="text-align: left; border: 1px solid #e5e5e5; border-left: none;">Freight:</th>
+								</tr>
+
+								<?php
+								}
+									// end if
+						?>
+							<tr>
+								<td class="td" scope="col" colspan="3" style="text-align:left; padding-left: 40px;"><?php echo $this_shipping_method['name']; ?></td>
+								<td class="td" scope="col" style="text-align: right;"><?php echo  $this_shipping_method['amount']; ?></td>
+							</tr>
+						<?php
+							$j++;
+							} // end foreach
+						?>
+
+					<?php 
+					
+				} else {
+
+					?>
+					<tr>
+						<th class="td" scope="col" colspan="3" style="text-align:left;"><?php echo $total['label']; ?></th>
+						<td class="td" scope="col" style="text-align: right;"><?php echo $total['value']; ?></td>
+					</tr>
+					<?php 
+				}
+			  
+				$bottom_table_array[$key] = ob_get_clean();
+
+			} 
+			echo $bottom_table_array['cart_subtotal'];
+			echo $bottom_table_array['shipping'];
+			echo $bottom_table_array['order_total'];
+
+			$order_gst = round((floatval($order->get_total()) * .1), 2);
+			$order_total_with_gst = floatval($order_gst) + floatval($order->get_total());
 			?>
 			<tr>
-				<th scope="col" colspan="<?php echo esc_attr( $colspan ); ?>" style="text-align:right;border: 1px solid #eee;"><?php echo wp_kses_post( $total['label'] ); ?></th>
-				<td scope="col" style="text-align:right;border: 1px solid #eee;"><?php echo wp_kses_post( $total['value'] ); ?></td>
+				<th class="td" scope="col" colspan="3" style="text-align: left;">GST:</th>
+				<td class="td" scope="col" style="text-align: right;"<?php echo wc_price( $order_gst, get_woocommerce_currency_symbol()); ?></td>
+			</tr>
+
+			<tr>
+				<th class="td" scope="col" colspan="3" style="text-align: left;">Total:</th>
+				<td class="td" scope="col" style="text-align: right;"><?php echo wc_price( $order_total_with_gst, get_woocommerce_currency_symbol()); ?></td>
 			</tr>
 			<?php
 		}
+
+		// foreach ( $order->get_order_item_totals() as $key => $total ) {
+			?>
+			<!-- <tr>
+				<th scope="col" colspan="<?php echo esc_attr( $colspan ); ?>" style="text-align:right;border: 1px solid #eee;"><?php echo wp_kses_post( $total['label'] ); ?></th>
+				<td scope="col" style="text-align:right;border: 1px solid #eee;"><?php echo wp_kses_post( $total['value'] ); ?></td>
+			</tr> -->
+			<?php
+		// }
 		?>
 
 	<?php endif; ?>
@@ -143,5 +223,5 @@ $currency = $order->get_currency();
 
 <?php
 
-do_action( 'yith_ywraq_email_after_raq_table', $order );
+//do_action( 'yith_ywraq_email_after_raq_table', $order );
 ?>

@@ -1,6 +1,9 @@
 # Changelog
 
 Gineico Lighting Bridge child theme documented changes.
+## [2.0.16] - 2022-03-15 
+* Added local fonts to theme.
+
 ## [2.0.15] - 2022-03-07
 * Updated the shipping options panel on the admin screen.
 * Added short description to the request a quote page for each product.

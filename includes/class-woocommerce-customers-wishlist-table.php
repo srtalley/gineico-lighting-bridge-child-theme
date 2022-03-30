@@ -4,14 +4,14 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 if ( ! defined( 'YITH_WCWL' ) ) {
-	exit;
+	return;
 } // Exit if accessed directly
 
 if( ! class_exists( 'YITH_WCWL_Admin_Table' ) && defined( 'YITH_WCWL' ) ) {
     require_once(  YITH_WCWL_INC . 'tables/class-yith-wcwl-admin-table.php');
-}
+} 
 
-if ( !class_exists( 'GL_Customers_Wishlist_Table' ) ) {
+if ( !class_exists( 'GL_Customers_Wishlist_Table' ) && class_exists('YITH_WCWL_Admin_Table')) {
 
     // class for functions related to ...
     class GL_Customers_Wishlist_Table extends \YITH_WCWL_Admin_Table {

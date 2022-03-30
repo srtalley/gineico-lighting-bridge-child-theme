@@ -55,7 +55,16 @@ defined( 'ABSPATH' ) || exit;
 										<tbody>
 											<tr style="font-family: Arial, sans-serif; line-height: 1.3em;">
 												<td align="right" class="footer_container_inner bottom-nav" style="line-height: 1.3em; font-family: Arial,sans-serif; font-size: 12px; color: #646464;">
-													<p style="margin: 10px 0; font-size: 12px; color: #646464; line-height: 1.3em;">Gineico QLD Pty Ltd<br> G45, 76-84 Waterway Drive, Coomera, QLD, 4209<br> Tel: 07 55560244 Fax: 07 55560266<br>E: <a href="mailto:showroom@gineico.com" style="text-decoration: none">showroom@gineico.com</a><br> Web: <a href="https://www.gineicolighting.com.au" style="text-decoration: none">www.gineicolighting.com.au</a></p>
+													<p style="margin: 10px 0; font-size: 12px; color: #646464; line-height: 1.3em;">Gineico QLD Pty Ltd<br> G45, 76-84 Waterway Drive, Coomera, QLD, 4209<br> Tel: 07 55560244 Fax: 07 55560266<br> Web: www.gineicolighting.com.au</p>
+													<table border="0" cellpadding="0" cellspacing="0" width="auto" class="top_nav" style="font-family: Arial, sans-serif; line-height: 1.3em; color: #232323;">
+														<tbody>
+														<tr style="font-family: Arial, sans-serif; line-height: 1.3em;">
+															<td class="nav-text-block " style="font-family: Arial, sans-serif; line-height: 1.3em; height: 18px; font-size: 11px; padding: 2px 6px;"> <a href="https://www.gineicolighting.com.au/products/" style="color: #232323; font-style: none; text-decoration: none;"> Products </a> </td>
+															<td class="nav-text-block " style="font-family: Arial, sans-serif; line-height: 1.3em; height: 18px; font-size: 11px; padding: 2px 6px;"> <a href="https://www.gineicolighting.com.au/" style="color: #232323; font-style: none; text-decoration: none;"> My Account </a> </td>
+															<td class="nav-text-block " style="font-family: Arial, sans-serif; line-height: 1.3em; height: 18px; font-size: 11px; padding: 2px 0 2px 6px;"> <a href="https://www.gineicolighting.com.au/contact/" style="color: #232323; font-style: none; text-decoration: none;"> Contact Us </a> </td>
+														</tr>
+														</tbody>
+													</table>
 													<table border="0" cellpadding="0" cellspacing="0" width="auto" class="top_nav" style="font-family: Arial, sans-serif; line-height: 1.3em; color: #232323;">
 														<tbody>
 														<tr style="font-family: Arial, sans-serif; line-height: 1.3em;">

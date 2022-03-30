@@ -137,7 +137,7 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
 								$product = wc_get_product($product_id);
 								$product_short_description = $product->get_short_description();
 
-									echo strip_tags( substr($product->get_short_description(), 0 , 110)) . '&hellip; <a style="text-decoration: none; color: #e2ae68;" target="_blank" href="' . esc_url( $_product->get_permalink() ) . '">Read More</a>';
+									echo strip_tags( substr($product->get_short_description(), 0 , 200)) . '&hellip; <a style="text-decoration: none; color: #e2ae68;" target="_blank" href="' . esc_url( $_product->get_permalink() ) . '">Read More</a>';
 								
 							}
 							echo '</div>';
@@ -162,6 +162,7 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
 
             <?php
             $bottom_table_array = array();
+
             foreach ( $order->get_order_item_totals() as $key => $total ) {
                 
                 ob_start();
@@ -183,39 +184,19 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
                    
 
                         <?php
-                        $i = 1;
+                        $i = 0;
                         foreach($selected_shipping_methods as $this_shipping_method) {
                             ?>
                             <tr>
                             <?php
-                            if($i == 1) {
+                            if($i == 0) {
                                 ?>
-                                <th scope="col" colspan="3"></th>
-                                <?php if($shipping_method_count == 1) {
-                                    $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-top: 1px solid #777; border-bottom: 1px solid #777;border-color: #777;';
-                                } else {
-                                    $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-top: 1px solid #777;  border-color: #777;';
-                                }
-                                ?>
-                                <th scope="col" style="<?php echo $freight_td_classes; ?>"><strong>Freight</strong></th>
-
+                                <th scope="col" colspan="3" rowspan="<?php echo $shipping_method_count; ?>"></th>
+                                <td scope="col"  rowspan="<?php echo $shipping_method_count; ?>" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><strong>Freight</strong></td>
                             <?php
-                                } else if($i > 1) {
-
-                                    if($i < $shipping_method_count) {
-                                        $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-right: 1px solid #777;';
-                                    } else {
-                                        $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-right: 1px solid #777;border-bottom: 1px solid #777;';
-                                    }
-
-                                    ?>
-                                    <th scope="col" colspan="3"></th>
-                                    <th scope="col" style="<?php echo $freight_td_classes; ?>"></th>
-                                <?php
-                                }
-                                    // end if
+                                } // end if
                         ?>
-                            <td scope="col" colspan="2" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-top: 1px solid #777; border-color: #777;"><?php echo $this_shipping_method['name']; ?></td>
+                            <td scope="col" colspan="2" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo $this_shipping_method['name']; ?></td>
                             <td scope="col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;" class="shipping-col"><?php echo  $this_shipping_method['amount']; ?></td>
                             </tr>
                         <?php
@@ -226,11 +207,9 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
                     <?php 
                     
                 } else {
-
                     ?>
                     <tr>
-                        <th scope="col" colspan="4"></th>
-                        <th scope="col" colspan="2" style="text-align:right; border-right: 1px solid #777; border-color: #777;"><?php echo $total['label']; ?></th>
+                        <th scope="col" colspan="<?php echo $colspan ?>" style="text-align:right;"><?php echo $total['label']; ?></th>
                         <td scope="col" class="last-col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo $total['value']; ?></td>
                     </tr>
                     <?php 
@@ -238,24 +217,11 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
               
                 $bottom_table_array[$key] = ob_get_clean();
             } 
-            echo $bottom_table_array['cart_subtotal'];
             echo $bottom_table_array['shipping'];
+            echo $bottom_table_array['cart_subtotal'];
             echo $bottom_table_array['order_total'];
 
-            $order_gst = round((floatval($order->get_total()) * .1), 2);
-            $order_total_with_gst = floatval($order_gst) + floatval($order->get_total());
             ?>
-            <tr>
-                <th scope="col" colspan="4"></th>
-                <th scope="col" colspan="2" style="text-align:right; border-right: 1px solid #777; border-color: #777;">GST</th>
-                <td scope="col" class="last-col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo wc_price( $order_gst, get_woocommerce_currency_symbol()); ?></td>
-            </tr>
-
-            <tr>
-                <th scope="col" colspan="4"></th>
-                <th scope="col" colspan="2" style="text-align:right; border-right: 1px solid #777; border-color: #777;">TOTAL</th>
-                <td scope="col" class="last-col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo wc_price( $order_total_with_gst, get_woocommerce_currency_symbol()); ?></td>
-            </tr>
         <?php endif; ?>
 
 

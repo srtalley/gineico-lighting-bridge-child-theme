@@ -68,7 +68,7 @@ if ( function_exists( 'wc_format_datetime' ) ) {
 
 ?>
 <div class="logo">
-	<img src="<?php echo esc_url( $logo ); ?>" style="max-width: 300px; max-height: 80px;">
+	<a href="<?php echo site_url();?>" target="_blank"><img src="<?php echo esc_url( $logo ); ?>" style="max-width: 300px; max-height: 80px;"></a>
 </div>
 <div class="admin_info right">
 	<div class="admin_info_part_left">
@@ -76,7 +76,12 @@ if ( function_exists( 'wc_format_datetime' ) ) {
 			<tr>
 				<td valign="top" class="small-title"><?php echo __( 'From', 'yith-woocommerce-request-a-quote' ) ?></td>
 				<td valign="top" class="small-info">
-					<p><?php echo apply_filters( 'ywraq_pdf_info', nl2br( get_option( 'ywraq_pdf_info' ) ), $order ) ?></p>
+					<p><?php //echo apply_filters( 'ywraq_pdf_info', nl2br( get_option( 'ywraq_pdf_info' ) ), $order ) ?>
+					<strong>Gineico Lighting</strong><br>
+					<a href="mailto:showroom@gineico.com" target="_blank"style="text-decoration: none; color: #000;">showroom@gineico.com</a><br>
+					<a href="https://www.gineicolighting.com.au" target="_blank"style="text-decoration: none; color: #000;">www.gineicolighting.com.au</a><br>
+					<a href="tel:+61-417-950-455" target="_blank"style="text-decoration: none; color: #000; ">+61 417 950 455</a><br>
+				</p>
 				</td>
 			</tr>
 		</table>
