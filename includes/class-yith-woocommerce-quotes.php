@@ -54,7 +54,18 @@ class GL_YITH_WooCommerce_Quotes {
         
         add_action( 'current_screen', array($this,'gl_woocommerce_order_admin'), 10, 1 );
 
+        // Save the PDF name on a new quote
+        add_action( 'woocommerce_new_order', array($this, 'gl_add_pdf_name_new_order'), 10, 1 );
+        // update the PDF name on save
+        // add_action( 'save_post', array($this, 'gl_update_pdf_name'), 9999 );
+        // Ajax to update the PDF name
+        add_action( 'wp_ajax_gl_save_pdf_name', array($this, 'gl_save_pdf_name') );
+
         add_action( 'add_meta_boxes', array($this, 'gl_shop_order_add_meta_boxes'), 40 );
+
+        add_filter( 'yith_ywraq_metabox_fields', array($this, 'gl_yith_ywraq_metabox_fields'), 10, 3 );
+
+
 
     }
 
@@ -70,15 +81,34 @@ class GL_YITH_WooCommerce_Quotes {
         for ($i = 0; $i < 6; $i++) { 
             $index = rand(0, strlen($characters) - 1); 
             $random_string .= $characters[$index]; 
-        } 
+        }
+        
         return $url . '?ver=' . $random_string;
     }
 
     /**
-     * Change the file name of the quote PDF
+     * Change the file name of the quote PDF 
      */
     public function gl_ywraq_pdf_file_name($pdf_file_name, $order_id) {
+        $pdf_revision_name_extension = '';
+        $project_name = '';
+
         $order = wc_get_order($order_id);
+        // get custom PDF name
+        $gl_ywraq_pdf_revision_number = get_post_meta( $order_id, '_gl_ywraq_pdf_revision_number', true );
+        if(is_array($gl_ywraq_pdf_revision_number) && isset($gl_ywraq_pdf_revision_number['html'])) {
+            $pdf_revision = $gl_ywraq_pdf_revision_number['html'];
+            if($pdf_revision != 0) {
+                $pdf_revision_name_extension = '-REV' . $pdf_revision;
+            }
+        } 
+        
+        $ywraq_other_email_fields = get_post_meta( $order_id, 'ywraq_other_email_fields', true );
+        if(is_array($ywraq_other_email_fields) && isset($ywraq_other_email_fields['Project Name'])) {
+            $project_name = $ywraq_other_email_fields['Project Name'];
+            $project_name = str_replace(' ', '_', $project_name);
+        } 
+
         $customer_lastname   = yit_get_prop( $order, '_billing_last_name', true );
 
         if($customer_lastname == null || $customer_lastname == '') {
@@ -89,18 +119,21 @@ class GL_YITH_WooCommerce_Quotes {
 
         $order_date = yit_get_prop($order, 'date_created', true);
         $order_date = substr($order_date, 0, 10);
-        $order_date = str_replace('-', '_', $order_date);
-        $pdf_file_name = 'Quote-' . $order_id . '-' . $order_date;
+        // $order_date = str_replace('-', '_', $order_date);
+        $order_date = str_replace('-', '', $order_date);
+        $pdf_file_name = 'Quote-' . $order_id . '-' . $project_name . '-' . $order_date . $pdf_revision_name_extension;
         $YITH_Request_Quote = YITH_Request_Quote_Premium();
         $path = $YITH_Request_Quote->create_storing_folder($order_id);
         $file = YITH_YWRAQ_DOCUMENT_SAVE_DIR . $path . $pdf_file_name . '.pdf';
-        if(file_exists($file)) {
-            $new_pdf_file_name = YITH_YWRAQ_DOCUMENT_SAVE_DIR . $path . $pdf_file_name . '-' . $customer_lastname . '.pdf';
-            rename($file, $new_pdf_file_name);
-            return $pdf_file_name . '-' . $customer_lastname . '.pdf';
-        }
+        // if(file_exists($file)) {
 
-        return $pdf_file_name . '-' . $customer_lastname . '.pdf';
+        //     // $new_pdf_file_name = YITH_YWRAQ_DOCUMENT_SAVE_DIR . $path . $pdf_file_name . '-' . $customer_lastname . '.pdf';
+        //     $new_pdf_file_name = YITH_YWRAQ_DOCUMENT_SAVE_DIR . $path . $pdf_file_name . '.pdf';
+
+        //     rename($file, $new_pdf_file_name);
+        //     return $pdf_file_name . '.pdf';
+        // }
+        return $pdf_file_name .'.pdf';
     }
     
 
@@ -509,10 +542,44 @@ class GL_YITH_WooCommerce_Quotes {
                  */
                 function addCustomVersionStringToPDFurl() {
                     $(document).on('click', '#ywraq_pdf_button', function() {
+
+                        var pdf_revision_number = $('#_gl_ywraq_pdf_revision_number_html').val();
+                        var order_id = $('#post_ID').val();
+
                         var currentUrl = $(this).data('pdf');
-                        var url = new URL(currentUrl);
+                        var url_without_params = currentUrl.split('?')[0];
+                        var url_without_extension = url_without_params.split('.pdf')[0];
+                        var url_without_rev = url_without_extension.split('-REV')[0];
+
+                        if(pdf_revision_number >= 1) {
+                            var url_new_name = url_without_rev + '-REV' + pdf_revision_number + '.pdf';
+                        } else {
+                            var url_new_name = url_without_rev + '.pdf';
+                        }
+                        var url = new URL(url_new_name);
+
                         url.searchParams.set("ver", makeid(6)); // setting your param
                         $(this).data('pdf', url.href);
+
+
+                        // AJAX
+                        $.ajax({
+                            type: 'POST',
+                            dataType: 'json',
+                            url: '<?php echo admin_url( 'admin-ajax.php' ); ?>',
+                            data: {
+                                'action': 'gl_save_pdf_name',
+                                'nonce': '<?php echo wp_create_nonce( 'gl_mods_init_nonce' ); ?>',
+                                'pdf_name': pdf_revision_number,
+                                'order_id': order_id,
+                            },
+                            success: function(data) {
+                                console.log(data);
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.log(jqXHR + ' :: ' + textStatus + ' :: ' + errorThrown);
+                            }
+                        });
                     });
                 }
                 /**
@@ -527,6 +594,7 @@ class GL_YITH_WooCommerce_Quotes {
                     }
                     return result;
                 }
+
 
             });
         </script>
@@ -643,9 +711,39 @@ class GL_YITH_WooCommerce_Quotes {
                 font-weight: bold;
                 font-size: 18px;
             }
+            .button.add-order-shipping {
+                display: none !important;
+            }
+            .wc-backbone-modal .wc-backbone-modal-content {
+                min-width: 800px;
+            }
+            .wc-backbone-modal .wc-backbone-modal-content .widefat>tbody>tr>td:first-child {
+                width: 90%;
+            }
         </style>
 
         <?php
+    }
+
+    /**
+     * Add a PDF name on new order
+     */
+    public function gl_add_pdf_name_new_order($order_id) {
+        $value =  array(
+            'html' => 0
+        );
+        update_post_meta( $order_id, '_gl_ywraq_pdf_revision_number', $value );
+    }
+    /**
+     * Save the PDF name that is entered
+     */
+    public function gl_save_pdf_name() {
+        $nonce_check = check_ajax_referer( 'gl_mods_init_nonce', 'nonce' );
+        $value =  array(
+            'html' => sanitize_text_field($_POST['pdf_name'])
+        );
+        $order_id = sanitize_text_field($_POST['order_id']);
+        update_post_meta( $order_id, '_gl_ywraq_pdf_revision_number', $value );
     }
 
     public function gl_shop_order_add_meta_boxes() {
@@ -664,8 +762,7 @@ class GL_YITH_WooCommerce_Quotes {
 
         $local_freight_name = 'Local Freight - Delivery From Gineico QLD Warehouse';
         
-        $international_freight_name = 'International Freight - From Manufacturer Warehouse'
-        ;
+        $international_freight_name = 'International Freight - From Manufacturer Warehouse';
         ?>
         <!-- <p><strong>Shipping</strong></p> -->
         <form id="gl-shipping-options">
@@ -816,6 +913,83 @@ class GL_YITH_WooCommerce_Quotes {
 
 
         $wp_meta_boxes['shop_order']['normal']['high']['yith-ywraq-metabox-order'] = $yith_ywraq_metabox_order;
+    }
+
+    /**
+     * Add the PDF revision field
+     */
+    public function gl_yith_ywraq_metabox_fields( $array_fields, $fields, $group_2 ) {
+        $array_fields['gl_ywraq_pdf_revision_number'] = array(
+            'type'   => 'inline-fields',
+            'label'  => esc_html__( 'PDF Revision Number', 'yith-woocommerce-request-a-quote' ),
+            'fields' => array(
+                'html' => array(
+                    'type' => 'number',
+                    'custom_attributes' => 'placeholder="0"',
+                    'std'               => '',
+                    'class'             => 'number-short',
+    
+                ),
+            ),
+        );
+        return $array_fields;
+    }
+
+    /**
+     * Increase the revision number on save
+     */
+    function gl_update_pdf_name( $post_id ){
+
+        // Only for shop order 
+        if ( 'shop_order' != $_POST[ 'post_type' ] )
+            return $post_id;
+
+        // Checking that is not an autosave
+        if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+            return $post_id;
+
+        // Check the user’s permissions (for 'shop_manager' and 'administrator' user roles)
+        if ( ! current_user_can( 'edit_shop_order', $post_id ) && ! current_user_can( 'edit_shop_orders', $post_id ) )
+            return $post_id;
+
+        // Updating custom field data
+        if( isset( $_POST['yit_metaboxes'] ) ) {
+            if( isset( $_POST['yit_metaboxes']['_gl_ywraq_pdf_revision_number'])) {
+                $current_number = sanitize_text_field($_POST['yit_metaboxes']['_gl_ywraq_pdf_revision_number']['html']);
+
+                if($current_number >= 1) {
+                    $new_number = (int) $current_number;
+                    $new_number++;
+
+                    // The new value
+                    $value = array(
+                        'html' => $new_number
+                    );
+
+                    // Replacing and updating the value
+                    update_post_meta( $post_id, '_gl_ywraq_pdf_revision_number', $value );
+                }
+                // this was for text revision names
+                // if (preg_match('/^[1-9][0-9]*$/', substr($current_name, -3))) { 
+                //     $current_number = (int) substr($current_name, -3);
+                //     $new_number = substr($current_name, 0, -3) . $current_number++;
+                // } else if (preg_match('/^[1-9][0-9]*$/', substr($current_name, -2))) { 
+                //     $current_number = (int) substr($current_name, -2);
+                //     $new_number = substr($current_name, 0, -2) . $current_number++;
+                // } else if (preg_match('/^[1-9][0-9]*$/', substr($current_name, -1))) { 
+                //     $current_number = (int) substr($current_name, -1);
+                //     if($current_number == 0) {
+                //         $new_number = substr($current_name, 0, -1) . '1';  
+                //     } else {
+                //         $new_number = substr($current_name, 0, -1) . $current_number++;
+                //     }
+                // } else {
+                //     return false;
+                // }
+            }
+
+
+        }
     }
 } // end class
 

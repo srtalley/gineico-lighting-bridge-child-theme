@@ -37,6 +37,10 @@ class GL_WooCommerce {
         // Move the product tabs
         add_action( 'woocommerce_before_single_product', array($this, 'gl_change_single_product_layout'), 60);
 
+        // Set a default price if none set
+        add_filter('woocommerce_product_get_price', array($this, 'set_default_price'), 10, 2);
+        // add_filter('woocommerce_product_get_regular_price', array($this, 'set_default_price'), 10, 2);
+        // add_filter('woocommerce_product_get_sale_price', array($this, 'set_default_price'), 10, 2);
 
         // My Account
         add_filter( 'woocommerce_account_menu_items', array($this, 'gl_wc_account_menu_items'), 9999 );
@@ -422,6 +426,16 @@ class GL_WooCommerce {
         // add to the description tab
         add_filter( 'the_content', array($this, 'gl_add_additional_information_to_description_tab') );
 
+    }
+
+    /**
+     * Set a default price of zero if none defined
+     */
+    public function set_default_price($price, $product){
+        if($price == '') {
+            $price = "0"; 
+        }
+        return $price; 
     }
     /**
      * Remove the additional information tab/button

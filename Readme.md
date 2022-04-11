@@ -1,6 +1,10 @@
 # Changelog
 
 Gineico Lighting Bridge child theme documented changes.
+## [2.0.17] - 2022-04-10
+* Added a PDF revision field that can be appended to the PDF name.
+* Added zero prices for products without explicit pricing.
+
 ## [2.0.16] - 2022-03-15 
 * Added local fonts to theme.
 

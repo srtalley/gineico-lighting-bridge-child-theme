@@ -51,6 +51,8 @@ function bridge_child_wp_enqueue_scripts() {
 	}
 }
 add_action('wp_enqueue_scripts', 'bridge_child_wp_enqueue_scripts', 11);
+
+
 // remove wp version number from scripts and styles
 function remove_css_js_version( $src ) {
 

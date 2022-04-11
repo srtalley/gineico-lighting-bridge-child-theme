@@ -110,7 +110,6 @@ do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plai
 			if ( $item_totals ) {
 				$i = 0;
 				foreach ( $item_totals as $total ) {
-					wl($total);
 					$i++;
 					?>
 					<tr>
