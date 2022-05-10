@@ -1,33 +1,47 @@
 <?php
 /**
- * HTML Template Email
+ * HTML Template Quote table
  *
  * @package YITH Woocommerce Request A Quote
  * @since   1.0.0
- * @author  Yithemes
+ * @version 2.2.7
+ * @author  YITH
+ *
+ * @var WC_Order $order
  */
 
-$border = true;
-$order_id          = yit_get_prop( $order, 'id', true );
+$border   = true;
+$order_id = $order->get_id();
 
-if( function_exists('icl_get_languages') ) {
-    global $sitepress;
-	$lang = yit_get_prop( $order, 'wpml_language', true );
-    YITH_Request_Quote_Premium()->change_pdf_language( $lang );
+if ( function_exists( 'icl_get_languages' ) ) {
+	global $sitepress;
+	$lang = $order->get_meta( 'wpml_language' );
+	YITH_Request_Quote_Premium()->change_pdf_language( $lang );
 }
-add_filter('woocommerce_is_attribute_in_product_name','__return_false');
+add_filter( 'woocommerce_is_attribute_in_product_name', '__return_false' );
 
 ?>
 
-<?php if( ( $after_list = yit_get_prop( $order, '_ywcm_request_response', true ) ) != ''): ?>
-    <div class="after-list">
-        <p><?php echo apply_filters( 'ywraq_quote_before_list', nl2br($after_list), $order_id ) ?></p>
-    </div>
+<?php
+$after_list = $order->get_meta( '_ywcm_request_response' );
+if ( '' !== $after_list ) :
+	?>
+	<div class="after-list">
+		<p><?php echo wp_kses_post( apply_filters( 'ywraq_quote_before_list', nl2br( $after_list ), $order_id ) ); ?></p>
+	</div>
 <?php endif; ?>
 
 <?php do_action( 'yith_ywraq_email_before_raq_table', $order ); ?>
 
+<?php
+$columns = get_option( 'ywraq_pdf_columns', 'all' );
+/* be sure it is an array */
+if ( ! is_array( $columns ) ) {
+	$columns = array( $columns );
+}
+$colspan = 0;
 
+?>
 <div class="table-wrapper">
     <div class="mark"></div>
     <h5 style="margin: 0 0 10px 0; font-style: italic; font-weight: normal;">Product images are indicative only</h5>
@@ -137,7 +151,7 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
 								$product = wc_get_product($product_id);
 								$product_short_description = $product->get_short_description();
 
-									echo strip_tags( substr($product->get_short_description(), 0 , 200)) . '&hellip; <a style="text-decoration: none; color: #e2ae68;" target="_blank" href="' . esc_url( $_product->get_permalink() ) . '">Read More</a>';
+									echo strip_tags( substr($product->get_short_description(), 0 , 110)) . '&hellip; <a style="text-decoration: none; color: #e2ae68;" target="_blank" href="' . esc_url( $_product->get_permalink() ) . '">Read More</a>';
 								
 							}
 							echo '</div>';
@@ -162,9 +176,7 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
 
             <?php
             $bottom_table_array = array();
-
             foreach ( $order->get_order_item_totals() as $key => $total ) {
-                
                 ob_start();
                 if($key == 'shipping') {
                     $selected_shipping_methods = array();
@@ -184,19 +196,39 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
                    
 
                         <?php
-                        $i = 0;
+                        $i = 1;
                         foreach($selected_shipping_methods as $this_shipping_method) {
                             ?>
                             <tr>
                             <?php
-                            if($i == 0) {
+                            if($i == 1) {
                                 ?>
-                                <th scope="col" colspan="3" rowspan="<?php echo $shipping_method_count; ?>"></th>
-                                <td scope="col"  rowspan="<?php echo $shipping_method_count; ?>" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><strong>Freight</strong></td>
+                                <th scope="col" colspan="3"></th>
+                                <?php if($shipping_method_count == 1) {
+                                    $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-top: 1px solid #777; border-bottom: 1px solid #777;border-color: #777;';
+                                } else {
+                                    $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-top: 1px solid #777;  border-color: #777;';
+                                }
+                                ?>
+                                <th scope="col" style="<?php echo $freight_td_classes; ?>"><strong>Freight</strong></th>
+
                             <?php
-                                } // end if
+                                } else if($i > 1) {
+
+                                    if($i < $shipping_method_count) {
+                                        $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-right: 1px solid #777;';
+                                    } else {
+                                        $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-right: 1px solid #777;border-bottom: 1px solid #777;';
+                                    }
+
+                                    ?>
+                                    <th scope="col" colspan="3"></th>
+                                    <th scope="col" style="<?php echo $freight_td_classes; ?>"></th>
+                                <?php
+                                }
+                                    // end if
                         ?>
-                            <td scope="col" colspan="2" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo $this_shipping_method['name']; ?></td>
+                            <td scope="col" colspan="2" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-top: 1px solid #777; border-color: #777;"><?php echo $this_shipping_method['name']; ?></td>
                             <td scope="col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;" class="shipping-col"><?php echo  $this_shipping_method['amount']; ?></td>
                             </tr>
                         <?php
@@ -207,9 +239,11 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
                     <?php 
                     
                 } else {
+
                     ?>
                     <tr>
-                        <th scope="col" colspan="<?php echo $colspan ?>" style="text-align:right;"><?php echo $total['label']; ?></th>
+                        <th scope="col" colspan="4"></th>
+                        <th scope="col" colspan="2" style="text-align:right; border-right: 1px solid #777; border-color: #777;"><?php echo $total['label']; ?></th>
                         <td scope="col" class="last-col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo $total['value']; ?></td>
                     </tr>
                     <?php 
@@ -217,37 +251,59 @@ add_filter('woocommerce_is_attribute_in_product_name','__return_false');
               
                 $bottom_table_array[$key] = ob_get_clean();
             } 
-            echo $bottom_table_array['shipping'];
+            
             echo $bottom_table_array['cart_subtotal'];
+            if(isset($bottom_table_array['shipping'])) {
+                echo $bottom_table_array['shipping'];
+            }
             echo $bottom_table_array['order_total'];
 
+            $order_gst = round((floatval($order->get_total()) * .1), 2);
+            $order_total_with_gst = floatval($order_gst) + floatval($order->get_total());
             ?>
+            <tr>
+                <th scope="col" colspan="4"></th>
+                <th scope="col" colspan="2" style="text-align:right; border-right: 1px solid #777; border-color: #777;">GST</th>
+                <td scope="col" class="last-col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo wc_price( $order_gst, get_woocommerce_currency_symbol()); ?></td>
+            </tr>
+
+            <tr>
+                <th scope="col" colspan="4"></th>
+                <th scope="col" colspan="2" style="text-align:right; border-right: 1px solid #777; border-color: #777;">TOTAL</th>
+                <td scope="col" class="last-col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo wc_price( $order_total_with_gst, get_woocommerce_currency_symbol()); ?></td>
+            </tr>
         <?php endif; ?>
 
 
-        </tbody>
-    </table>
+		</tbody>
+	</table>
 </div>
-<?php if( get_option( 'ywraq_pdf_link' ) == 'yes'): ?>
-<div>
-    <table>
-        <tr>
-            <?php if ( get_option( 'ywraq_show_accept_link' ) != 'no' ): ?>
-            <td><a href="<?php echo esc_url( add_query_arg( array( 'request_quote' => $order_id, 'status' => 'accepted', 'raq_nonce' => ywraq_get_token( 'accept-request-quote', $order_id, yit_get_prop( $order, 'ywraq_customer_email', true ) ) ), YITH_Request_Quote()->get_raq_page_url() ) ) ?>" class="pdf-button"><?php ywraq_get_label('accept', true) ?></a></td>
-            <?php endif;
-            echo ( get_option( 'ywraq_show_accept_link' ) != 'no' && get_option( 'ywraq_show_reject_link' ) != 'no' ) ? '<td><span style="color: #666666">|</span></td>' : '';
-            if ( get_option( 'ywraq_show_reject_link' ) != 'no' ): ?>
-            <td><a href="<?php echo esc_url( add_query_arg( array( 'request_quote' => $order_id, 'status' => 'rejected', 'raq_nonce' => ywraq_get_token( 'reject-request-quote', $order_id, yit_get_prop( $order, 'ywraq_customer_email', true ) ) ), YITH_Request_Quote()->get_raq_page_url() ) ) ?>" class="pdf-button"><?php ywraq_get_label('reject', true) ?></a></td>
-            <?php endif ?>
-        </tr>
-    </table>
-</div>
+<?php if ( get_option( 'ywraq_pdf_link' ) === 'yes' ) : ?>
+	<div>
+		<table class="ywraq-buttons">
+			<tr>
+				<?php if ( get_option( 'ywraq_show_accept_link' ) !== 'no' ) : ?>
+					<td><a href="<?php echo esc_url( ywraq_get_accepted_quote_page( $order ) ); ?>"
+							class="pdf-button"><?php ywraq_get_label( 'accept', true ); ?></a></td>
+					<?php
+				endif;
+				echo ( get_option( 'ywraq_show_accept_link' ) !== 'no' && get_option( 'ywraq_show_reject_link' ) !== 'no' ) ? '<td><span style="color: #666666">|</span></td>' : '';
+				if ( get_option( 'ywraq_show_reject_link' ) !== 'no' ) :
+					?>
+					<td><a href="<?php echo esc_url( ywraq_get_rejected_quote_page( $order ) ); ?>"
+							class="pdf-button"><?php ywraq_get_label( 'reject', true ); ?></a></td>
+				<?php endif ?>
+			</tr>
+		</table>
+	</div>
 <?php endif ?>
-  
+
 <?php do_action( 'yith_ywraq_email_after_raq_table', $order ); ?>
 
-<?php if ( ( $after_list = yit_get_prop( $order, '_ywraq_request_response_after', true ) ) != '' ): ?>
-    <div class="after-list">
-        <p><?php echo apply_filters( 'ywraq_quote_after_list', nl2br( $after_list ), $order_id ) ?></p>
-    </div>
+<?php $after_list = apply_filters( 'ywraq_quote_after_list', $order->get_meta( '_ywraq_request_response_after' ), $order_id ); ?>
+
+<?php if ( '' !== $after_list ) : ?>
+	<div class="after-list">
+		<p><?php echo wp_kses_post( nl2br( $after_list ) ); ?></p>
+	</div>
 <?php endif; ?>

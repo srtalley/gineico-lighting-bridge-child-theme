@@ -9,6 +9,7 @@ class GL_WooCommerceAdmin {
     public function __construct() {
         add_action( 'current_screen', array($this,'gl_woocommerce_product_admin'), 10, 1 );
 
+        add_action( 'woocommerce_before_order_itemmeta', array($this, 'gl_show_quote_description'), 10, 3 );
     }
     /**
     * Move the product metaboxes to the left in the admin area.
@@ -75,9 +76,12 @@ class GL_WooCommerceAdmin {
         $wp_meta_boxes['product']['normal']['high']['tagsdiv-product_tag'] = $sidebar_tags_metabox;
 
         // Move the YITH Request a Quote metabox
-        $mainarea_ywraq_metabox = $wp_meta_boxes['product']['normal']['high']['yith-ywraq-metabox'];
-        unset($wp_meta_boxes['product']['normal']['high']['yith-ywraq-metabox']);
-        $wp_meta_boxes['product']['normal']['high']['yith-ywraq-metabox'] = $mainarea_ywraq_metabox;
+        if(isset($wp_meta_boxes['product']['normal']['high']['yith-ywraq-metabox'])) {
+            $mainarea_ywraq_metabox = $wp_meta_boxes['product']['normal']['high']['yith-ywraq-metabox'];
+            unset($wp_meta_boxes['product']['normal']['high']['yith-ywraq-metabox']);
+            $wp_meta_boxes['product']['normal']['high']['yith-ywraq-metabox'] = $mainarea_ywraq_metabox;
+    
+        }
 
         // Move the product PDF files
         $mainarea_pdffiles_metabox = $wp_meta_boxes['product']['normal']['high']['acf-group_5bbe75339e188'];
@@ -283,6 +287,20 @@ class GL_WooCommerceAdmin {
             });
         </script>
         <?php
+    }
+
+    /**
+     * Show the quote description in the order area
+     */
+    public function gl_show_quote_description($item_id, $item, $product) {
+        if(is_object($product)) {
+            // if($product->get_type() == 'variation') {
+                $quote_description = get_post_meta($product->get_id(), 'quote_description', true);
+                if($quote_description != '') {
+                    echo '<div class="gl-quote-description"><strong>Quote Description: </strong>' . $quote_description . '</div>';
+                }
+            // }
+        }
     }
 } // end class
 

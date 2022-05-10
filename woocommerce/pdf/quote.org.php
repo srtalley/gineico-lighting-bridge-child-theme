@@ -1,25 +1,18 @@
 <?php
 /**
- * Request Quote PDF Wrapper fils
+ * This file belongs to the YIT Plugin Framework.
  *
- * @package YITH Woocommerce Request A Quote
- * @since   1.0.0
- * @version 3.0.0
- * @author  YITH
- *
- * @var int $order_id Order id.
+ * This source file is subject to the GNU GENERAL PUBLIC LICENSE (GPL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
 
-// NOTE: Block level tags are ignored inside tables and CSS does not apply:
-
-// "Block-level tags (DIV, P etc) are ignored inside tables, including any CSS styles - inline CSS or stylesheet classes, id etc. To set text characteristics within a table/cell, either define the CSS for the table/cell, or use in-line tags e.g. <span style="...">"
-
-// https://mpdf.github.io/tables/tables.html
-
+$pdf_font = apply_filters('pdf_font_family', '"dejavu sans"');
 ?>
 <!DOCTYPE html>
 <html>
@@ -36,9 +29,8 @@ if ( ! defined( 'ABSPATH' ) ) {
             margin: 0;
             padding: 0;
         }
-
         .logo{
-            width: 40%;
+            width: 100%;
             float: left;
             max-width: 300px;
         }
@@ -53,14 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         .admin_info{
             font-size: 12px;
         }
-        .admin_info_part_left {
-            width: 50%;
-            float: left;
-        }
-        .admin_info_part_right {
-            width: 50%;
-            float: right;
-        }
+
         table{
             border: 0;
         }
@@ -69,33 +54,25 @@ if ( ! defined( 'ABSPATH' ) ) {
             font-size: 14px;
         }
 
-        .small-title,
-        .admin-info.small-title {
+        .small-title{
             text-align: right;
             font-weight: 600;
             color: #4e4e4e;
             padding-top: 5px;
             padding-right: 5px;
-            font-size: 12px;
         }
-        
-        .small-info{
-			background: #a8c6e4;
-			background: linear-gradient(360deg, #a8c6e4 0%, #ffffff 1%, #ffffff 100%);
-			padding-left:10px;
-			margin-bottom: 20px;
-		}
+        .admin_info_part_left {
+            width: 50%;
+            float: left;
+        }
+        .admin_info_part_right {
+            width: 50%;
+            float: right;
+        }
         .small-info p{
+            border-left: 2px solid #a8c6e4;
             padding: 0 0 5px 5px;
             margin: 0; 
-            font-size: 12px;
-        }
-
-        .admin-info.small-info {
-            font-size: 12px;
-            text-decoration: none !important;
-            color: #000 !important;
-            line-height: 18px !important;
         }
         .quote-table td{
             border: 0;
@@ -144,9 +121,6 @@ if ( ! defined( 'ABSPATH' ) ) {
             border-left: 1px solid #ccc ;
             border-right: 1px solid #ccc ;
         }
-        .product-desc {
-            line-height: 1.2em;
-        }
         .pdf-button{
             color: #a8c6e4;
             text-decoration: none;
@@ -155,23 +129,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 		.wc-item-meta {
 			margin: 5px 0;
 		}
+		.wc-item-meta li strong, 
+		.wc-item-meta li p {
+			display: inline-block;
+			margin: 0 !important;
+		}
         .shipping-col .shipped_via {
             display: none;
         }
         .footer {
-			width: 100%;
-			text-align: center;
-			position: fixed;
-			bottom: 0;
+            position: fixed;
+            bottom: .05in;
+            text-align: center;
+            font-size: 70%;
+            width: 100%;
+            margin-top: 0px;
         }
 		.gl-last-page-footer {
 			font-size: 13px;
             width: 100%;
             text-align: center;
 			position: absolute;
-			bottom: 0.25in;
-            text-decoration: none !important;
-            color: #000 !important;
+			bottom: -.25in;
 		}
         .pagenum:before {
             content: counter(page);
@@ -205,7 +184,7 @@ do_action( 'yith_ywraq_quote_template_header', $order_id );
 	?>
 </div>
 <div class="gl-last-page-footer">
-    <p>Thank you for the opportunity to quote on your lighting selections. Contact Us <a href="tel:+61-417-950-455" style="text-decoration: none; color: #e2ae68; font-weight: bold;">+61 417 950 455</a> © Gineico Lighting | <a href="https://www.gineicolighting.com.au" target="_blank" style="text-decoration: none; color: #e2ae68; font-weight: bold;">www.gineicolighting.com.au</a></p>
+    <p>Thank you for the opportunity to quote on your lighting selections. Contact Us <a href="tel:+61-417-950-455" style="text-decoration: none; color: #e2ae68; font-weight: bold;">+61 417 950 455</a> © Gineico Lighting | <a href="https://www.gineicolighting.com.au" target="_blank"style="text-decoration: none; color: #e2ae68; font-weight: bold;">www.gineicolighting.com.au</a></p>
 </div>
 </body>
 </html>

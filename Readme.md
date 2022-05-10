@@ -1,6 +1,12 @@
 # Changelog
 
 Gineico Lighting Bridge child theme documented changes.
+## [2.0.18] - 2022-05-09
+* Updates to the manual order area -- added a unit price field and an original cost field.
+* Added a quote description field for products that will show on the PDF.
+* Updated templates for compatibility with mPDF in the newest YITH Request a Quote.
+* Various other admin updates related to quotes.
+
 ## [2.0.17] - 2022-04-10
 * Added a PDF revision field that can be appended to the PDF name.
 * Added zero prices for products without explicit pricing.

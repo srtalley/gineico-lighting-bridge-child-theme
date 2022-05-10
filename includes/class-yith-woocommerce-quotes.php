@@ -65,7 +65,8 @@ class GL_YITH_WooCommerce_Quotes {
 
         add_filter( 'yith_ywraq_metabox_fields', array($this, 'gl_yith_ywraq_metabox_fields'), 10, 3 );
 
-
+        add_filter( 'ywraq_mpdf_args', array($this, 'gineico_ywraq_mpdf_args') );
+ 
 
     }
 
@@ -297,309 +298,31 @@ class GL_YITH_WooCommerce_Quotes {
             if($current_screen->id == 'shop_order') {
 
                 // add the CSS & JS
-                add_action('admin_head', array($this, 'gl_shop_order_quote_css_js'), 1000);
+                add_action('admin_head', array($this, 'gl_shop_order_quote_css_js'), 1);
 
                 // move the metaboxes
                 add_action( 'add_meta_boxes', array($this, 'gl_change_order_metaboxes'), 99 );
+
+                // enqueue the JS file
+                add_action( 'admin_enqueue_scripts', array($this, 'gl_shop_order_quote_external_js'), 1, 1 );
 
             }
         } // end if 
     }
 
+    /**
+     * CSS & JS for the shop order
+     */
     public function gl_shop_order_quote_css_js() {
         ?>
 
-        <script type="text/javascript">
-            jQuery(function($) {
-
-                $('document').ready(function() {
-
-                    setupCustomMeta();
-
-                    // handle an update where the items are reloaded
-                    // via ajax and run it a few times in case there's 
-                    // a delay in them being added
-                    $(document).on('items_saved', function() {
-                        setupCustomMetaSupport();
-                    });
-                    $( '#woocommerce-order-items' ).on( 'click', '.cancel-action', function() {
-                        setupCustomMetaSupport();
-                    } );
-                    
-                    setupCustomShipping();
-
-                    addCustomVersionStringToPDFurl();
-                });
-
-                function setupCustomMetaSupport() {
-                    setTimeout(() => {
-                        setupCustomMeta();
-                    }, 500);
-                    setTimeout(() => {
-                        setupCustomMeta();
-                    }, 2000);
-                    setTimeout(() => {
-                        setupCustomMeta();
-                        // shipping_observer();
-                    }, 5000);
-                    setTimeout(() => {
-                        setupCustomMeta();
-                    }, 20000);
-                }
-                function setupCustomMeta() {
-
-                    $('input[value="_gl_quote_type"]').addClass('gl-hide-label');
-                    $('input[value="_gl_quote_type"]').parent().parent().addClass('gl-quote-type');
-
-                    $('input[value="_gl_quote_part_number"]').addClass('gl-hide-label');
-                    $('input[value="_gl_quote_part_number"]').parent().parent().addClass('gl-quote-part-number');
-                }
-
-                function setupCustomShipping() {
-                    // hide the other field
-                    // $('.gl-other-shipping-method').css('display', 'none').removeClass('hide');
-                    $('.gl-custom-label').css('display', 'none').removeClass('hide');
-                    $('.gl-shipping-amount').css('display', 'none').removeClass('hide');
-
-                    // show the custom shipping name
-                    $('.gl-edit-shipping-label').on('click', function(e) {
-                        e.preventDefault();
-                        var that = this;
-                        var current_row = $(that).parentsUntil('.gl-label-col').parent();
-                        $(current_row).find('.gl-regular-label').slideUp();
-                        $(current_row).find('.gl-custom-label').slideDown();
-                        $(current_row).find('.gl-use-custom-name-hidden').val('true');
-                    });
-                    // hide the custom shipping name
-                    $('.gl-hide-shipping-label').on('click', function(e) {
-                        e.preventDefault();
-                        var that = this;
-                        var current_row = $(that).parentsUntil('.gl-label-col').parent();
-                        $(current_row).find('.gl-custom-label').slideUp();
-                        $(current_row).find('.gl-use-custom-name-hidden').val('false');
-                        $(current_row).find('.gl-regular-label').slideDown();
-                    });
-                    // reset the form
-                    $('#gl_reset_form').on('click', function(e) {
-                        e.preventDefault();
-                        $('.gl-hide-shipping-label').click();
-                        $('.gl-shipping-checkbox').each(function() {
-                            $(this).prop( "checked", false );
-                        })
-                        $('.gl-custom-shipping-name').each(function() {
-                            $(this).val($(this).attr('value'));
-                        });
-                        $('.gl-shipping-amount').each(function() {
-                            $(this).val('0');
-                            $(this).hide();
-                        });
-                    });
-
-                    // show amounts with checkboxes 
-                    $('.gl-shipping-checkbox').on('click', function(e) {
-                        if( $(this).is(':checked') ) {
-                            $(this).parentsUntil('.gl-options-row').parent().find('.gl-shipping-amount').show();
-                        } else {
-                            $(this).parentsUntil('.gl-options-row').parent().find('.gl-shipping-amount').hide();
-                        }
-                    });
-                    $('#gl_add_shipping').on('click', function(e) {
-                        e.preventDefault();
-
-                        // get the checkboxes
-                        var shipping_options = new Array();
-                        $('.gl-shipping-checkbox').each(function(){
-                            current_checkbox = this;
-                            if( $(current_checkbox).is(':checked') ) {
-                                // get the id and then split to component parts
-                                var checkbox_id = $(current_checkbox).attr('id');
-                                var shipping_id = checkbox_id.split("[")[0];
-
-                                // see if there's an amount set
-                                var shipping_amount = $('#' + shipping_id + '\\[amount\\]').val();
-                                if(shipping_amount < 0) {
-                                    // show error
-                                    $('#' + shipping_id + '\\[error\\]').show();
-                                } else{
-                                    $('#' + shipping_id + '\\[error\\]').hide();
-                                    // see if custom name is being used
-                                    var use_custom_name = $('#' + shipping_id + '\\[use_custom_name\\]').val();
-                                    if(use_custom_name === 'true' || shipping_id == 'other') {
-                                        // get the custom name
-                                        var shipping_name = $('#' + shipping_id + '\\[custom_name\\]').val();
-                                    } else {
-                                        var shipping_name = $(current_checkbox).val();
-                                    }
-
-                                    // we can define the array options
-                                    var this_shipping_option = { 
-                                        'method' : shipping_name,
-                                        'amount' : shipping_amount
-                                    };
-                                    // add to the array
-                                    shipping_options.push(this_shipping_option);
-
-                                }
-
-                            }
-
-                        });
-                        // see if no items have been checked and show error
-                        if (shipping_options.length === 0) {
-                            // show error
-                            $('#gl-shipping-error').show();
-                            setTimeout(function() {
-                                $('#gl-shipping-error').hide();
-                            }, 10000);
-                            return false;
-                        }
-                        /**
-                         * Async function to click the add shipping button
-                         * and add options
-                         */
-                        async function loop_shipping_options () {
-                            for(var i=0;i<shipping_options.length;i++){
-                                const result = await shipping_observer(shipping_options[i].method, shipping_options[i].amount);
-                            }
-                            return;
-                        };
-
-                        /**
-                         * Waits for the loop to finish and then clicks the
-                         * save button to save the shipping options
-                         */
-                        async function save_shipping_options(){
-                            
-                            $('html, body').animate({
-                                scrollTop: ($('#order_shipping_line_items').first().offset().top - 150)
-                            }, 500);
-                            await loop_shipping_options();
-                            var result = $('.button.save-action').click();
-                            $('#gl_reset_form').click();
-                            
-                        };
-                        save_shipping_options();
-                      
-                    });
-                }
-
-                /**
-                 * function that returns a promise, which clicks
-                 * the add shipping button and enters the info
-                 */
-                function shipping_observer(method, amount, rejectTime = 50) {
-
-                    return new Promise((resolve,reject) => {
-
-                        // click the button
-                        $('.button.add-order-shipping').click(); 
-
-                        // let hasChanged = false;
-
-                        // Create an observer instance
-                        var observer = new MutationObserver(function( mutations ) {
-                            mutations.forEach(function( mutation ) {		
-                                var newNodes = mutation.addedNodes; 
-                                // If there are new nodes added
-                                if( newNodes !== null ) { 
-                                    var $nodes = $( newNodes ); 
-                                    $nodes.each(function() {
-                                        var $node = $( this );
-                                        // check if new node added with class 'shipping'
-                                        if( $node.hasClass("shipping")){			
-                                            // get the id
-                                            order_item_id = $node.data('order_item_id');
-
-                                            $('input[name="shipping_method_title[' + order_item_id + ']"]').val(method);
-                                            $('input[name="shipping_cost[' + order_item_id + ']"]').val(amount);
-
-                                            // hasChanged = true;
-                                            observer.disconnect();
-
-                                            resolve(method);
-
-                                        }
-                                    });
-                                }
-                            });    
-                            
-                        });
-                        // Configuration of the observer:
-                        var config = { 
-                            childList: true,
-                            attributes: true,
-                            subtree: true,
-                            characterData: true
-                        }; 
-                        var targetNode = $('#order_shipping_line_items')[0];
-                        observer.observe(targetNode, config);  
-                    });
-                }
-
-                /**
-                 * Update the custom version string on the create PDF
-                 * link if it has been clicked.
-                 */
-                function addCustomVersionStringToPDFurl() {
-                    $(document).on('click', '#ywraq_pdf_button', function() {
-
-                        var pdf_revision_number = $('#_gl_ywraq_pdf_revision_number_html').val();
-                        var order_id = $('#post_ID').val();
-
-                        var currentUrl = $(this).data('pdf');
-                        var url_without_params = currentUrl.split('?')[0];
-                        var url_without_extension = url_without_params.split('.pdf')[0];
-                        var url_without_rev = url_without_extension.split('-REV')[0];
-
-                        if(pdf_revision_number >= 1) {
-                            var url_new_name = url_without_rev + '-REV' + pdf_revision_number + '.pdf';
-                        } else {
-                            var url_new_name = url_without_rev + '.pdf';
-                        }
-                        var url = new URL(url_new_name);
-
-                        url.searchParams.set("ver", makeid(6)); // setting your param
-                        $(this).data('pdf', url.href);
-
-
-                        // AJAX
-                        $.ajax({
-                            type: 'POST',
-                            dataType: 'json',
-                            url: '<?php echo admin_url( 'admin-ajax.php' ); ?>',
-                            data: {
-                                'action': 'gl_save_pdf_name',
-                                'nonce': '<?php echo wp_create_nonce( 'gl_mods_init_nonce' ); ?>',
-                                'pdf_name': pdf_revision_number,
-                                'order_id': order_id,
-                            },
-                            success: function(data) {
-                                console.log(data);
-                            },
-                            error: function(jqXHR, textStatus, errorThrown) {
-                                console.log(jqXHR + ' :: ' + textStatus + ' :: ' + errorThrown);
-                            }
-                        });
-                    });
-                }
-                /**
-                 * Random string generator
-                 */
-                function makeid(length) {
-                    var result           = '';
-                    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-                    var charactersLength = characters.length;
-                    for ( var i = 0; i < length; i++ ) {
-                        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-                    }
-                    return result;
-                }
-
-
-            });
-        </script>
-
         <style>
+            .gl-quote-description {
+                display: block;
+                margin-top: 0.5em;
+                font-size: .92em!important;
+                color: #888;
+            }
             .gl-hide-label {
                 display: none;
             }
@@ -720,11 +443,26 @@ class GL_YITH_WooCommerce_Quotes {
             .wc-backbone-modal .wc-backbone-modal-content .widefat>tbody>tr>td:first-child {
                 width: 90%;
             }
+            /* Hide price discount */
+            .line_cost label,
+            .line_cost .line_subtotal {
+                display: none !important;
+            }
         </style>
 
         <?php
     }
 
+    /**
+     * Enqueue a separate JS file for the shop order
+     */
+    public function gl_shop_order_quote_external_js($hook) {
+        wp_enqueue_script( 'gl-shop-order', get_stylesheet_directory_uri() . '/js/admin-shop-order.js', array('jquery'), wp_get_theme()->get('Version'), false );
+        wp_localize_script( 'gl-shop-order', 'gl_admin_shop_order_init', array(
+            'ajaxurl'   => admin_url( 'admin-ajax.php' ),
+            'ajaxnonce' => wp_create_nonce( 'gl_mods_init_nonce' )
+        ) );
+    }
     /**
      * Add a PDF name on new order
      */
@@ -768,8 +506,7 @@ class GL_YITH_WooCommerce_Quotes {
         <form id="gl-shipping-options">
 
             <div class="gl-options-row header">
-                <p>Check the shipping options below you wish to add to the quote, and the amount field will appear.</p>
-                <p>When done, click the Add Shipping button to add the chosen methods to the quote.</p>
+                <p>Check the shipping options below you wish to add to the quote, and the amount field will appear. When done, click the Add Shipping button to add the chosen methods to the quote.</p>
                 <hr>
             </div>
             <div class="gl-options-row header">
@@ -990,6 +727,10 @@ class GL_YITH_WooCommerce_Quotes {
 
 
         }
+    }
+    public function gineico_ywraq_mpdf_args($args) {
+        $args['orientation'] = 'L';
+        return $args;
     }
 } // end class
 

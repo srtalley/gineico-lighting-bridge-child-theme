@@ -1,47 +1,33 @@
 <?php
 /**
- * HTML Template Quote table
+ * HTML Template Email
  *
  * @package YITH Woocommerce Request A Quote
  * @since   1.0.0
- * @version 2.2.7
- * @author  YITH
- *
- * @var WC_Order $order
+ * @author  Yithemes
  */
 
-$border   = true;
-$order_id = $order->get_id();
+$border = true;
+$order_id          = yit_get_prop( $order, 'id', true );
 
-if ( function_exists( 'icl_get_languages' ) ) {
-	global $sitepress;
-	$lang = $order->get_meta( 'wpml_language' );
-	YITH_Request_Quote_Premium()->change_pdf_language( $lang );
+if( function_exists('icl_get_languages') ) {
+    global $sitepress;
+	$lang = yit_get_prop( $order, 'wpml_language', true );
+    YITH_Request_Quote_Premium()->change_pdf_language( $lang );
 }
-add_filter( 'woocommerce_is_attribute_in_product_name', '__return_false' );
+add_filter('woocommerce_is_attribute_in_product_name','__return_false');
 
 ?>
 
-<?php
-$after_list = $order->get_meta( '_ywcm_request_response' );
-if ( '' !== $after_list ) :
-	?>
-	<div class="after-list">
-		<p><?php echo wp_kses_post( apply_filters( 'ywraq_quote_before_list', nl2br( $after_list ), $order_id ) ); ?></p>
-	</div>
+<?php if( ( $after_list = yit_get_prop( $order, '_ywcm_request_response', true ) ) != ''): ?>
+    <div class="after-list">
+        <p><?php echo apply_filters( 'ywraq_quote_before_list', nl2br($after_list), $order_id ) ?></p>
+    </div>
 <?php endif; ?>
 
 <?php do_action( 'yith_ywraq_email_before_raq_table', $order ); ?>
 
-<?php
-$columns = get_option( 'ywraq_pdf_columns', 'all' );
-/* be sure it is an array */
-if ( ! is_array( $columns ) ) {
-	$columns = array( $columns );
-}
-$colspan = 0;
 
-?>
 <div class="table-wrapper">
     <div class="mark"></div>
     <h5 style="margin: 0 0 10px 0; font-style: italic; font-weight: normal;">Product images are indicative only</h5>
@@ -49,14 +35,14 @@ $colspan = 0;
         <thead>
         <tr>
             <?php if( get_option('ywraq_show_preview') == 'yes'): ?>
-                <th scope="col" style="text-align:left; border-bottom: 1px solid #777; border-left: 1px solid #777;border-top: 1px solid #777;" class="image-col"><?php _e( 'Image', 'yith-woocommerce-request-a-quote' ); ?></th>
+                <th scope="col" style="text-align:left; border: 1px solid #777;" class="image-col"><?php _e( 'Image', 'yith-woocommerce-request-a-quote' ); ?></th>
             <?php endif ?>
-            <th scope="col"  style="text-align:left; border-bottom: 1px solid #777; border-left: 1px solid #777;border-top: 1px solid #777;" class="type-col"><?php _e( 'Type', 'yith-woocommerce-request-a-quote' ); ?></th>
-            <th scope="col"  style="text-align:left; border-bottom: 1px solid #777; border-left: 1px solid #777;border-top: 1px solid #777;" class="qty-col"><?php _e( 'QTY', 'yith-woocommerce-request-a-quote' ); ?></th>
-            <th scope="col"  style="text-align:left; border-bottom: 1px solid #777; border-left: 1px solid #777;border-top: 1px solid #777;" class="part-num-col"><?php _e( 'Part No', 'yith-woocommerce-request-a-quote' ); ?></th>
-            <th scope="col"  style="text-align:left; border-bottom: 1px solid #777; border-left: 1px solid #777;border-top: 1px solid #777;" class="product-col"><?php _e( 'Product', 'yith-woocommerce-request-a-quote' ); ?></th>
-            <th scope="col"  style="text-align:left; border-bottom: 1px solid #777; border-left: 1px solid #777;border-top: 1px solid #777;" class="unit-col"><?php _e( 'Unit Price', 'yith-woocommerce-request-a-quote' ); ?></th>
-            <th scope="col"  style="text-align:left; border-bottom: 1px solid #777; border-left: 1px solid #777;border-top: 1px solid #777; border-right: 1px solid #777;" class="subtotal-col"><?php _e( 'Subtotal', 'yith-woocommerce-request-a-quote' ); ?></th>
+            <th scope="col" style="text-align:left; border: 1px solid #777;" class="type-col"><?php _e( 'Type', 'yith-woocommerce-request-a-quote' ); ?></th>
+            <th scope="col" style="text-align:left; border: 1px solid #777;" class="qty-col"><?php _e( 'QTY', 'yith-woocommerce-request-a-quote' ); ?></th>
+            <th scope="col" style="text-align:left; border: 1px solid #777;" class="part-num-col"><?php _e( 'Part No', 'yith-woocommerce-request-a-quote' ); ?></th>
+            <th scope="col" style="text-align:left; border: 1px solid #777;" class="product-col"><?php _e( 'Product', 'yith-woocommerce-request-a-quote' ); ?></th>
+            <th scope="col" style="text-align:left; border: 1px solid #777;" class="unit-col"><?php _e( 'Unit Price', 'yith-woocommerce-request-a-quote' ); ?></th>
+            <th scope="col" style="text-align:left; border: 1px solid #777;" class="subtotal-col"><?php _e( 'Subtotal', 'yith-woocommerce-request-a-quote' ); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -125,26 +111,12 @@ $colspan = 0;
                     <td scope="col" style="text-align:center; border-left: 1px solid #777; border-color: #777;" class="part-no-col"><?php echo wc_get_order_item_meta( $item->get_id(), '_gl_quote_part_number', true );?></td>
                     <!-- EHD GL CUSTOM -->
 
-                    <td scope="col" style="text-align:left; border-left: 1px solid #777; border-color: #777;" class="product-desc">
+                    <td scope="col" style="text-align:left; border-left: 1px solid #777; border-color: #777;">
                     <?php //echo $title
                     //BEGIN GL CUSTOM
                     //app.launchURL("http://www.mycompany.com/pdfDocument.pdf", true);
 							echo '<a style="text-decoration: none; color: #e2ae68; font-weight: bold;" target="_blank" href="' . esc_url( $_product->get_permalink() ) . '">' . esc_html( $title ) . '</a>';
-                    // END GL CUSTOM 
-                    
-                    // see if the quote description is set 
-                    $quote_description = get_post_meta($_product->get_id(), 'quote_description', true);
-                    if($quote_description != ''):
-                        ?>
-                        <small>
-                            <div class="quote-description">
-                                <?php echo $quote_description; ?>
-                            </div>
-                        </small>
-                        <?php 
-                    else:
-
-                    ?>
+                    // END GL CUSTOM ?>
                        <small><?php
 
                             //BEGIN GL CUSTOM	
@@ -175,23 +147,10 @@ $colspan = 0;
 						   if ( $im ) {
 		                       $im->display();
 	                       } else {
-                                // wc_display_item_meta( $item );
-                                // Customized wc_display_item_meta funciton
-                                foreach ( $item->get_all_formatted_meta_data() as $meta_id => $meta ) {
-                                    $value     = strip_tags(trim( $meta->display_value ));
-                                    $strings[] = '<span class="wc-item-meta-label" style="display: inline-block"><strong>' . wp_kses_post( $meta->display_key ) . ':</strong></span>&nbsp;<span class="wc-item-meta-value" style="display: inline-block">' . $value . '</span>';
-                                }
-                                if ( $strings ) {
-                                    $html = '<span style="display: block; height: 5px;">&nbsp;</span><ul class="wc-item-meta"><li>' . implode( '</li><li>', $strings ) . '</li></ul>';
-                                }
-                        
-                                echo $html;
+                                wc_display_item_meta( $item );
 	                       }
 	                       ?></small>
                            
-                           <?php 
-                            endif; // if quote_description
-                            ?>
                            
                            </td>
                     <td scope="col" style="text-align:center; border-left: 1px solid #777; border-color: #777;"><?php echo $unit_price ?></td>
@@ -232,7 +191,7 @@ $colspan = 0;
                                 ?>
                                 <th scope="col" colspan="3"></th>
                                 <?php if($shipping_method_count == 1) {
-                                    $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-bottom: 1px solid #777;';
+                                    $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-top: 1px solid #777; border-bottom: 1px solid #777;border-color: #777;';
                                 } else {
                                     $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-top: 1px solid #777;  border-color: #777;';
                                 }
@@ -255,7 +214,7 @@ $colspan = 0;
                                 }
                                     // end if
                         ?>
-                            <td scope="col" colspan="2" style="text-align:left; border-left: 1px solid #777; border-color: #777;"><?php echo $this_shipping_method['name']; ?></td>
+                            <td scope="col" colspan="2" style="text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-top: 1px solid #777; border-color: #777;"><?php echo $this_shipping_method['name']; ?></td>
                             <td scope="col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;" class="shipping-col"><?php echo  $this_shipping_method['amount']; ?></td>
                             </tr>
                         <?php
@@ -269,18 +228,8 @@ $colspan = 0;
 
                     ?>
                     <tr>
-                        <th scope="col" colspan="3"></th>
-                        <?php 
-                        if($total['label'] == 'Subtotal:') {
-                            ?>
-                            <th scope="col" colspan="3" style="text-align:right; border-bottom: 1px solid #777;"><?php echo $total['label']; ?></th>
-                        <?php 
-                        } else {
-                        ?>
-                            <th scope="col" colspan="3" style="text-align:right;"><?php echo $total['label']; ?></th>
-                        <?php
-                        }
-                        ?>
+                        <th scope="col" colspan="4"></th>
+                        <th scope="col" colspan="2" style="text-align:right; border-right: 1px solid #777; border-color: #777;"><?php echo $total['label']; ?></th>
                         <td scope="col" class="last-col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo $total['value']; ?></td>
                     </tr>
                     <?php 
@@ -300,47 +249,41 @@ $colspan = 0;
             ?>
             <tr>
                 <th scope="col" colspan="4"></th>
-                <th scope="col" colspan="2" style="text-align:right;">GST</th>
+                <th scope="col" colspan="2" style="text-align:right; border-right: 1px solid #777; border-color: #777;">GST</th>
                 <td scope="col" class="last-col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo wc_price( $order_gst, get_woocommerce_currency_symbol()); ?></td>
             </tr>
 
             <tr>
                 <th scope="col" colspan="4"></th>
-                <th scope="col" colspan="2" style="text-align:right;">TOTAL</th>
+                <th scope="col" colspan="2" style="text-align:right; border-right: 1px solid #777; border-color: #777;">TOTAL</th>
                 <td scope="col" class="last-col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo wc_price( $order_total_with_gst, get_woocommerce_currency_symbol()); ?></td>
             </tr>
         <?php endif; ?>
 
 
-		</tbody>
-	</table>
+        </tbody>
+    </table>
 </div>
-<?php if ( get_option( 'ywraq_pdf_link' ) === 'yes' ) : ?>
-	<div>
-		<table class="ywraq-buttons">
-			<tr>
-				<?php if ( get_option( 'ywraq_show_accept_link' ) !== 'no' ) : ?>
-					<td><a href="<?php echo esc_url( ywraq_get_accepted_quote_page( $order ) ); ?>"
-							class="pdf-button"><?php ywraq_get_label( 'accept', true ); ?></a></td>
-					<?php
-				endif;
-				echo ( get_option( 'ywraq_show_accept_link' ) !== 'no' && get_option( 'ywraq_show_reject_link' ) !== 'no' ) ? '<td><span style="color: #666666">|</span></td>' : '';
-				if ( get_option( 'ywraq_show_reject_link' ) !== 'no' ) :
-					?>
-					<td><a href="<?php echo esc_url( ywraq_get_rejected_quote_page( $order ) ); ?>"
-							class="pdf-button"><?php ywraq_get_label( 'reject', true ); ?></a></td>
-				<?php endif ?>
-			</tr>
-		</table>
-	</div>
+<?php if( get_option( 'ywraq_pdf_link' ) == 'yes'): ?>
+<div>
+    <table>
+        <tr>
+            <?php if ( get_option( 'ywraq_show_accept_link' ) != 'no' ): ?>
+            <td><a href="<?php echo esc_url( add_query_arg( array( 'request_quote' => $order_id, 'status' => 'accepted', 'raq_nonce' => ywraq_get_token( 'accept-request-quote', $order_id, yit_get_prop( $order, 'ywraq_customer_email', true ) ) ), YITH_Request_Quote()->get_raq_page_url() ) ) ?>" class="pdf-button"><?php ywraq_get_label('accept', true) ?></a></td>
+            <?php endif;
+            echo ( get_option( 'ywraq_show_accept_link' ) != 'no' && get_option( 'ywraq_show_reject_link' ) != 'no' ) ? '<td><span style="color: #666666">|</span></td>' : '';
+            if ( get_option( 'ywraq_show_reject_link' ) != 'no' ): ?>
+            <td><a href="<?php echo esc_url( add_query_arg( array( 'request_quote' => $order_id, 'status' => 'rejected', 'raq_nonce' => ywraq_get_token( 'reject-request-quote', $order_id, yit_get_prop( $order, 'ywraq_customer_email', true ) ) ), YITH_Request_Quote()->get_raq_page_url() ) ) ?>" class="pdf-button"><?php ywraq_get_label('reject', true) ?></a></td>
+            <?php endif ?>
+        </tr>
+    </table>
+</div>
 <?php endif ?>
-
+  
 <?php do_action( 'yith_ywraq_email_after_raq_table', $order ); ?>
 
-<?php $after_list = apply_filters( 'ywraq_quote_after_list', $order->get_meta( '_ywraq_request_response_after' ), $order_id ); ?>
-
-<?php if ( '' !== $after_list ) : ?>
-	<div class="after-list">
-		<p><?php echo wp_kses_post( nl2br( $after_list ) ); ?></p>
-	</div>
+<?php if ( ( $after_list = yit_get_prop( $order, '_ywraq_request_response_after', true ) ) != '' ): ?>
+    <div class="after-list">
+        <p><?php echo apply_filters( 'ywraq_quote_after_list', nl2br( $after_list ), $order_id ) ?></p>
+    </div>
 <?php endif; ?>

@@ -61,6 +61,7 @@ class GL_WooCommerce {
 
         // Send a new user email to the admins
         add_action( 'woocommerce_created_customer', array($this, 'gl_woocommerce_created_customer_admin_notification'), 1000 );
+
     }
 
     /**
@@ -674,6 +675,7 @@ class GL_WooCommerce {
             ),
         ) );
     }
+
 } // end class
 
 $gl_woocommerce = new GL_WooCommerce();

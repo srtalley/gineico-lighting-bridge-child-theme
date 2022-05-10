@@ -52,14 +52,6 @@ $exdata = $order->get_meta( '_ywcm_request_expire' );
 
 /* GL CUSTOM */
 $title_order_date   = date_i18n('d/m/Y', strtotime(yit_get_prop($order, 'date_created', true)));
-$additional_email_fields = get_post_meta( $order_id, 'ywraq_other_email_fields', true );
-$gl_ywraq_pdf_revision_number = get_post_meta( $order_id, '_gl_ywraq_pdf_revision_number', true );
-if(is_array($gl_ywraq_pdf_revision_number) && isset($gl_ywraq_pdf_revision_number['html'])) {
-	$pdf_revision = $gl_ywraq_pdf_revision_number['html'];
-	if($pdf_revision != 0) {
-		$pdf_revision_name_extension = ' - REV ' . $pdf_revision;
-	}
-} 
 /* END GL CUSTOM */
 
 $expiration_data = '';
@@ -88,13 +80,13 @@ if ( function_exists( 'wc_format_datetime' ) ) {
 	<div class="admin_info_part_left">
 		<table style="overflow: hidden;" autosize="1">
 			<tr>
-				<td valign="top" class="admin-info small-title"><?php echo __( 'From', 'yith-woocommerce-request-a-quote' ) ?></td>
-				<td valign="top" class="admin-info small-info">
+				<td valign="top" class="small-title"><?php echo __( 'From', 'yith-woocommerce-request-a-quote' ) ?></td>
+				<td valign="top" class="small-info">
 					<p><?php //echo apply_filters( 'ywraq_pdf_info', nl2br( get_option( 'ywraq_pdf_info' ) ), $order ) ?>
 					<strong>Gineico Lighting</strong><br>
-					<a class="link-nounderline" href="mailto:showroom@gineico.com" target="_blank" style="text-decoration: none; color: #000;">showroom@gineico.com</a><br>
-					<a class="link-nounderline" href="https://www.gineicolighting.com.au" target="_blank" style="text-decoration: none; color: #000;">www.gineicolighting.com.au</a><br>
-					<a class="link-nounderline" href="tel:+61-417-950-455" target="_blank" style="text-decoration: none; color: #000; ">+61 417 950 455</a><br>
+					<a href="mailto:showroom@gineico.com" target="_blank"style="text-decoration: none; color: #000;">showroom@gineico.com</a><br>
+					<a href="https://www.gineicolighting.com.au" target="_blank"style="text-decoration: none; color: #000;">www.gineicolighting.com.au</a><br>
+					<a href="tel:+61-417-950-455" target="_blank"style="text-decoration: none; color: #000; ">+61 417 950 455</a><br>
 				</p>
 				</td>
 			</tr>
@@ -103,8 +95,8 @@ if ( function_exists( 'wc_format_datetime' ) ) {
 	<div class="admin_info_part_right">
 		<table style="overflow: hidden;" autosize="1">
 			<tr>
-				<td valign="top" class="admin-info small-title"><?php echo __( 'Customer', 'yith-woocommerce-request-a-quote' ) ?></td>
-				<td valign="top" class="admin-info small-info">
+				<td valign="top" class="small-title"><?php echo __( 'Customer', 'yith-woocommerce-request-a-quote' ) ?></td>
+				<td valign="top" class="small-info">
 	                <p>
 						<?php if(isset($additional_email_fields['Company Name']) && !empty($additional_email_fields['Company Name'])) {
 	                        echo esc_attr($additional_email_fields['Company Name']) . '<br>';
@@ -146,9 +138,8 @@ if ( function_exists( 'wc_format_datetime' ) ) {
 </div>
 <div class="clear"></div>
 <div class="quote-title" style="margin: 30px 0 0;">
-	<h4 style="margin: 0 0 5px 0;"><?php printf( __( 'Quote #%s', 'yith-woocommerce-request-a-quote' ), apply_filters( 'ywraq_quote_number', $order_id ) ) ?> - <?php echo $title_order_date . $pdf_revision_name_extension; ?></h4>
-	<?php
-	if((isset($additional_email_fields['Project Name']) && !empty($additional_email_fields['Project Name'])) or (isset($additional_email_fields['Project Address']) && !empty($additional_email_fields['Project Address']))) {
+	<h4 style="margin: 0 0 5px 0;"><?php printf( __( 'Quote #%s', 'yith-woocommerce-request-a-quote' ), apply_filters( 'ywraq_quote_number', $order_id ) ) ?> - <?php echo $title_order_date; ?></h4>
+	<?php if((isset($additional_email_fields['Project Name']) && !empty($additional_email_fields['Project Name'])) or (isset($additional_email_fields['Project Address']) && !empty($additional_email_fields['Project Address']))) {
         echo '<h5 style="margin: 0;">';
         if(!empty($additional_email_fields['Project Name'])) {
 	        echo 'Project Name: <span style="font-weight: normal">' . esc_attr($additional_email_fields['Project Name']) . '</span>&nbsp;&nbsp;&nbsp;&nbsp;';
