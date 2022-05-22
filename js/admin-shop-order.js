@@ -112,7 +112,7 @@ jQuery(function($) {
                     var value = $(this).data('sort-value');
                 
                     // CODE TO SHOW PRICE
-                    $('<td class="gl-original-price"></td>').insertBefore(item_cost_field);
+                    $('<td class="gl-original-price" style="text-align: right;"></td>').insertBefore(item_cost_field);
 
                     gl_get_product_price_from_order_item_id(order_item_id).done(function(data) {
                         $(item_cost_field).parent().find('.gl-original-price').html(data.price);

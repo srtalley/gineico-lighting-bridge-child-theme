@@ -134,6 +134,14 @@ $colspan = 0;
                     
                     // see if the quote description is set 
                     $quote_description = get_post_meta($_product->get_id(), 'quote_description', true);
+
+                    if($_product->get_type() == 'variation') {
+                        if($quote_description == '') {
+                            // try to get the parent desc
+                            $parent_id = $_product->get_parent_id();
+                            $quote_description = get_post_meta($parent_id, 'quote_description', true);
+                        }
+                    } 
                     if($quote_description != ''):
                         ?>
                         <small>

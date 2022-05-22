@@ -13,8 +13,8 @@ class GL_WooCommerce_Product {
         add_action( 'wp_ajax_gl_get_product_price_from_order_item_id', array($this, 'gl_get_product_price_from_order_item_id') );
 
         // Add and save Quote Description field for variable products
-        add_action( 'woocommerce_product_options_general_product_data', array($this, 'gl_add_quote_description_to_simple_product') ); 
-        add_action( 'woocommerce_process_product_meta', array($this, 'gl_save_quote_description_simple_product') );
+        add_action( 'woocommerce_product_options_advanced', array($this, 'gl_add_quote_description_to_advanced_tab') ); 
+        add_action( 'woocommerce_process_product_meta', array($this, 'gl_save_quote_description_main_product') );
 
         // Add and save Quote Description field for variable products
         add_action( 'woocommerce_product_after_variable_attributes', array($this, 'gl_add_quote_description_to_variations'), 20, 3 );
@@ -62,7 +62,9 @@ class GL_WooCommerce_Product {
     /**
      * Add the Quote Description field for simple products under the general tab
      */
-    public function gl_add_quote_description_to_simple_product() {
+    public function gl_add_quote_description_to_advanced_tab($product) {
+
+        $product = wc_get_product(get_the_ID());
 
         woocommerce_wp_textarea_input(
             array(
@@ -70,17 +72,23 @@ class GL_WooCommerce_Product {
                 'name'          => "quote_description",
                 'value'         => get_post_meta( get_the_ID(), 'quote_description', true ),
                 'label'         => __( 'Quote Description', 'woocommerce' ),
-                'desc_tip'      => true,
-                'description'   => __( 'Enter a description that will show on the quote for this variation.', 'woocommerce' ),
                 'wrapper_class' => 'form-row form-row-full',
+                'class'         => 'long'
             )
         );
+        echo '<p class="form-field quote_description_field_label form-row form-row-full">';
+        if($product->is_type( 'variable' )) {
+            echo '<label></label>This field will show on the PDF, but if you write a different description in the options for a variation, then this field will be ignored.</p>';
+        } else {
+            echo '<label></label>This field will show on the PDF.</p>';
+        }
+
     }
 
     /**
      * Save the Quote Description field for simple products
      */
-    public function gl_save_quote_description_simple_product($post_id) {
+    public function gl_save_quote_description_main_product($post_id) {
         $quote_description = $_POST['quote_description'];
         if ( isset( $quote_description ) ) update_post_meta( $post_id, 'quote_description', esc_attr( $quote_description ) );       
     }

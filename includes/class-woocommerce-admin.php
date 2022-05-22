@@ -10,6 +10,13 @@ class GL_WooCommerceAdmin {
         add_action( 'current_screen', array($this,'gl_woocommerce_product_admin'), 10, 1 );
 
         add_action( 'woocommerce_before_order_itemmeta', array($this, 'gl_show_quote_description'), 10, 3 );
+
+        add_filter('woocommerce_product_variation_get_sku', array($this, 'gl_test'), 10, 2 );
+
+    }
+
+    public function gl_test($value, $object) {
+        return $value;
     }
     /**
     * Move the product metaboxes to the left in the admin area.
@@ -294,14 +301,25 @@ class GL_WooCommerceAdmin {
      */
     public function gl_show_quote_description($item_id, $item, $product) {
         if(is_object($product)) {
-            // if($product->get_type() == 'variation') {
+            $product->get_sku();
+            $quote_description = get_post_meta($product->get_id(), 'quote_description', true);
+
+            if($product->get_type() == 'variation') {
                 $quote_description = get_post_meta($product->get_id(), 'quote_description', true);
-                if($quote_description != '') {
-                    echo '<div class="gl-quote-description"><strong>Quote Description: </strong>' . $quote_description . '</div>';
+                if($quote_description == '') {
+                    // try to get the parent desc
+                    $parent_id = $product->get_parent_id();
+                    $quote_description = get_post_meta($parent_id, 'quote_description', true);
                 }
-            // }
+            } 
+            if($quote_description != '') {
+                echo '<div class="gl-quote-description"><strong>Quote Description: </strong>' . $quote_description . '</div>';
+            }
         }
     }
+
+
+
 } // end class
 
 $gl_woocommerce_admin = new GL_WooCommerceAdmin();
