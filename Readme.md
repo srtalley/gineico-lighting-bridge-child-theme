@@ -1,6 +1,10 @@
 # Changelog
 
 Gineico Lighting Bridge child theme documented changes.
+## [2.0.19] - 2022-05-27
+* Added the ability to set a custom quote description from within the manual order.
+* Added the ability to update the variation or main product quote description with the custom description.
+
 ## [2.0.18] - 2022-05-09
 * Updates to the manual order area -- added a unit price field and an original cost field.
 * Added a quote description field for products that will show on the PDF.

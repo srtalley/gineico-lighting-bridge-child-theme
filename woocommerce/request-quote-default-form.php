@@ -41,17 +41,6 @@
             $count = 0;
             $current_is_second_column = false;
             echo '<div class="request-quote-column">';
-            // foreach ( $fields as $key => $field ) {
-            //     if($count > 0 and $count % $column_items_count == 0 and !$current_is_second_column) {
-            //         echo '</div>';
-            //         echo '<div class="request-quote-column">';
-            //         $current_is_second_column = true;
-            //     }
-            //     if ( isset( $field['enabled'] ) && $field['enabled'] ) {
-            //         woocommerce_form_field( $key, $field, YITH_YWRAQ_Default_Form()->get_value( $key, $field ) );
-            //         $count++;
-            //     }
-            // }
             foreach ( $fields as $key => $field ) {
                 if ( isset( $field['enabled'] ) && in_array( $field['enabled'], array( 1, 'yes' ) ) ) { //phpcs:ignore
                     $default = isset( $field['default'] ) ? $field['default'] : ''; //phpcs:ignore
@@ -64,6 +53,9 @@
                         echo '</div>';
                         echo '<div class="request-quote-column">';
                         $current_is_second_column = true;
+                    }
+                    if($key == 'Required_Delivery_Date') {
+                        $field['input_class'] = array('ywraq-datepicker-type');
                     }
                     woocommerce_form_field( $key, $field, YITH_YWRAQ_Default_Form()->get_value( $key, $field, $default ) );
                     $count++;

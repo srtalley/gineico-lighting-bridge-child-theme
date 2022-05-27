@@ -54,6 +54,7 @@ $exdata = $order->get_meta( '_ywcm_request_expire' );
 $title_order_date   = date_i18n('d/m/Y', strtotime(yit_get_prop($order, 'date_created', true)));
 $additional_email_fields = get_post_meta( $order_id, 'ywraq_other_email_fields', true );
 $gl_ywraq_pdf_revision_number = get_post_meta( $order_id, '_gl_ywraq_pdf_revision_number', true );
+$pdf_revision_name_extension = '';
 if(is_array($gl_ywraq_pdf_revision_number) && isset($gl_ywraq_pdf_revision_number['html'])) {
 	$pdf_revision = $gl_ywraq_pdf_revision_number['html'];
 	if($pdf_revision != 0) {

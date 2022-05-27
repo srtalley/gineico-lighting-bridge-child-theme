@@ -317,15 +317,71 @@ class GL_YITH_WooCommerce_Quotes {
         ?>
 
         <style>
+            #order_line_items td.name {
+                display: flex;
+                flex-direction: column;
+            }
+            #order_line_items td.name > a,
+            #order_line_items td.name > div {
+                order: 100;
+            }
+            #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items tbody th textarea, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items td textarea {
+                font-size: 16px;
+            }
+            #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.display_meta, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta,
+            #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items td.name .wc-order-item-sku, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items td.name .wc-order-item-variation,
             .gl-quote-description {
                 display: block;
                 margin-top: 0.5em;
-                font-size: .92em!important;
-                color: #888;
+                font-size: 16px !important;
+                line-height: 1.6em;
+                color: #2e2e2e;
+                padding-top: 8px;
+            }
+            .gl-quote-description-label {
+                font-weight: 600;
+            }
+            .gl-quote-description.edit-description .gl-quote-description-label,
+            .gl-quote-description.edit-description .gl-quote-description-text {
+                color: #8d8d8d;
+            }
+            .gl-quote-description-edit-links {
+                padding-left: 10px;
+            }
+            .gl-quote-description-edit-links .hide-link {
+                display: none;
+            }
+            .gl-quote-description-text p {
+                margin: 0;
+                font-size: 16px;
+            }
+            .gl-quote-description-textarea {
+                min-height: 200px;
+            }
+            #order_line_items td.name .wc-order-item-name {
+                order: 2 !important;
+                color: #000000;
+                font-size: 18px;
+                font-weight: 600;
+                text-decoration-color: #e2ae68;
+                text-decoration-thickness: .125em;
+                text-underline-offset: 4.5px;
+            }
+            #order_line_items td.name .wc-order-item-name:after {
+                content:'';
+                border-bottom: 2px solid black;
+            }
+            .gl-quote-description {
+                order: 2 !important;
+            }
+            .gl-quote-description .edit,
+            .gl-quote-description-edit {
+                display: none;
             }
             .gl-hide-label {
                 display: none;
             }
+            .gl-quote-description-edit-label,
             .gl-quote-type > td:first-child::before,
             .gl-quote-part-number > td:first-child::before {
                 content: '';
@@ -334,6 +390,9 @@ class GL_YITH_WooCommerce_Quotes {
                 color: #000;
                 margin-bottom: 5px;
                 display: block
+            }
+            .gl-quote-description-edit-label {
+                display: inline-block;
             }
             .gl-quote-type > td:last-child button,
             .gl-quote-part-number > td:last-child button{

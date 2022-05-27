@@ -32,7 +32,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
         body {
             color: #000;
-            font-family: <?php echo $pdf_font ?>;
             margin: 0;
             padding: 0;
         }

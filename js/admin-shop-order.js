@@ -94,7 +94,41 @@ jQuery(function($) {
         $('input[value="_gl_quote_part_number"]').addClass('gl-hide-label');
         $('input[value="_gl_quote_part_number"]').parent().parent().addClass('gl-quote-part-number');
 
+        // add the quote desc edit
+        var quote_desc_fields = $('.woocommerce_order_items_wrapper td.name .gl-quote-description');
 
+        $(quote_desc_fields).each(function(){
+            if(!$(this).hasClass('added_js')) {
+                $(this).addClass('added_js');
+                var quote_desc_div = this;
+                var quote_desc_edit_link = $(this).find('.gl-quote-description-edit-link');
+                var quote_desc_cancel_edit_link = $(this).find('.gl-quote-description-cancel-edit-link');
+                var quote_desc_is_custom = $(this).find('.gl-quote-description-is-custom');
+                $(quote_desc_edit_link).on('click', function(e){
+                    e.preventDefault();
+                    $(quote_desc_div).addClass('edit-description');
+                    $(quote_desc_div).find('.gl-quote-description-edit').show();
+                    $(quote_desc_edit_link).addClass('hide-link');
+                    $(quote_desc_cancel_edit_link).removeClass('hide-link');
+                    $(quote_desc_is_custom).val('yes');
+                });
+                $(quote_desc_cancel_edit_link).on('click', function(e){
+                    e.preventDefault();
+                    $(quote_desc_div).removeClass('edit-description');
+                    $(quote_desc_div).find('.gl-quote-description-edit').hide();
+                    $(quote_desc_edit_link).removeClass('hide-link');
+                    $(quote_desc_cancel_edit_link).addClass('hide-link');
+                    $(quote_desc_is_custom).val('no');
+
+                    // replace the original description
+                    var quote_description_text = $(quote_desc_div).find('.gl-quote-description-text');
+                    var quote_description_textarea = $(quote_desc_div).find('.gl-quote-description-textarea');
+                    $(quote_description_textarea).val($(quote_description_text).text());
+
+                });
+            }
+        });
+      
         // add the original price field column to the head
         var item_header = $('.woocommerce_order_items_wrapper th.item_cost');
         if(!$(item_header).parent().find('.gl-original-price').length) {

@@ -66,7 +66,7 @@ $colspan = 0;
         $colspan = 5;
         if( ! empty( $items ) ):
 
-            foreach( $items as $item ):
+            foreach( $items as $item_id => $item ):
               
                 if( isset( $item['variation_id']) && $item['variation_id'] ){
                     $_product = wc_get_product( $item['variation_id'] );
@@ -131,17 +131,21 @@ $colspan = 0;
                     //app.launchURL("http://www.mycompany.com/pdfDocument.pdf", true);
 							echo '<a style="text-decoration: none; color: #e2ae68; font-weight: bold;" target="_blank" href="' . esc_url( $_product->get_permalink() ) . '">' . esc_html( $title ) . '</a>';
                     // END GL CUSTOM 
-                    
-                    // see if the quote description is set 
-                    $quote_description = get_post_meta($_product->get_id(), 'quote_description', true);
+                    // see if the item order meta quote description is set
+                    $quote_description = wc_get_order_item_meta($item_id, '_gl_quote_description_custom', true);
+                    if($quote_description == '') {
+                        // see if the quote description is set 
+                        $quote_description = get_post_meta($_product->get_id(), 'quote_description', true);
 
-                    if($_product->get_type() == 'variation') {
-                        if($quote_description == '') {
-                            // try to get the parent desc
-                            $parent_id = $_product->get_parent_id();
-                            $quote_description = get_post_meta($parent_id, 'quote_description', true);
-                        }
-                    } 
+                        if($_product->get_type() == 'variation') {
+                            if($quote_description == '') {
+                                // try to get the parent desc
+                                $parent_id = $_product->get_parent_id();
+                                $quote_description = get_post_meta($parent_id, 'quote_description', true);
+                            }
+                        } 
+                    }
+                   
                     if($quote_description != ''):
                         ?>
                         <small>
