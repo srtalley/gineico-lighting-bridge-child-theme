@@ -130,12 +130,12 @@ jQuery(function($) {
         });
       
         // add the original price field column to the head
-        var item_header = $('.woocommerce_order_items_wrapper th.item_cost');
-        if(!$(item_header).parent().find('.gl-original-price').length) {
-            $('<th class="gl-original-price" style="text-align: right;">Original Cost</th>').insertBefore($(item_header));
-        }
+        // var item_header = $('.woocommerce_order_items_wrapper th.item_cost');
+        // if(!$(item_header).parent().find('.gl-original-price').length) {
+            // $('<th class="gl-original-price" style="text-align: right;">Original Cost</th>').insertBefore($(item_header));
+        // }
 
-        // add the unit price fields and orignal price fields
+        // add the unit price fields and original price fields
         var item_cost_fields = $('.woocommerce_order_items_wrapper td.item_cost');
         if(item_cost_fields.length) {
             $(item_cost_fields).each(function(index) {
@@ -143,14 +143,18 @@ jQuery(function($) {
                     var item_cost_field = this;
                     // get the item ID
                     var order_item_id = $(this).parent().data('order_item_id');
-                    var value = $(this).data('sort-value');
-                
-                    // CODE TO SHOW PRICE
-                    $('<td class="gl-original-price" style="text-align: right;"></td>').insertBefore(item_cost_field);
+                    // var line_total_value = $(item_cost_field).parent().find('input.line_total').val();
+                    // var quantity = $(item_cost_field).parent().find('input.quantity').val(); 
+                    var value = $(item_cost_field).parent().find('input[name="gl_current_item_cost"]').val(); //$(this).data('sort-value');
 
-                    gl_get_product_price_from_order_item_id(order_item_id).done(function(data) {
-                        $(item_cost_field).parent().find('.gl-original-price').html(data.price);
-                    });
+                    // update the view price
+                    $(item_cost_field).find('.woocommerce-Price-amount').html('<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">$</span>' + value + '</bdi></span>');
+                    // CODE TO SHOW PRICE
+                    // $('<td class="gl-original-price" style="text-align: right;"></td>').insertBefore(item_cost_field);
+
+                    // gl_get_product_price_from_order_item_id(order_item_id).done(function(data) {
+                    //     $(item_cost_field).parent().find('.gl-original-price').html(data.price);
+                    // });
 
                     $(this).append('<div class="edit" style="display: none;"><input type="number" autocomplete="off" name="gc_unit_price[' + order_item_id + ']" placeholder="0" value="' + value + '" data-qty="1" class="gc-unit-price"></div>');
                     var added_edit_field = $(this).find('.edit .gc-unit-price');
@@ -165,7 +169,8 @@ jQuery(function($) {
 
                     });
                     $(item_cost_field).parent().find('input.line_total').on('change', function() {
-
+                    // $(line_total_value).on('change', function() {
+                        
                         var quantity = $(item_cost_field).parent().find('input.quantity').val(); 
                         
                         var new_unit_price = $(this).val() / quantity;
@@ -175,6 +180,21 @@ jQuery(function($) {
                 }
                 
             });
+        }
+
+        // fix the vouchers column
+        var wc_order_totals = $('.wc-order-totals');
+        if(wc_order_totals.length) {
+            // see if the vouchers column is filled
+            var wc_order_totals_lines = $(wc_order_totals).find('.label');
+            $(wc_order_totals_lines).each(function() {
+                if($(this).text() == 'Voucher(s):') {
+                    // hide the vouchers line and fix the item subtotal
+                    $(this).parent().hide();
+                    var subtotal = $(this).parentsUntil('.wc-order-totals').parent().find('input[name="gl_order_subtotal"]').val();
+                    $(this).parentsUntil('.wc-order-totals').parent().find('tbody tr:first-child .total').html('<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">$</span>' + subtotal + '</bdi></span>');
+                }
+            })
         }
     }
     /**

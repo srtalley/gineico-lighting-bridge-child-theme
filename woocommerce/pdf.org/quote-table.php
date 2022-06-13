@@ -244,7 +244,7 @@ $colspan = 0;
                                 ?>
                                 <th scope="col" colspan="3"></th>
                                 <?php if($shipping_method_count == 1) {
-                                    $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-bottom: 1px solid #777;';
+                                    $freight_td_classes = 'text-align:left; border-top: 1px solid #777; border-left: 1px solid #777; border-bottom: 1px solid #777;';
                                 } else {
                                     $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-top: 1px solid #777;  border-color: #777;';
                                 }
@@ -255,9 +255,9 @@ $colspan = 0;
                                 } else if($i > 1) {
 
                                     if($i < $shipping_method_count) {
-                                        $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-right: 1px solid #777;';
+                                        $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-top: 1px solid #777;';
                                     } else {
-                                        $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-right: 1px solid #777;border-bottom: 1px solid #777;';
+                                        $freight_td_classes = 'text-align:left; border-left: 1px solid #777; border-right: 1px solid #777; border-top: 1px solid #777; border-bottom: 1px solid #777;';
                                     }
 
                                     ?>
@@ -267,8 +267,8 @@ $colspan = 0;
                                 }
                                     // end if
                         ?>
-                            <td scope="col" colspan="2" style="text-align:left; border-left: 1px solid #777; border-color: #777;"><?php echo $this_shipping_method['name']; ?></td>
-                            <td scope="col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;" class="shipping-col"><?php echo  $this_shipping_method['amount']; ?></td>
+                            <td scope="col" colspan="2" style="text-align:right; border-left: 1px solid #777; border-top: 1px solid #777;border-color: #777;"><?php echo $this_shipping_method['name']; ?></td>
+                            <td scope="col" style="text-align:right; border-left: 1px solid #777; border-top: 1px solid #777; border-right: 1px solid #777; border-color: #777;" class="shipping-col"><?php echo  $this_shipping_method['amount']; ?></td>
                             </tr>
                         <?php
                             $i++;
@@ -283,17 +283,18 @@ $colspan = 0;
                     <tr>
                         <th scope="col" colspan="3"></th>
                         <?php 
-                        if($total['label'] == 'Subtotal:') {
-                            ?>
-                            <th scope="col" colspan="3" style="text-align:right; border-bottom: 1px solid #777;"><?php echo $total['label']; ?></th>
-                        <?php 
-                        } else {
-                        ?>
-                            <th scope="col" colspan="3" style="text-align:right;"><?php echo $total['label']; ?></th>
-                        <?php
+                            $total_label_additional_classes = 'border-bottom: 1px solid #777;';
+                            if($total['label'] == 'Subtotal:') {
+                            // there may be "discounts so include those
+                            $total['value'] = wc_price($order->get_subtotal() - $order->get_discount_total());
+                            if(count($order->get_shipping_methods()) >= 1) {
+                                $total_label_additional_classes = 'border-bottom: none;';
+                            }
                         }
                         ?>
-                        <td scope="col" class="last-col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777;"><?php echo $total['value']; ?></td>
+                        <th scope="col" colspan="3" style="text-align:right;"><?php echo $total['label']; ?></th>
+
+                        <td scope="col" class="last-col" style="text-align:right; border-left: 1px solid #777; border-right: 1px solid #777; border-color: #777; <?php echo $total_label_additional_classes; ?>"><?php echo $total['value']; ?></td>
                     </tr>
                     <?php 
                 }

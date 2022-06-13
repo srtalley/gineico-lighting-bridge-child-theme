@@ -8,8 +8,6 @@ class GL_YITH_WooCommerce_Quotes {
 
   
     public function __construct() {
-
-
         
         // PDF file url version string
         add_filter('ywraq_pdf_file_url', array($this, 'gl_ywraq_pdf_url_string'), 10, 1);
@@ -67,6 +65,18 @@ class GL_YITH_WooCommerce_Quotes {
 
         add_filter( 'ywraq_mpdf_args', array($this, 'gineico_ywraq_mpdf_args') );
  
+        // do not show discounts in quotes
+        add_filter( 'option_ywraq_show_old_price', array($this, 'filter_ywraq_show_old_price'), 10, 1 );
+
+        // show the quote description in the order area
+        add_action( 'woocommerce_before_order_itemmeta', array($this, 'gl_show_quote_description'), 10, 3 );
+
+        // add the original price to the admin order 
+        add_action( 'woocommerce_admin_order_item_headers', array($this, 'gl_show_original_price_header'), 10, 1 );
+        add_action( 'woocommerce_admin_order_item_values', array($this, 'gl_show_original_price_value'), 10, 3 );
+
+        // add a field for the admin orders to show the price without a voucher column
+        add_action( 'woocommerce_admin_order_totals_after_discount', array($this, 'gl_show_subtotal_without_vouchers'), 10, 1 );
 
     }
 
@@ -330,13 +340,17 @@ class GL_YITH_WooCommerce_Quotes {
             }
             #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.display_meta, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta,
             #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items td.name .wc-order-item-sku, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items td.name .wc-order-item-variation,
-            .gl-quote-description {
+            .gl-quote-description,
+            #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items td p {
                 display: block;
                 margin-top: 0.5em;
                 font-size: 16px !important;
                 line-height: 1.6em;
                 color: #2e2e2e;
                 padding-top: 8px;
+            }
+            #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.display_meta tr td p {
+                padding-top: 0;
             }
             .gl-quote-description-label {
                 font-weight: 600;
@@ -348,7 +362,9 @@ class GL_YITH_WooCommerce_Quotes {
             .gl-quote-description-edit-links {
                 padding-left: 10px;
             }
-            .gl-quote-description-edit-links .hide-link {
+            #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .line_cost .wc-order-item-discount,
+            .gl-quote-description-edit-links .hide-link,
+            #woocommerce-order-items .add-items .button.add-coupon {
                 display: none;
             }
             .gl-quote-description-text p {
@@ -363,6 +379,7 @@ class GL_YITH_WooCommerce_Quotes {
                 color: #000000;
                 font-size: 18px;
                 font-weight: 600;
+                line-height: 1.6em;
                 text-decoration-color: #e2ae68;
                 text-decoration-thickness: .125em;
                 text-underline-offset: 4.5px;
@@ -370,6 +387,9 @@ class GL_YITH_WooCommerce_Quotes {
             #order_line_items td.name .wc-order-item-name:after {
                 content:'';
                 border-bottom: 2px solid black;
+            }
+            #woocommerce-order-items .wc-order-data-row {
+                padding-right: 90px;
             }
             .gl-quote-description {
                 order: 2 !important;
@@ -787,9 +807,105 @@ class GL_YITH_WooCommerce_Quotes {
 
         }
     }
+    
+    /**
+     * Change the PDF orientation
+     */
     public function gineico_ywraq_mpdf_args($args) {
         $args['orientation'] = 'L';
         return $args;
+    }
+
+    /**
+     * Do not show discounts in subtotals in PDFs
+     */
+    public function filter_ywraq_show_old_price($value) {
+        return 'no';
+    }
+    /**
+     * Show the quote description in the order area
+     */
+    public function gl_show_quote_description($item_id, $item, $product) {
+        if(is_object($product)) {
+
+            $is_variation = false;
+            $product->get_sku();
+            // first see if this line item already has a custom description
+            $quote_description_custom_meta = wc_get_order_item_meta($item_id, '_gl_quote_description_custom', true);
+            $quote_description = get_post_meta($product->get_id(), 'quote_description', true);
+
+            if($product->get_type() == 'variation') {
+                $is_variation = true;
+                $quote_description = get_post_meta($product->get_id(), 'quote_description', true);
+                if($quote_description == '') {
+                    // try to get the parent desc
+                    $parent_id = $product->get_parent_id();
+                    $quote_description = get_post_meta($parent_id, 'quote_description', true);
+                }
+            } 
+            // if($quote_description != '') {
+                // echo '<div class="gl-quote-description"><strong>Quote Description: </strong>' . $quote_description . '<div class="edit"><table class="gl-quote-description-edit"><tr><td><textarea name="gl-quote-description[' . $item_id . ']" disabled>' . $quote_description . '</textarea></td><td><a href="#" class=name="gl-quote-description-edit-link" data-item_id="' . $item_id . '">Edit</a><a href="#" class=name="gl-quote-description-cancel-edit-link" data-item_id="' . $item_id . '">Cancel</a> <label><input type="checkbox" name="gl-quote-description-update-product[' . $item_id . ']">Update Description for All</label></td></tr></table></div></div>';
+                // echo '<div class="gl-quote-description"><strong>Quote Description: </strong>' . $quote_description . '<span class="edit gl-quote-description-edit-links"><a href="#" class="gl-quote-description-edit-link" data-item_id="' . $item_id . '">Edit</a><a href="#" class="gl-quote-description-cancel-edit-link hide-link" data-item_id="' . $item_id . '">Cancel</a></span><div class="gl-quote-description-edit"><label class="gl-quote-description-edit-label" for="gl-quote-description[' . $item_id . ']">Enter New Quote Description:</label><textarea name="gl-quote-description[' . $item_id . ']">' . $quote_description . '</textarea> <label><input type="checkbox" name="gl-quote-description-update-product[' . $item_id . ']">&nbsp;Update Description for All</label></div></div>';
+
+                // echo '<div class="gl-quote-description"><span class="gl-quote-description-label">Quote Description: </span><span class="gl-quote-description-text">' . $quote_description . '</span><span class="edit gl-quote-description-edit-links"><a href="#" class="gl-quote-description-edit-link" data-item_id="' . $item_id . '">Edit</a></span><div class="gl-quote-description-edit"><label class="gl-quote-description-edit-label" for="gl-quote-description[' . $item_id . ']">Enter New Quote Description:</label><span class="edit gl-quote-description-edit-links"><a href="#" class="gl-quote-description-cancel-edit-link hide-link" data-item_id="' . $item_id . '">Cancel</a></span><textarea class="gl-quote-description-textarea" name="gl-quote-description[' . $item_id . ']">' . $quote_description . '</textarea> <label><input type="checkbox" name="gl-quote-description-update-product[' . $item_id . ']">&nbsp;Update Description for All</label></div></div>';
+                ?>
+                <div class="gl-quote-description">
+                    <?php if($quote_description_custom_meta != ''): ?>
+                        <span class="gl-quote-description-label">Custom Quote Description: </span>
+                        <span class="edit gl-quote-description-edit-links"><a href="#" class="gl-quote-description-edit-link" data-item_id="<?php echo $item_id ; ?>">Edit</a></span>
+                        <span class="gl-quote-description-text"><?php echo wpautop($quote_description_custom_meta) ; ?></span>
+
+                        <? // set it for the text area 
+                        $quote_description = $quote_description_custom_meta;
+                        ?>
+                    <?php else: ?>
+                        <span class="gl-quote-description-label">Quote Description: </span>
+                        <span class="edit gl-quote-description-edit-links"><a href="#" class="gl-quote-description-edit-link" data-item_id="<?php echo $item_id ; ?>">Edit</a></span>
+                        <span class="gl-quote-description-text"><?php echo wpautop($quote_description ); ?></span>
+                    <?php endif; ?>
+
+                    <div class="gl-quote-description-edit">
+                        <label class="gl-quote-description-edit-label" for="gl-quote-description[<?php echo $item_id ; ?>]">Enter New Quote Description:</label><span class="edit gl-quote-description-edit-links"><a href="#" class="gl-quote-description-cancel-edit-link hide-link" data-item_id="<?php echo $item_id ; ?>">Cancel</a></span>
+                        <textarea class="gl-quote-description-textarea" name="gl-quote-description[<?php echo $item_id ; ?>]"><?php echo $quote_description ; ?></textarea>
+                        <input type="hidden" class="gl-quote-description-is-custom" name="gl-quote-description-is-custom[<?php echo $item_id ; ?>]" value="no">
+                        <?php if($is_variation): ?>
+                            <div><label><input type="checkbox" name="gl-quote-description-update-product-variation[<?php echo $item_id ; ?>]">&nbsp;Update description for this variation</label></div>
+
+                            <div><label><input type="checkbox" name="gl-quote-description-update-product-parent[<?php echo $item_id ; ?>]">&nbsp;Update description for parent product</label></div>
+                        <?php else: ?>
+                            <div><label><input type="checkbox" name="gl-quote-description-update-product-parent[<?php echo $item_id ; ?>]">&nbsp;Update description for product</label></div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php
+            // }
+        }
+    }
+
+    /**
+     * Show the Original Price in the order area
+     */
+    public function gl_show_original_price_header($order) {
+        echo '<th class="gl-original-price" style="text-align: right;">Original Cost</th>';
+    }
+    public function gl_show_original_price_value($product, $item, $item_id) {
+        $current_cost = 'null';
+        $original_price_html = '';
+        if(is_object( $product )) {
+            $current_cost = $item->get_total() / $item->get_quantity();
+            $current_cost = number_format($current_cost, 2, '.', '');
+            $original_price_html = wc_price($product->get_price());
+        }
+        echo '<td class="gl-original-price" style="text-align: right;">' . $original_price_html . '<input type="hidden" name="gl_current_item_cost" value="' . $current_cost . '"></td>';
+
+    }
+    /**
+     * add a field for the admin orders to show the price without a voucher column
+     */
+    public function gl_show_subtotal_without_vouchers($order_id) {
+        $order = wc_get_order($order_id);
+        $order_subtotal = $order->get_subtotal() - $order->get_discount_total();
+        echo '<input type="hidden" name="gl_order_subtotal" value="' . $order_subtotal . '">';
     }
 } // end class
 

@@ -4,6 +4,8 @@
 include_once('includes/qode-breadcrumbs.php');
 include_once('includes/class-portfolio.php');
 
+// include_once('includes/class-gc-wc-product-data-store-cpt.php');
+
 include_once('includes/class-woocommerce.php');
 include_once('includes/class-woocommerce-product.php');
 include_once('includes/class-woocommerce-admin.php');
@@ -13,7 +15,7 @@ include_once('includes/class-woocommerce-customers-list.php');
 include_once('includes/class-woocommerce-customers-table.php');
 include_once('includes/class-woocommerce-customers-wishlist-table.php');
 
-include_once('includes/class-yith-woocommerce-quotes.php');
+// include_once('includes/class-yith-woocommerce-quotes.php');
 include_once('includes/class-yith-woocommerce-wishlist.php');
 // include_once('includes/class-yith-woocommerce-wishlist-admin.php');
 include_once('includes/class-yith-woocommerce-wishlist-page-template.php');
@@ -1449,3 +1451,16 @@ function wf( $contents, $filename = '' ) {
         $defaults['delimiter'] = ' &gt; ';
         return $defaults;
     }
+
+/**
+ * Return the abbreviation for this site
+ */
+function get_gineico_site_abbreviation() {
+	if(site_url() == "https://www.gineicolighting.com.au" || site_url() == "https://gineicolighting.client.dustysun.com") {
+		return 'GL';
+	}  if(site_url() == "https://www.gineicomarine.com.au" || site_url() == "https://gineicomarine.dev.dustysun.com") {
+		return 'GM';
+	} else {
+		return false;
+	}
+}

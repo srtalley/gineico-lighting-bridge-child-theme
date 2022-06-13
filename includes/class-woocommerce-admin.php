@@ -8,16 +8,8 @@ class GL_WooCommerceAdmin {
 
     public function __construct() {
         add_action( 'current_screen', array($this,'gl_woocommerce_product_admin'), 10, 1 );
-
-        add_action( 'woocommerce_before_order_itemmeta', array($this, 'gl_show_quote_description'), 10, 3 );
-
-        add_filter('woocommerce_product_variation_get_sku', array($this, 'gl_test'), 10, 2 );
-
     }
 
-    public function gl_test($value, $object) {
-        return $value;
-    }
     /**
     * Move the product metaboxes to the left in the admin area.
     */
@@ -296,67 +288,7 @@ class GL_WooCommerceAdmin {
         <?php
     }
 
-    /**
-     * Show the quote description in the order area
-     */
-    public function gl_show_quote_description($item_id, $item, $product) {
-        if(is_object($product)) {
-
-            $is_variation = false;
-            $product->get_sku();
-            // first see if this line item already has a custom description
-            $quote_description_custom_meta = wc_get_order_item_meta($item_id, '_gl_quote_description_custom', true);
-            $quote_description = get_post_meta($product->get_id(), 'quote_description', true);
-
-            if($product->get_type() == 'variation') {
-                $is_variation = true;
-                $quote_description = get_post_meta($product->get_id(), 'quote_description', true);
-                if($quote_description == '') {
-                    // try to get the parent desc
-                    $parent_id = $product->get_parent_id();
-                    $quote_description = get_post_meta($parent_id, 'quote_description', true);
-                }
-            } 
-            // if($quote_description != '') {
-                // echo '<div class="gl-quote-description"><strong>Quote Description: </strong>' . $quote_description . '<div class="edit"><table class="gl-quote-description-edit"><tr><td><textarea name="gl-quote-description[' . $item_id . ']" disabled>' . $quote_description . '</textarea></td><td><a href="#" class=name="gl-quote-description-edit-link" data-item_id="' . $item_id . '">Edit</a><a href="#" class=name="gl-quote-description-cancel-edit-link" data-item_id="' . $item_id . '">Cancel</a> <label><input type="checkbox" name="gl-quote-description-update-product[' . $item_id . ']">Update Description for All</label></td></tr></table></div></div>';
-                // echo '<div class="gl-quote-description"><strong>Quote Description: </strong>' . $quote_description . '<span class="edit gl-quote-description-edit-links"><a href="#" class="gl-quote-description-edit-link" data-item_id="' . $item_id . '">Edit</a><a href="#" class="gl-quote-description-cancel-edit-link hide-link" data-item_id="' . $item_id . '">Cancel</a></span><div class="gl-quote-description-edit"><label class="gl-quote-description-edit-label" for="gl-quote-description[' . $item_id . ']">Enter New Quote Description:</label><textarea name="gl-quote-description[' . $item_id . ']">' . $quote_description . '</textarea> <label><input type="checkbox" name="gl-quote-description-update-product[' . $item_id . ']">&nbsp;Update Description for All</label></div></div>';
-
-                // echo '<div class="gl-quote-description"><span class="gl-quote-description-label">Quote Description: </span><span class="gl-quote-description-text">' . $quote_description . '</span><span class="edit gl-quote-description-edit-links"><a href="#" class="gl-quote-description-edit-link" data-item_id="' . $item_id . '">Edit</a></span><div class="gl-quote-description-edit"><label class="gl-quote-description-edit-label" for="gl-quote-description[' . $item_id . ']">Enter New Quote Description:</label><span class="edit gl-quote-description-edit-links"><a href="#" class="gl-quote-description-cancel-edit-link hide-link" data-item_id="' . $item_id . '">Cancel</a></span><textarea class="gl-quote-description-textarea" name="gl-quote-description[' . $item_id . ']">' . $quote_description . '</textarea> <label><input type="checkbox" name="gl-quote-description-update-product[' . $item_id . ']">&nbsp;Update Description for All</label></div></div>';
-                ?>
-                <div class="gl-quote-description">
-                    <?php if($quote_description_custom_meta != ''): ?>
-                        <span class="gl-quote-description-label">Custom Quote Description: </span>
-                        <span class="edit gl-quote-description-edit-links"><a href="#" class="gl-quote-description-edit-link" data-item_id="<?php echo $item_id ; ?>">Edit</a></span>
-                        <span class="gl-quote-description-text"><?php echo wpautop($quote_description_custom_meta) ; ?></span>
-
-                        <? // set it for the text area 
-                        $quote_description = $quote_description_custom_meta;
-                        ?>
-                    <?php else: ?>
-                        <span class="gl-quote-description-label">Quote Description: </span>
-                        <span class="edit gl-quote-description-edit-links"><a href="#" class="gl-quote-description-edit-link" data-item_id="<?php echo $item_id ; ?>">Edit</a></span>
-                        <span class="gl-quote-description-text"><?php echo wpautop($quote_description ); ?></span>
-                    <?php endif; ?>
-
-                    <div class="gl-quote-description-edit">
-                        <label class="gl-quote-description-edit-label" for="gl-quote-description[<?php echo $item_id ; ?>]">Enter New Quote Description:</label><span class="edit gl-quote-description-edit-links"><a href="#" class="gl-quote-description-cancel-edit-link hide-link" data-item_id="<?php echo $item_id ; ?>">Cancel</a></span>
-                        <textarea class="gl-quote-description-textarea" name="gl-quote-description[<?php echo $item_id ; ?>]"><?php echo $quote_description ; ?></textarea>
-                        <input type="hidden" class="gl-quote-description-is-custom" name="gl-quote-description-is-custom[<?php echo $item_id ; ?>]" value="no">
-                        <?php if($is_variation): ?>
-                            <div><label><input type="checkbox" name="gl-quote-description-update-product-variation[<?php echo $item_id ; ?>]">&nbsp;Update description for this variation</label></div>
-
-                            <div><label><input type="checkbox" name="gl-quote-description-update-product-parent[<?php echo $item_id ; ?>]">&nbsp;Update description for parent product</label></div>
-                        <?php else: ?>
-                            <div><label><input type="checkbox" name="gl-quote-description-update-product-parent[<?php echo $item_id ; ?>]">&nbsp;Update description for product</label></div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-                <?php
-            // }
-        }
-    }
-
-
+    
 
 } // end class
 

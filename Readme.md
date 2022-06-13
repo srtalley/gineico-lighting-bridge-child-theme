@@ -1,6 +1,14 @@
 # Changelog
 
 Gineico Lighting Bridge child theme documented changes.
+
+## [2.0.19a] - 2022-06-13
+* Removed the quoting class so it could be added to the Gineico Quoting System plugin.
+
+## [2.0.19a] - 2022-06-09
+* Updated the quotes to not show a discount or strikethroughs.
+* Fixes for totals on the quote when there's a discount.
+
 ## [2.0.19] - 2022-05-27
 * Added the ability to set a custom quote description from within the manual order.
 * Added the ability to update the variation or main product quote description with the custom description.
