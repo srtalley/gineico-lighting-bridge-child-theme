@@ -342,12 +342,12 @@ if(!function_exists('bridge_child_custom_taxonomy_columns')) {
 	add_filter('manage_edit-designers_columns' , 'bridge_child_custom_taxonomy_columns');
 }
 
-if(!function_exists('bridge_child_ywraq_change_paper_orientation')) {
-	function bridge_child_ywraq_change_paper_orientation($orientation) {
-		return 'landscape';
-	}
-	add_filter('ywraq_change_paper_orientation' , 'bridge_child_ywraq_change_paper_orientation');
-}
+// if(!function_exists('bridge_child_ywraq_change_paper_orientation')) {
+// 	function bridge_child_ywraq_change_paper_orientation($orientation) {
+// 		return 'landscape';
+// 	}
+// 	add_filter('ywraq_change_paper_orientation' , 'bridge_child_ywraq_change_paper_orientation');
+// }
 
 if(!function_exists('bridge_child_custom_taxonomy_columns_content')) {
 	function bridge_child_custom_taxonomy_columns_content($content, $column_name, $term_id) {
@@ -779,49 +779,6 @@ if(!function_exists('qode_ywraq_get_default_form_field_email')) {
 	add_filter( 'ywraq_get_default_form_field_email', 'qode_ywraq_get_default_form_field_email' );
 }
 
-/**
- * Add the resend quote action to order actions select box on edit order page
- * Only added for Pending Quote orders
- *
- * @param array $actions order actions array to display
- * @return array - updated actions
- */
-if(!function_exists('qode_wc_add_action_to_order_actions_box')) {
-	function qode_wc_add_action_to_order_actions_box($actions) {
-	    global $theorder;
-	    $order_data = $theorder->get_data();
-	    if($order_data['status'] != 'ywraq-pending') {
-	        return $actions;
-	    }
-	    $actions['wc_resend_quote_email_action'] = __('Resend Quote Email', 'gineicolighting');
-	    return $actions;
-	}
-	add_action('woocommerce_order_actions', 'qode_wc_add_action_to_order_actions_box');
-}
-
-/**
- * Add an order note when quote resend
- *
- * @param \WC_Order $order
- */
-if(!function_exists('qode_wc_resend_quote_email_handler')) {
-	function qode_wc_resend_quote_email_handler($order) {
-	    $message = sprintf(__('Quote details email resent by %s.', 'gineicolighting'), wp_get_current_user()->display_name);
-	    $order->add_order_note($message);
-
-		$mailer = WC()->mailer();
-		$mails = $mailer->get_emails();
-		if(!empty($mails)) {
-		    foreach($mails as $mail) {
-		        if($mail->id == 'ywraq_send_quote') {
-		        	$mail->trigger($order->get_id());
-		        }
-		    }
-		}
-	}
-	add_action('woocommerce_order_action_wc_resend_quote_email_action', 'qode_wc_resend_quote_email_handler' );
-}
-
 if ( ! function_exists( 'bridge_child_product_advanced_search' ) ) {
 	function bridge_child_product_advanced_search( $atts ) {
 		// get filter selected values
@@ -1093,44 +1050,12 @@ if ( ! function_exists( 'bridge_child_woocommerce_email_footer' ) ) {
 				break;
 			
 			default:
-				echo '<p>&nbsp;</p>';
-				bridge_child_woocommerce_quote_email_pdf_footer($email);
+				// echo '<p>&nbsp;</p>';
+				// bridge_child_woocommerce_quote_email_pdf_footer($email);
 				break;
 		}
 	}
 	add_action( 'woocommerce_email_footer', 'bridge_child_woocommerce_email_footer' );
-}
-
-if ( ! function_exists( 'bridge_child_woocommerce_quote_email_pdf_footer' ) ) {
-	function bridge_child_woocommerce_quote_email_pdf_footer($order_id) {
-		?>
-		<div class="gineico-pdf-footer" style="margin-top: 100px; font-style: italic; font-size: 12px;">
-		<p style="font-style: italic; font-size: 12px;">
-			PLEASE TAKE NOTE OF ALL THE CONDITIONS OF THIS QUOTE AS STATED BELOW, BEFORE PLACING AN ORDER</p>
-			<ol>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Until fully Paid, goods remain the sole property of Gineico Queensland Pty Ltd.</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Unless otherwise specified, indicated costs are unit costs.</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Prices are quoted not including G.S.T</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Prices are quoted for goods ex our store. Delivery charges will apply if goods are required to be on-forwarded.</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Unless otherwise stated, standard manufacturing lead time is aproximately 4-5 weeks from confirmation of order (not including holiday closures). The goods are then ready for collection from the manufacturer in Italy.</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Standard prices are based on sea freight from Italy to Australia. Transit time for sea freight is aproximately 6-7 weeks from date goods are ready / collected from the manufacturers warehouse in Italy (see above).</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Express air freight option is available at additional cost. This reduces transit time to aproximately 7 working days from date goods are ready / collected from the manufacturers warehouse in Italy (see above).</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Terms of sale: 50% deposit with written order. Balance in full prior to consignment.</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Balance of payment and collection of goods, to take place within 7 calendar days from date when goods become available from our warehouse.</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Failure to pay and collect goods by the stated time may incur storage costs or the forfeit of the deposit and goods.</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Payments made by cheque, credit card or telegraphic transfer will be subject to clearance of funds in our account, prior to goods being released.</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">This offer is valid for 30 calendar days from date of issue.</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Quantities indicated above are to be checked by purchaser prior to ordering. Reduction of the indicated quantities will be cause for revision of quoted prices.</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Restocking fee of 50% applies to all items returned. Items can only be returned with prior written consent by gineico QLD Pty Ltd. Goods to be returned in "as new condition" at client's expense.</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Custom or non standard / stock hardware cannot be returned.</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Clients should take care to download the product specific data sheets, or to request technical information in writing, to ensure all items ordered are in every way compatible for each specific intended application.</li>
-				<li style="font-style: italic; margin-bottom: 5px; font-size: 12px;">Clients should take care to check all goods when they are delivered. Any claims for damaged goods or missing items must be lodged in writing within 7 days of arrival on site.</li>
-			</ol>
-		</div>
-		<?php
-	}
-	add_action( 'yith_ywraq_quote_template_after_content', 'bridge_child_woocommerce_quote_email_pdf_footer' );
-	add_action( 'woocommerce_order_details_after_order_table', 'bridge_child_woocommerce_quote_email_pdf_footer' );
 }
 
 
@@ -1148,24 +1073,24 @@ if ( ! function_exists( 'bridge_child_woocommerce_email_footer_quote_conditions_
 				break;
 			
 			default:
-				echo sprintf( __( 'PLEASE TAKE NOTE OF ALL THE CONDITIONS OF THIS QUOTE AS STATED BELOW, BEFORE PLACING AN ORDER', 'woocommerce' ) ) . "\n\n";
-				echo sprintf( __( '1. Until fully Paid, goods remain the sole property of Gineico Queensland Pty Ltd.', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '2. Unless otherwise specified, indicated costs are unit costs.', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '3. Prices are quoted not including G.S.T', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '4. Prices are quoted for goods ex our store. Delivery charges will apply if goods are required to be on-forwarded.', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '5. Unless otherwise stated, standard manufacturing lead time is aproximately 4-5 weeks from confirmation of order (not including holiday closures). The goods are then ready for collection from the manufacturer in Italy.', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '6. Standard prices are based on sea freight from Italy to Australia. Transit time for sea freight is aproximately 6-7 weeks from date goods are ready / collected from the manufacturers warehouse in Italy (see above).', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '7. Express air freight option is available at additional cost. This reduces transit time to aproximately 7 working days from date goods are ready / collected from the manufacturers warehouse in Italy (see above).', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '8. Terms of sale: 50% deposit with written order. Balance in full prior to consignment.', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '9. Balance of payment and collection of goods, to take place within 7 calendar days from date when goods become available from our warehouse.', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '10. Failure to pay and collect goods by the stated time may incur storage costs or the forfeit of the deposit and goods.', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '11. Payments made by cheque, credit card or telegraphic transfer will be subject to clearance of funds in our account, prior to goods being released.', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '12. This offer is valid for 30 calendar days from date of issue.', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '13. Quantities indicated above are to be checked by purchaser prior to ordering. Reduction of the indicated quantities will be cause for revision of quoted prices.', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '14. Restocking fee of 50% applies to all items returned. Items can only be returned with prior written consent by gineico QLD Pty Ltd. Goods to be returned in "as new condition" at client\'s expense.', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '15. Custom or non standard / stock hardware cannot be returned.', 'woocommerce' ) ) . "\n";
-				echo sprintf( __( '16. Clients should take care to download the product specific data sheets, or to request technical information in writing, to ensure all items ordered are in every way compatible for each specific intended application.', 'woocommerce' ) ) . "\n\n";
-				echo sprintf( __( '17. Clients should take care to check all goods when they are delivered. Any claims for damaged goods or missing items must be lodged in writing within 7 days of arrival on site.', 'woocommerce' ) ) . "\n\n";
+				// echo sprintf( __( 'PLEASE TAKE NOTE OF ALL THE CONDITIONS OF THIS QUOTE AS STATED BELOW, BEFORE PLACING AN ORDER', 'woocommerce' ) ) . "\n\n";
+				// echo sprintf( __( '1. Until fully Paid, goods remain the sole property of Gineico Queensland Pty Ltd.', 'woocommerce' ) ) . "\n";
+				// echo sprintf( __( '2. Unless otherwise specified, indicated costs are unit costs.', 'woocommerce' ) ) . "\n";
+				// echo sprintf( __( '3. Prices are quoted not including G.S.T', 'woocommerce' ) ) . "\n";
+				// echo sprintf( __( '4. Prices are quoted for goods ex our store. Delivery charges will apply if goods are required to be on-forwarded.', 'woocommerce' ) ) . "\n";
+				// echo sprintf( __( '5. Unless otherwise stated, standard manufacturing lead time is aproximately 4-5 weeks from confirmation of order (not including holiday closures). The goods are then ready for collection from the manufacturer in Italy.', 'woocommerce' ) ) . "\n";
+				// echo sprintf( __( '6. Standard prices are based on sea freight from Italy to Australia. Transit time for sea freight is aproximately 6-7 weeks from date goods are ready / collected from the manufacturers warehouse in Italy (see above).', 'woocommerce' ) ) . "\n";
+				// echo sprintf( __( '7. Express air freight option is available at additional cost. This reduces transit time to aproximately 7 working days from date goods are ready / collected from the manufacturers warehouse in Italy (see above).', 'woocommerce' ) ) . "\n";
+				// echo sprintf( __( '8. Terms of sale: 50% deposit with written order. Balance in full prior to consignment.', 'woocommerce' ) ) . "\n";
+				// echo sprintf( __( '9. Balance of payment and collection of goods, to take place within 7 calendar days from date when goods become available from our warehouse.', 'woocommerce' ) ) . "\n";
+				// echo sprintf( __( '10. Failure to pay and collect goods by the stated time may incur storage costs or the forfeit of the deposit and goods.', 'woocommerce' ) ) . "\n";
+				// echo sprintf( __( '11. Payments made by cheque, credit card or telegraphic transfer will be subject to clearance of funds in our account, prior to goods being released.', 'woocommerce' ) ) . "\n";
+				// echo sprintf( __( '12. This offer is valid for 30 calendar days from date of issue.', 'woocommerce' ) ) . "\n";
+				// echo sprintf( __( '13. Quantities indicated above are to be checked by purchaser prior to ordering. Reduction of the indicated quantities will be cause for revision of quoted prices.', 'woocommerce' ) ) . "\n";
+				// echo sprintf( __( '14. Restocking fee of 50% applies to all items returned. Items can only be returned with prior written consent by gineico QLD Pty Ltd. Goods to be returned in "as new condition" at client\'s expense.', 'woocommerce' ) ) . "\n";
+				// echo sprintf( __( '15. Custom or non standard / stock hardware cannot be returned.', 'woocommerce' ) ) . "\n";
+				// echo sprintf( __( '16. Clients should take care to download the product specific data sheets, or to request technical information in writing, to ensure all items ordered are in every way compatible for each specific intended application.', 'woocommerce' ) ) . "\n\n";
+				// echo sprintf( __( '17. Clients should take care to check all goods when they are delivered. Any claims for damaged goods or missing items must be lodged in writing within 7 days of arrival on site.', 'woocommerce' ) ) . "\n\n";
 				break;
 		}
 
@@ -1211,16 +1136,6 @@ if ( ! function_exists( 'bridge_child_woocommerce_email_footer_quote_conditions_
 // 	}
 // 	add_filter( 'ywraq_pdf_file_name', 'bridge_child_ywraq_pdf_file_name', 10, 2 );
 // }
-
-if ( ! function_exists( 'bridge_child_woocommerce_get_order_item_totals' ) ) {
-	function bridge_child_woocommerce_get_order_item_totals($total_rows, $obj, $tax_display) {
-		if(isset($total_rows['order_total'])) {
-			$total_rows['order_total']['label'] = __( 'Total Ex GST:', 'woocommerce' );
-		}
-		return $total_rows;
-	}
-	add_filter( 'woocommerce_get_order_item_totals', 'bridge_child_woocommerce_get_order_item_totals', 10, 3 );
-}
 
 if ( ! function_exists( 'bridge_child_wc_display_item_meta' ) ) {
 	/**

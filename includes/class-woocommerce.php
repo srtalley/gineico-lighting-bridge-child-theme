@@ -18,6 +18,9 @@ class GL_WooCommerce {
         add_action( 'woocommerce_before_add_to_cart_quantity', array($this, 'gl_add_quantity_label') );
         add_action( 'woocommerce_after_add_to_cart_quantity', array($this, 'gl_add_quantity_label_close') );
 
+        // add ex. GST to the subtotal in the cart
+        add_filter( 'woocommerce_get_order_item_totals', array($this, 'add_gst_to_order_item_totals'), 10, 3 );
+
         add_shortcode( 'gl_wc_login_reg_messages', array($this, 'gl_wc_login_reg_messages_function') );
 
         // login and registration shortcodes
@@ -95,6 +98,16 @@ class GL_WooCommerce {
         echo '</div> <!-- .gl-quantity-container -->'; 
     }
 
+    /**
+     * Add ex GST to subtotals
+     */
+    public function add_gst_to_order_item_totals($total_rows, $obj, $tax_display) {
+        if(isset($total_rows['order_total'])) {
+            $total_rows['order_total']['label'] = __( 'Total Ex GST:', 'woocommerce' );
+        }
+        return $total_rows;
+    }
+    
     /**
      * Shortcode to show the actions before the login form
      */
