@@ -155,28 +155,29 @@ class GL_WooCommerce_Product {
      *      Any non-null value will be returned as if it were pulled from the database
      */
     public function gc_add_product_id_post_meta( $value, $post_id, $meta_key, $single ) {
-        $post = get_post( $post_id );
-        if ( 'product' != $post->post_type && 'product_variation' != $post->post_type ) {
+        if(!is_404()) {
+            $post = get_post( $post_id );
+            if ( 'product' != $post->post_type && 'product_variation' != $post->post_type ) {
+                return $value;
+            }
+            switch ( $meta_key ) {
+                case 'gineico_product_id':
+                    $product = wc_get_product($post_id);
+    
+                    // detect if product is variation
+                    if($product->is_type('variation')) {
+                        $parent_id = $product->get_parent_id();
+                        $id =  $parent_id . '-' . $product->get_id();
+                    } else {
+                        $id = $product->get_id();
+                    }
+            
+                    $site_abbreviation = get_gineico_site_abbreviation() . '-';
+                    $value = $site_abbreviation . $id;
+                    break;
+            }
             return $value;
         }
-        switch ( $meta_key ) {
-            case 'gineico_product_id':
-                $product = wc_get_product($post_id);
-
-                // detect if product is variation
-                if($product->is_type('variation')) {
-                    $parent_id = $product->get_parent_id();
-                    $id =  $parent_id . '-' . $product->get_id();
-                } else {
-                    $id = $product->get_id();
-                }
-        
-                $site_abbreviation = get_gineico_site_abbreviation() . '-';
-                $value = $site_abbreviation . $id;
-                break;
-        }
-    
-        return $value;
     }
     /**
      * Filter to return a custom product ID for Zoho

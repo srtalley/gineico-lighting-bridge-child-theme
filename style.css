@@ -4,8 +4,8 @@ Theme URI: http://demo.qodeinteractive.com/bridge/
 Description: A child theme of Bridge Theme
 Author: Qode Interactive
 Author URI: http://www.qodethemes.com/
-Version: 2.0.20
-Date: 2022-06-13
+Version: 2.1.1c
+Date: 2022-08-24
 Template: bridge
 */
 @import url("../bridge/style.css");
@@ -793,8 +793,13 @@ ul.products li.product  {
 .content.content_top_margin {
     margin-top: 188px !important;
 }
-.content .container .container_inner.qode-child-breadcrumb {
-	padding: 50px 0 30px;
+.woocommerce .content .container .container_inner, .woocommerce-page .content .container .container_inner {
+    padding: 0;
+}
+.woocommerce .content .container .container_inner .woocommerce-breadcrumb,
+.woocommerce-page .content .container .container_inner .woocommerce-breadcrumb,
+.content .container .container_inner.qode-child-breadcrumb .breadcrumbs_inner {
+	padding: 20px 0 0;
 }
 .breadcrumb {
 	font-size: 16px;
@@ -1537,6 +1542,9 @@ header.scrolled .header_top {
 }
 .woocommerce #payment ul.payment_methods li label[for="payment_method_cod"] {
 	display: none;
+}
+.single-product.woocommerce .product .images figure {
+    display: block;
 }
 .woocommerce.single-product .product .yith-ywraq-add-to-quote {
 	backface-visibility: hidden;
@@ -2504,8 +2512,15 @@ form.products-per-page select {
 @media only screen and (min-width: 1000px) {
     
 	.content .container .container_inner.default_template_holder {
-		padding-top:30px;
+		padding-top: 40px;
 	}
+    .tax-product_cat .content .container .container_inner.default_template_holder,
+    .single-product .content .container .container_inner.default_template_holder {
+		padding-top:20px;
+	}
+    .post-type-archive-product .content .container .container_inner.default_template_holder {
+        padding-top: 0;
+    }
 	.advanced-filter .col {
 		width: 25%;
 		float: left;
@@ -2603,8 +2618,8 @@ form.products-per-page select {
 }
 @media only screen and (max-width: 1024px) {
 
-    .content .container .container_inner.qode-child-breadcrumb {
-        padding: 50px 0 0;
+    .wrapper .content .container .container_inner.qode-child-breadcrumb {
+        padding: 0 !important;
     }
     .woocommerce.single-product .product .yith-ywraq-add-to-quote {
         /* width: 325px;  */
@@ -2696,8 +2711,15 @@ form.products-per-page select {
 	    margin-top: 0 !important;
 	}
 	.content .container .container_inner.default_template_holder {
-	    padding-top: 0 !important;
+	    padding-top: 30px !important;
 	}
+    .tax-product_cat .content .container .container_inner.default_template_holder,
+    .single-product .content .container .container_inner.default_template_holder {
+	    padding-top: 20px !important;
+	}
+    .post-type-archive-product .content .container .container_inner.default_template_holder {
+        padding-top: 0;
+    }
 	.admin-bar .float-gineico-advanced-filter-close {
 		top: 60px;
 	}

@@ -2,6 +2,12 @@
 
 Gineico Lighting Bridge child theme documented changes.
 
+## [2.1.1] - 2022-08-24
+* Updates to spacing at the tops of pages.
+
+## [2.1.0] - 2022-07-23
+* Added a redirect class to detect and redirect to pages that make sense.
+
 ## [2.0.20] - 2022-06-17
 * Removed the quoting class so it could be added to the Gineico Quoting System plugin.
 * Updated other parts of the code that were added to the new plugin.

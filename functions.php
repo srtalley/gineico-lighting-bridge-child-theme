@@ -3,6 +3,7 @@
 // custom child theme includes
 include_once('includes/qode-breadcrumbs.php');
 include_once('includes/class-portfolio.php');
+include_once('includes/class-redirect.php');
 
 // include_once('includes/class-gc-wc-product-data-store-cpt.php');
 
