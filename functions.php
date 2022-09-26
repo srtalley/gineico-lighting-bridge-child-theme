@@ -1380,3 +1380,30 @@ function get_gineico_site_abbreviation() {
 		return false;
 	}
 }
+
+/**
+ * Supports WP All Export
+ * Returns the filtered SKU for a product
+ */
+// function get_gqs_sku($value) {
+// 	$product = wc_get_product(get_the_ID());
+// 	if(is_object($product)) {
+// 		$sku = $product->get_sku();
+// 		return $sku;
+// 	}
+// }
+
+/**
+ * Supports WP All Export
+ * Returns the main brand prefix for a product
+ */
+function get_gqs_product_brand_prefix($value) {
+	$product = wc_get_product(get_the_ID());
+	if(is_object($product)) {
+		if(class_exists('\Gineicio\QuotingSystem\GQS_WooCommerce_Product')) {
+			$main_brand_prefix = \Gineicio\QuotingSystem\GQS_WooCommerce_Product::get_brand_prefix($product);
+			return $main_brand_prefix;
+		}
+	}
+	return false;
+}

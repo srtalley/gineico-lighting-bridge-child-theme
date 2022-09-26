@@ -2,6 +2,9 @@
 
 Gineico Lighting Bridge child theme documented changes.
 
+## [2.1.1.1] - 2022-09-25
+* Added function to export the brand prefix for WP All Export.
+
 ## [2.1.1] - 2022-08-24
 * Updates to spacing at the tops of pages.
 
