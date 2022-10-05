@@ -485,7 +485,7 @@ class GL_WooCommerce {
                     $content = $content  . $product_attributes;
 
                 } else {
-                    $content = $content . '<h4 class="additional-information">Additional Information</h4>' . $product_attributes;
+                    $content = $content . '<h4 class="additional-information">ADDITIONAL INFORMATION &mdash; SHIPPING</h4>' . $product_attributes;
 
                 }
             }

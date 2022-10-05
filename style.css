@@ -4,8 +4,8 @@ Theme URI: http://demo.qodeinteractive.com/bridge/
 Description: A child theme of Bridge Theme
 Author: Qode Interactive
 Author URI: http://www.qodethemes.com/
-Version: 2.1.1c
-Date: 2022-08-24
+Version: 2.1.2
+Date: 2022-10-04
 Template: bridge
 */
 @import url("../bridge/style.css");
@@ -483,6 +483,9 @@ ul.products li.product .yith-wcwl-add-button.gl-wcwl-add-to-my-favourites.in_my_
 }
 
 /* Single Product Tabs */
+.single-product .woocommerce-product-details__short-description {
+    padding-top: 10px;
+}
 .single-product .woocommerce-product-details__short-description p,
 .single-product .woocommerce-product-details__short-description li,
 .single-product .accordion_content.ui-accordion-content.ui-helper-reset.ui-widget-content p,
@@ -490,13 +493,20 @@ ul.products li.product .yith-wcwl-add-button.gl-wcwl-add-to-my-favourites.in_my_
     font-size: 17px;
     line-height: 22px;
 }
-
+.single-product .q_accordion_holder.boxed div.accordion_content_inner {
+    padding-bottom: 5px;
+}
 .single-product .q_accordion_holder {
     margin-bottom: 0;
     box-sizing: border-box;
     width: 80%;
 }
-
+.single-product .q_accordion_holder p {
+    padding-bottom: 0.8em;
+}
+.single-product .q_accordion_holder ul {
+    padding-bottom: 1em;
+}
 .single-product .title-holder.ui-accordion-header {
     /* margin-bottom: 10px;
     width: 100%;
@@ -581,7 +591,6 @@ ul.products li.product .yith-wcwl-add-button.gl-wcwl-add-to-my-favourites.in_my_
 
 }
 .single-product .woocommerce-accordion .additional-information {
-    margin-top: 40px;
     position: relative;
     font-weight: 700;
     font-size: 17px;
@@ -1692,7 +1701,6 @@ body.woocommerce-js .yith_ywraq_add_item_browse_message a:hover,
 .yith-request-a-quote-page .request-quote-column .form-row input,
 .yith-request-a-quote-page .request-quote-column .form-row textarea {
     width: 100%;
-
 }
 .request-quote-column p.form-row {
 	position: relative;
@@ -1702,6 +1710,14 @@ body.woocommerce-js .yith_ywraq_add_item_browse_message a:hover,
 }
 .yith-request-a-quote-page .product-name .quote-product-short-description {
     font-size: 16px;
+}
+.yith-request-a-quote-page abbr.required {
+    color: #ac0000;
+    font-size: 14px;
+    text-decoration: none;
+}
+.yith-request-a-quote-page abbr.required:before {
+    content: ' (Required)';
 }
 /* .request-quote-column {
     width: 50%;
