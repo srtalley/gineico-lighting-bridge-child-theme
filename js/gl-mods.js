@@ -443,7 +443,7 @@ jQuery(function($) {
      */
     function change_disabled_ywraq_and_projects_button_message() {
 
-        $(document).on('click', '.woocommerce-variation-add-to-cart-disabled + .yith-ywraq-add-to-quote, .gl-yith-wcwl-wrapper.disable-project-list .gl-wcwl-add-to-projects-wrapper .yith-wcwl-add-button, .gl-update-wraq-list-wrapper.disabled, .gl-update-wcwl-list-wrapper.disabled', function (event) {
+        $(document).on('click', '.gl-yith-wcwl-wrapper.disable-project-list .gl-wcwl-add-to-projects-wrapper .yith-wcwl-add-button, .gl-update-wraq-list-wrapper.disabled, .gl-update-wcwl-list-wrapper.disabled', function (event) {
             event.stopPropagation();
             // select the first drop down
             if($(this).parentsUntil('.qode-single-product-summary').parent().length) {
