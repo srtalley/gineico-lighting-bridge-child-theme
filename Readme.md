@@ -1,6 +1,9 @@
 # Changelog
 
 Gineico Lighting Bridge child theme documented changes.
+## [2.1.4] - 2022-11-04
+* Updates to myaccount templates.
+
 ## [2.1.3] - 2022-10-14
 * Updates to support new quoting system.
 

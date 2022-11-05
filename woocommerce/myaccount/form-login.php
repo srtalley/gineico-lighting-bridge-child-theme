@@ -12,15 +12,14 @@
  *
  * @see     https://docs.woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
- * @version 6.0.0
+ * @version 7.0.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-do_action( 'woocommerce_before_customer_login_form' ); 
-
+// BEGIN GINEICO CUSTOM
+// Deleted all code to add redirect
 echo("<script>location.href = '" . site_url('/login') . "'</script>");
-
-do_action( 'woocommerce_after_customer_login_form' ); ?>
+// END GINEICO CUSTOM

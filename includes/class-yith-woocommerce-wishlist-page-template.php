@@ -71,24 +71,26 @@ class GL_YITH_WooCommerce_Wishlist_Page_Template {
         <?php
         $product = wc_get_product($item['product_id']);
 
-        if($product->is_type('variableddd')) {
+        // removed 
+        // if($product->is_type('variable')) {
 
         ?>
-        <div class="yith-ywraq-add-to-quote gl-wcwl-quote-select-options-wrapper">
-            <div class="yith-ywraq-add-button show" style="display:block" data-product_id="<?php $product->get_id();?>">
-            <a href="#gl-wcwl-list-select-options-<?php echo $product->get_id();?>" class="gl-wcwl-list-select-options" data-product_id="<?php $product->get_id();?>" data-update_wcwl_button="true">Add Product Options</a>
+        <!-- <div class="yith-ywraq-add-to-quote gl-wcwl-quote-select-options-wrapper">
+            <div class="yith-ywraq-add-button show" style="display:block" data-product_id="<?php //echo $product->get_id();?>">
+            <a href="#gl-wcwl-list-select-options-<?php //echo $product->get_id();?>" class="gl-wcwl-list-select-options" data-product_id="<?php //echo $product->get_id();?>" data-update_wcwl_button="true">Add Product Options</a>
 
 
             </div>
-            <div id="gl-wcwl-list-select-options-<?php echo $product->get_id();?>" ><div class="gl-wcwl-quote-select-option-variation"></div>
+            <div id="gl-wcwl-list-select-options-<?php //echo $product->get_id();?>" ><div class="gl-wcwl-quote-select-option-variation"></div>
                 <div class="gl-wcwl-select-option-variation-message"></div>
             <div class="gl-wcwl-quote-select-option-variation-loader"></div>
 
         
         </div>							
-        </div> <!-- .gl-wcwl-quote-select-options-wrapper -->
+        </div>  -->
+        <!-- .gl-wcwl-quote-select-options-wrapper -->
     <?php
-        }
+        // }
     }
 
     public function gl_yith_wcwl_table_product_after_move_to_another_wishlist( $item, $wishlist ) {
@@ -108,7 +110,7 @@ class GL_YITH_WooCommerce_Wishlist_Page_Template {
         // check if there is more than one wishlist because we don't
         // want to show this if there is only one wishlist
         if($has_project_lists) {
-            echo '<a href="#gl_copy_to_another_wishlist" class="gl-open-popup-copy-to-another-wishlist-button" data-product_id="<?php $product->get_id();?>">Copy to another list &rsaquo;</a>';
+            echo '<a href="#gl_copy_to_another_wishlist" class="gl-open-popup-copy-to-another-wishlist-button">Copy to another list &rsaquo;</a>';
         }
 
         $product = wc_get_product($item['product_id']);
@@ -116,29 +118,26 @@ class GL_YITH_WooCommerce_Wishlist_Page_Template {
         if($product->is_type('variable')) {
             ?>
             <div class="yith-ywraq-add-to-quote gl-wcwl-quote-select-options-wrapper">
-            <div class="yith-ywraq-add-button show" style="display:block" data-product_id="<?php $product->get_id();?>">
-            <a href="#gl-wcwl-list-select-options-<?php echo $product->get_id();?>" class="gl-wcwl-list-select-options button" data-product_id="<?php $product->get_id();?>" data-update_wcwl_button="true">Add Product Options</a>
-
-
-            </div>
-            <div id="gl-wcwl-list-select-options-<?php echo $product->get_id();?>" ><div class="gl-wcwl-quote-select-option-variation"></div>
-                <div class="gl-wcwl-select-option-variation-message"></div>
-            <div class="gl-wcwl-quote-select-option-variation-loader"></div>
-
-        
-        </div>							
-        </div> <!-- .gl-wcwl-quote-select-options-wrapper -->
-            <div class="yith-ywraq-add-to-quote gl-wcwl-quote-select-options-wrapper disabled">
                 <div class="yith-ywraq-add-button show" style="display:block" data-product_id="<?php $product->get_id();?>">
-                    <a href="#gl-wcwl-quote-select-options-<?php echo $product->get_id();?>" class="gl-wcwl-quote-select-options button" data-product_id="<?php $product->get_id();?>" data-wraq_button="true">Request a Quote	</a>
-                    <!-- <p>* product options required</p> -->
-
+                <a href="#gl-wcwl-list-select-options-<?php echo $product->get_id();?>" class="gl-wcwl-list-select-options button" data-product_id="<?php $product->get_id();?>" data-update_wcwl_button="true">Add Product Options</a>
                 </div>
-                <div id="gl-wcwl-quote-select-options-<?php echo $product->get_id();?>" ><div class="gl-wcwl-quote-select-option-variation"></div>
+                <div id="gl-wcwl-list-select-options-<?php echo $product->get_id();?>" ><div class="gl-wcwl-quote-select-option-variation"></div>
+                    <div class="gl-wcwl-select-option-variation-message"></div>
                 <div class="gl-wcwl-quote-select-option-variation-loader"></div>
-                <!-- <div class="gl-wcwl-quote-select-option-variation-ywraq-buttons"></div>-->
-            
+
             </div>							
+            </div> <!-- .gl-wcwl-quote-select-options-wrapper -->
+                <div class="yith-ywraq-add-to-quote gl-wcwl-quote-select-options-wrapper disabled">
+                    <div class="yith-ywraq-add-button show" style="display:block" data-product_id="<?php $product->get_id();?>">
+                        <a href="#gl-wcwl-quote-select-options-<?php echo $product->get_id();?>" class="gl-wcwl-quote-select-options button" data-product_id="<?php $product->get_id();?>" data-wraq_button="true">Request a Quote	</a>
+                        <!-- <p>* product options required</p> -->
+
+                    </div>
+                    <div id="gl-wcwl-quote-select-options-<?php echo $product->get_id();?>" ><div class="gl-wcwl-quote-select-option-variation"></div>
+                    <div class="gl-wcwl-quote-select-option-variation-loader"></div>
+                    <!-- <div class="gl-wcwl-quote-select-option-variation-ywraq-buttons"></div>-->
+                
+                </div>							
             </div> <!-- .gl-wcwl-quote-select-options-wrapper -->
         <?php
         } else {

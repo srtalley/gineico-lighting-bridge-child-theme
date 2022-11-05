@@ -23,29 +23,6 @@ do_action( 'woocommerce_before_edit_account_form' ); ?>
 
 	<?php do_action( 'woocommerce_edit_account_form_start' ); ?>
 
-	<?php
-		// BEGIN GINEICO CUSTOM
-		if(function_exists('get_field')) {
-			?>
-			<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-				<label for="account_elect"><?php esc_html_e( 'Elect', 'woocommerce' ); ?> <span class="required">*</span></label>
-				<select class="woocommerce-Input woocommerce-Input--select input-select" name="account_elect" id="account_elect">
-					<option value=""></option>
-					<?php
-						$elect_value   =  get_user_meta( $user->ID, 'elect', true );
-						$elect_choices = qode_get_select_field_choices('acf_user-additional-information', 'elect');
-						foreach ($elect_choices as $key => $value) {
-							echo '<option value="' . $key . '"' . selected($elect_value, $key) . '>' . $value . '</option>';
-						}
-					?>
-				</select>
-			</p>
-			<div class="clear"></div>
-			<?php
-		}
-		// END GINEICO CUSTOM
-	?>
-
 	<p class="woocommerce-form-row woocommerce-form-row--first form-row form-row-first">
 		<label for="account_first_name"><?php esc_html_e( 'First name', 'woocommerce' ); ?>&nbsp;<span class="required">*</span></label>
 		<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_first_name" id="account_first_name" autocomplete="given-name" value="<?php echo esc_attr( $user->first_name ); ?>" />
@@ -62,67 +39,10 @@ do_action( 'woocommerce_before_edit_account_form' ); ?>
 	</p>
 	<div class="clear"></div>
 
-	<?php
-		// BEGIN GINEICO CUSTOM
-		if(function_exists('get_field')) {
-
-			// get the woocommerce fields first
-			$company       = get_user_meta( $user->ID, 'billing_company', true );
-			$phone_number  = get_user_meta( $user->ID, 'billing_phone', true );
-			$state_value   =  get_user_meta( $user->ID, 'billing_state', true );
-
-			// get from the ACF account fields if the above are empty
-			if($company == '') {
-				$company       = get_user_meta( $user->ID, 'company', true );
-			}
-			if($phone_number == '') {
-				$phone_number  = get_user_meta( $user->ID, 'phone_number', true );
-			}
-			if($state_value == '') {
-				$state_value   =  get_user_meta( $user->ID, 'state', true );
-			}
-			?>
-			<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-				<label for="account_company"><?php esc_html_e( 'Company', 'woocommerce' ); ?> <span class="required">*</span></label>
-				<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_company" id="account_company" value="<?php echo esc_attr( $company ); ?>" />
-			</p>
-			<div class="clear"></div>
-
-			<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-				<label for="account_phone_number"><?php esc_html_e( 'Phone Number', 'woocommerce' ); ?> <span class="required">*</span></label>
-				<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_phone_number" id="account_phone_number" value="<?php echo esc_attr( $phone_number ); ?>" />
-			</p>
-			<div class="clear"></div>
-			<?php
-		}
-		// END GINEICO CUSTOM
-	?>
-
 	<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
 		<label for="account_email"><?php esc_html_e( 'Email address', 'woocommerce' ); ?>&nbsp;<span class="required">*</span></label>
 		<input type="email" class="woocommerce-Input woocommerce-Input--email input-text" name="account_email" id="account_email" autocomplete="email" value="<?php echo esc_attr( $user->user_email ); ?>" />
 	</p>
-
-	<?php
-		// BEGIN GINEICO CUSTOM
-		if(function_exists('get_field')) {
-			?>
-			<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-				<label for="account_state"><?php esc_html_e( 'State', 'woocommerce' ); ?> <span class="required">*</span></label>
-				<select class="woocommerce-Input woocommerce-Input--select input-select" name="account_state" id="account_state">
-					<option value=""></option>
-					<?php
-						$state_choices = qode_get_select_field_choices('acf_user-additional-information', 'state');
-						foreach ($state_choices as $key => $value) {
-							echo '<option value="' . $key . '"' . selected($state_value, $key) . '>' . $value . '</option>';
-						}
-					?>
-				</select>
-			</p>
-			<?php
-		}
-		// END GINEICO CUSTOM
-	?>
 
 	<fieldset>
 		<legend><?php esc_html_e( 'Password change', 'woocommerce' ); ?></legend>
