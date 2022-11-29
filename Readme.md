@@ -1,6 +1,9 @@
 # Changelog
 
 Gineico Lighting Bridge child theme documented changes.
+## [2.1.5] - 2022-11-28
+* Removed sale badge from shop pages.
+
 ## [2.1.4] - 2022-11-04
 * Updates to myaccount templates.
 

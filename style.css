@@ -4,8 +4,8 @@ Theme URI: http://demo.qodeinteractive.com/bridge/
 Description: A child theme of Bridge Theme
 Author: Qode Interactive
 Author URI: http://www.qodethemes.com/
-Version: 2.1.4
-Date: 2022-11-04
+Version: 2.1.5
+Date: 2022-11-28
 Template: bridge
 */
 @import url("../bridge/style.css");
@@ -615,6 +615,7 @@ ul.products li.product .yith-wcwl-add-button.gl-wcwl-add-to-my-favourites.in_my_
 .woocommerce-page ul.products li.product a.product-category {
 	background-color: transparent;
 }
+/** WOOCOMMERCE SHOP **/
 /** Add the icons to the shop loop **/
 ul.products li.product  {
     /* display: flex;
@@ -626,6 +627,9 @@ ul.products li.product  {
 }
 .woocommerce ul.products li.product > div  {
     flex: 1 1 100%;
+}
+.product .onsale {
+    display: none !important;
 }
 /* .woocommerce-page ul.products li.product a.product-category.product-info {
     flex: 1 1 50%;
